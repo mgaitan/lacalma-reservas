@@ -25,6 +25,9 @@ class Departamento(models.Model):
     dia_media = models.DecimalField(max_digits=7, decimal_places=2)
     dia_baja = models.DecimalField(max_digits=7, decimal_places=2)
 
+    class Meta:
+        ordering = ('nombre',)
+
     def __str__(self):
         return self.nombre
 
@@ -40,7 +43,7 @@ class Reserva(TimeStampedModel):
     whatsapp = models.BooleanField('utiliza whatsapp', default=False)
     email = models.EmailField()
     estado = models.CharField(max_length=50, choices=ESTADOS, default=ESTADOS.pendiente)
-    fecha_vencimiento_reserva = models.DateTimeField()
+    fecha_vencimiento_reserva = models.DateTimeField(null=True, blank=True)
     como_se_entero = models.TextField(null=True, blank=True)
 
     dias_baja = models.IntegerField(default=0)
@@ -48,9 +51,11 @@ class Reserva(TimeStampedModel):
     dias_alta = models.IntegerField(default=0)
     costo_total = models.DecimalField(max_digits=7, decimal_places=2, default=0)
 
+    def rango(self):
+        return dias_en_rango(self.hasta, self.desde)
 
     def calcular(self):
-        reserva = dias_en_rango(self.hasta, self.desde)
+        reserva = self.rango()
         self.dias_media = len(set(reserva).intersection(TEMPORADA_MEDIA))
         self.dias_alta = len(set(reserva).intersection(TEMPORADA_ALTA))
         self.dias_baja = len(reserva) - self.dias_media - self.dias_alta
