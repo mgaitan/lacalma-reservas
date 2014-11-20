@@ -34,7 +34,7 @@ class Departamento(models.Model):
 
 class Reserva(TimeStampedModel):
     ESTADOS = Choices(('pendiente', 'confirmada'))
-    departamento = models.ForeignKey('Departamento')
+    departamento = models.ForeignKey(Departamento)
     desde = models.DateField()          # dia de entrada
     hasta = models.DateField()          # dia de salida
     nombre_y_apellido = models.CharField(max_length=50)
@@ -65,5 +65,3 @@ class Reserva(TimeStampedModel):
                                 self.dias_baja * self.departamento.dia_baja,
                                 ))
 
-    def __str__(self):
-        return "{departamento}: desde {desde} al {hasta} - {estado}".format(vars(self))

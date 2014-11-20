@@ -1,7 +1,10 @@
 from datetime import date, timedelta
 from decimal import Decimal
 from django.test import TestCase
+
 from lacalma.models import Reserva, Departamento, TEMPORADA_MEDIA, TEMPORADA_ALTA
+from lacalma.forms import ReservaForm
+
 
 
 def ReservaFactory(desde, hasta, depto=1):
@@ -49,3 +52,72 @@ class TestCalcular(TestCase):
         self.assertEqual(reserva.dias_media, 1)
         self.assertEqual(reserva.dias_baja, 0)
         self.assertEqual(reserva.dias_alta, 3)
+
+
+class TestValidar(TestCase):
+
+    fixtures = ['deptos.json']
+
+    def test_comienza_entre_reserva(self):
+        ReservaFactory(desde=date(2014, 11, 20), hasta=date(2014, 11, 24)).save()
+        form = ReservaForm({'fechas': '23-11-2014 al 27-11-2014',
+            'procedencia': None,
+             'nombre_y_apellido': 'tin',
+             'departamento': 1,
+             'como_se_entero': None,
+             'telefono': '33',
+             'email': 'gaitan@gmail.com'})
+        self.assertFalse(form.is_valid())
+        self.assertEqual(form._errors, {'fechas': [u'Hay reservas realizadas durante esas fechas']})
+
+    def test_comienza_mismo_dia_fin_anterior(self):
+        ReservaFactory(desde=date(2014, 11, 20), hasta=date(2014, 11, 24)).save()
+        # entra el mismo dia
+        form = ReservaForm({'fechas': '24-11-2014 al 27-11-2014',
+            'procedencia': None,
+             'nombre_y_apellido': 'tin',
+             'departamento': 1,
+             'como_se_entero': None,
+             'telefono': '33',
+             'email': 'gaitan@gmail.com'})
+        self.assertTrue(form.is_valid())
+
+    def test_termina_despues_de_reserva_previa(self):
+        ReservaFactory(desde=date(2014, 11, 20), hasta=date(2014, 11, 24)).save()
+        # entra el mismo dia
+        form = ReservaForm({'fechas': '10-11-2014 al 21-11-2014',
+            'procedencia': None,
+             'nombre_y_apellido': 'tin',
+             'departamento': 1,
+             'como_se_entero': None,
+             'telefono': '33',
+             'email': 'gaitan@gmail.com'})
+        self.assertFalse(form.is_valid())
+        self.assertEqual(form._errors, {'fechas': [u'Hay reservas realizadas durante esas fechas']})
+
+    def test_termina_dia_reserva(self):
+        ReservaFactory(desde=date(2014, 11, 20), hasta=date(2014, 11, 24)).save()
+        # entra el mismo dia
+        form = ReservaForm({'fechas': '10-11-2014 al 19-11-2014',
+            'procedencia': None,
+             'nombre_y_apellido': 'tin',
+             'departamento': 1,
+             'como_se_entero': None,
+             'telefono': '33',
+             'email': 'gaitan@gmail.com'})
+        self.assertTrue(form.is_valid())
+
+    def test_solapamiento_total(self):
+        ReservaFactory(desde=date(2014, 11, 1), hasta=date(2014, 11, 30)).save()
+        form = ReservaForm({'fechas': '10-11-2014 al 29-11-2014',
+            'procedencia': None,
+             'nombre_y_apellido': 'tin',
+             'departamento': 1,
+             'como_se_entero': None,
+             'telefono': '33',
+             'email': 'gaitan@gmail.com'})
+        self.assertFalse(form.is_valid())
+        self.assertEqual(form._errors, {'fechas': [u'Hay reservas realizadas durante esas fechas']})
+
+
+
