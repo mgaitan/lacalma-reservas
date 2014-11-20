@@ -11,7 +11,7 @@ class ReservaForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(ReservaForm, self).__init__(*args, **kwargs)
-        self.fields['departamento'].widget.choices = [c for c in self.fields['departamento'].widget.choices][1:]
+        self.fields['departamento'].empty_label = None
 
 
     def clean(self):
@@ -31,5 +31,5 @@ class ReservaForm(forms.ModelForm):
     class Meta:
         model = Reserva
         fields = ('departamento', 'fechas', 'desde', 'hasta', 'nombre_y_apellido', 'email',
-                  'procedencia', 'telefono', 'whatsapp', 'como_se_entero')
+                  'procedencia', 'telefono', 'como_se_entero')
 

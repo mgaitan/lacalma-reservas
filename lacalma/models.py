@@ -29,7 +29,7 @@ class Departamento(models.Model):
         ordering = ('nombre',)
 
     def __str__(self):
-        return self.nombre
+        return "%s (%s pax)" % (self.nombre, self.capacidad)
 
 
 class Reserva(TimeStampedModel):

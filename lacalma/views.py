@@ -1,19 +1,17 @@
 from datetime import date
 import json
-from django.shortcuts import render
-from django.views.generic.edit import FormView
+from django.shortcuts import render, redirect
+from django.contrib.formtools.preview import FormPreview
 from lacalma.models import Reserva, Departamento
 from lacalma.forms import ReservaForm
 
 
 
-class ReservaView(FormView):
-    template_name = 'index.html'
-    form_class = ReservaForm
+class ReservaViewWithPreview(FormPreview):
+    form_template = preview_template = 'index.html'
 
-
-    def get_context_data(self, **kwargs):
-        context = super(ReservaView, self).get_context_data(**kwargs)
+    def get_context(self, request, form):
+        context = super(ReservaViewWithPreview, self).get_context(request, form)
         hoy = date.today()
         context['hoy'] = str(hoy)
 
@@ -33,11 +31,33 @@ class ReservaView(FormView):
         context['reservas_confirmadas'] = json.dumps(reservas_confirmadas)
         return context
 
-    def form_valid(self, form):
-        # This method is called when valid form data has been POSTed.
-        # It should return an HttpResponse.
-        instance = form.save()
-        return render(self.context, 'gracias.html', {})
+    def process_preview(self, request, form, context):
+        reserva = form.save(commit=False)
+        reserva.calcular()
+        context['reserva'] = reserva
+
+
+    def post_post(self, request):
+        "Validates the POST data. If valid, calls done(). Else, redisplays form."
+        f = self.form(request.POST, auto_id=self.get_auto_id())
+        if f.is_valid():
+            if not self._check_security_hash(request.POST.get(self.unused_name('hash'), ''),
+                                             request, f):
+                return self.failed_hash(request)  # Security hash failed.
+            return self.done(request, f.cleaned_data, f)
+        else:
+            return render_to_response(self.form_template,
+                self.get_context(request, f),
+                context_instance=RequestContext(request))
+
+    def done(self, request, cleaned_data, form):
+
+        return redirect('/gracias/')
+
+
+def gracias(request):
+    return render(request, 'index.html', {'gracias': True})
 
 
 
+reserva_view = ReservaViewWithPreview(ReservaForm)

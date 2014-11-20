@@ -29,14 +29,75 @@
 	<body>
 
 		<div id="wrapper">
+
+
+		{% if gracias %}
+
+
+		<div class="row"></div>
+
+			    <div class="alert alert-success" >
+
+    <strong>¡Felicitaciones!</strong> Hemos recibido su solicitud. En breve recibirá un correo electrónico con las instrucciones para realizar un depósito de seña y confirmar su reserva.
+    </div>
+
+
+
+		{% else %}
+
+
 			<h1>Haga su reserva</h1>
+
+
+		{% if reserva %}
+
+			<h3>Verifique su reserva</h3>
+
+
+			<dl>
+  				<dt>Departamento</dt>
+  					<dd>{{ reserva.departamento }}</dd>
+  				<dt>Fecha de llegada</dt>
+  					<dd>{{ reserva.desde|date:"l j \d\e F \d\e Y" }} (desde las 14hs)</dd>
+  				<dt>Fecha de salida</dt>
+  					<dd>{{ reserva.hasta|date:"l j \d\e F \d\e Y" }} (hasta las 10hs)</dd>
+  				<dt>Dias en temporada alta</dt>
+  					<dd>{{ reserva.dias_alta }}</dd>
+				<dt>Dias en temporada media</dt>
+  					<dd>{{ reserva.dias_media }}</dd>
+				<dt>Dias en temporada baja</dt>
+  					<dd>{{ reserva.dias_baja }}</dd>
+  				<dt>Costo total</dt>
+  					<dd>$ {{ reserva.costo_total }}</dd>
+
+  			</dl>
+
+
+		<form action="" method="post">{% csrf_token %}
+		{% for field in form %}{{ field.as_hidden }}
+		{% endfor %}
+		<input type="hidden" name="{{ stage_field }}" value="2" />
+		<input type="hidden" name="{{ hash_field }}" value="{{ hash_value }}" />
+		<p>
+ 		<a id="back" class="btn">Volver</a>
+		<input type="submit"  class="btn" value="Confirmar reserva" /></p>
+		</form>
+
+		{% else %}
 
 		<form action="" method="post">
 		{% csrf_token %}
     	{{ form|crispy }}
-    	<input type="submit" value="Send message" />
+    	<input type="submit" class="btn" value="Siguiente" />
 		</form>
 
+
+		{% endif %}
+
+
+
+		{% endif %}
+		</div>
 
 	<script type="text/javascript">
 
@@ -45,7 +106,7 @@
 
 
 	function update_reservas(){
-		$('#id_fechas').dateRangePicker({
+		$('#formtools_fechas').dateRangePicker({
 				separator: ' al ',
 				format: 'DD-MM-YYYY',
 				//startDate: '{{ hoy }}',
@@ -53,9 +114,9 @@
 				startOfWeek: 'monday',
 				beforeShowDay: function(t)
 				{
-					depto = $('#id_departamento').val();
+					depto = $('#formtools_departamento').val();
 
-					hoy = moment('{{ hoy }}', 'YYYY-MM-DD').toDate()
+					hoy = moment('{{ hoy }}', 'YYYY-MM-DD').toDate();
 					if (parseInt(moment(t).format('YYYYMMDD')) < parseInt(moment(hoy).format('YYYYMMDD'))){
 						return [false,'',''];
 					}
@@ -76,8 +137,14 @@
 
 
 	$(function(){
-		$('#id_departamento').change(update_reservas);
+		$('#formtools_departamento').change(update_reservas);
 		update_reservas();
+
+		$('#back').click(function(e){
+			e.preventDefault();
+			window.history.back();
+			return false;
+		})
 
 	});
 	</script>
