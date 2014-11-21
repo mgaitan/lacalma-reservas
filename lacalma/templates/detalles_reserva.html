@@ -1,17 +1,31 @@
 
             <dl>
+
+
+
                 <dt>Departamento</dt>
                     <dd>{{ reserva.departamento }}</dd>
                 <dt>Fecha de llegada</dt>
                     <dd>{{ reserva.desde|date:"l j \d\e F \d\e Y" }} (desde las 14hs)</dd>
                 <dt>Fecha de salida</dt>
                     <dd>{{ reserva.hasta|date:"l j \d\e F \d\e Y" }} (hasta las 10hs)</dd>
+
+                <dt>Nombre y apellido</dt>
+                    <dd>{{ reserva.nombre_y_apellido }}</dd>
+                <dt>Email</dt>
+                    <dd>{{ reserva.email }}</dd>
+                <dt>Teléfono</dt>
+                    <dd>{{ reserva.telefono }}</dd>
+
+
                 <dt>Dias en temporada alta</dt>
                     <dd>{{ reserva.dias_alta }}</dd>
                 <dt>Dias en temporada media</dt>
                     <dd>{{ reserva.dias_media }}</dd>
                 <dt>Dias en temporada baja</dt>
                     <dd>{{ reserva.dias_baja }}</dd>
+
+
 
                 {% if reserva.descuento.0 %}
                     <dt>Descuento por quincena aplicado</dt>
@@ -24,7 +38,7 @@
                 <dt>Depósito de seña requerido</dt>
                     <dd>$ {{ reserva.deposito_requerido.1 }} ({{ reserva.deposito_requerido.0 }} %)</dd>
 
-                <dt>Fecha de vencimiento de reserva pendiente</dt>
+                <dt>Fecha de vencimiento de la reserva pendiente</dt>
                     <dd>{{ reserva.fecha_vencimiento_reserva|date:"l j \d\e F \d\e Y" }}</dd>
                 </dl>
 
