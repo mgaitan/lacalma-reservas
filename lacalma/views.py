@@ -54,7 +54,9 @@ class ReservaViewWithPreview(FormPreview):
                 context_instance=RequestContext(request))
 
     def done(self, request, cleaned_data, form):
-        reserva = form.save()
+        reserva = form.save(commit=False)
+        reserva.calcular()
+        reserva.save()
         mail_txt = render_to_string('mail_txt.html', {'reserva': reserva})
         mail_html = render_to_string('mail.html', {'reserva': reserva})
 
