@@ -4,6 +4,7 @@ from django.conf import settings
 from django.core.management.base import BaseCommand  # CommandError
 from datetime import datetime
 from lacalma.models import Reserva
+from django.core.mail import send_mail
 
 
 AHORA = datetime.now()
@@ -17,3 +18,7 @@ class Command(BaseCommand):
                                               fecha_vencimiento_reserva__lt=AHORA):
             reserva.estado = Reserva.ESTADOS.vencida
             reserva.save(update_fields=['estado'])
+
+            send_mail('[La Calma] Reserva vencida', u"La reserva #%d se venció" % reserva.id,
+                  'gaitan@gmail.com', ['gaitan@gmail.com', 'gracielamothe@gmail.com'])
+
