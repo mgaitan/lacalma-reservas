@@ -136,11 +136,11 @@
 			'next-year':'Año',
 			'less-than' : 'El rango no deberia ser mayor de %d dias',
 			'more-than' : 'El rango no deberia ser menor de %d dias',
-			'default-more' : 'Por favor selecciona un rango mayor a %d dias',
-			'default-single' : 'Por favor selecciona un dia',
-			'default-less' : 'Por favor selecciona un rango menor a %d dias',
-			'default-range' : 'Por favor selecciona un rango entre %d y %d dias',
-			'default-default': 'Por favor selecciona un rango de fechas.'
+			'default-more' : 'Por favor seleccione un rango mayor a %d dias',
+			'default-single' : 'Por favor seleccione un dia',
+			'default-less' : 'Por favor seleccione un rango menor a %d dias',
+			'default-range' : 'Por favor seleccione un rango entre %d y %d dias',
+			'default-default': 'Por favor seleccione un rango de fechas.'
 		},
 		'de':
 		{

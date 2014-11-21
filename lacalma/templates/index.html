@@ -17,7 +17,7 @@
 			width:800px;
 			margin:0 auto;
 			color:#333;
-			font-family:Tahoma;
+			font-family:"Droid Sans", sans-serif;
 			line-height:1.5;
 			font-size:14px;
 		}
@@ -46,9 +46,6 @@
 		{% else %}
 
 
-			<h1>Haga su reserva</h1>
-
-
 		{% if reserva %}
 
 			<h3>Verifique su reserva</h3>
@@ -68,6 +65,8 @@
 		</form>
 
 		{% else %}
+			<h1>Haga su reserva online</h1>
+
 
 		<form action="" method="post">
 		{% csrf_token %}
@@ -96,6 +95,7 @@
 				//startDate: '{{ hoy }}',
 				showShortcuts: false,
 				startOfWeek: 'monday',
+				alwaysOpen:false,
 				beforeShowDay: function(t)
 				{
 					depto = $('#formtools_departamento').val();
@@ -121,7 +121,9 @@
 
 
 	$(function(){
-		$('#formtools_departamento').change(update_reservas);
+		$('#formtools_departamento').change( function(){
+			update_reservas();
+		});
 		update_reservas();
 
 		$('#back').click(function(e){
