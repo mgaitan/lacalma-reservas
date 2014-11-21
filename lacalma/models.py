@@ -3,7 +3,7 @@ from django.db import models
 from model_utils import Choices
 from model_utils.models import TimeStampedModel
 from decimal import Decimal
-from datetime import date, timedelta
+from datetime import datetime, date, timedelta
 
 
 def dias_en_rango(inicio, fin):
@@ -52,7 +52,6 @@ class Reserva(TimeStampedModel):
     whatsapp = models.BooleanField('utiliza whatsapp', default=False)
     email = models.EmailField()
     estado = models.CharField(max_length=50, choices=ESTADOS, default=ESTADOS.pendiente)
-    fecha_vencimiento_reserva = models.DateTimeField(null=True, blank=True)
     como_se_entero = models.CharField(verbose_name=u'¿Cómo conoció La Calma?',  max_length=50, choices=ENTERO, null=True, blank=True)
     comentario = models.TextField(verbose_name=u'¿Algún comentario?', null=True, blank=True)
 
@@ -62,6 +61,8 @@ class Reserva(TimeStampedModel):
     dias_alta = models.IntegerField(default=0)
 
     costo_total = models.DecimalField(max_digits=7, decimal_places=2, default=0)
+
+    fecha_vencimiento_reserva = models.DateTimeField(null=True, blank=True)
 
 
     fecha_deposito_reserva = models.DateTimeField(null=True, blank=True)
@@ -102,3 +103,10 @@ class Reserva(TimeStampedModel):
 
         if self.dias_total >= 15:
             self.costo_total *= DESCUENTO_QUINCENA
+
+        # fecha vencimiento
+        faltan = (self.desde - date.today()).days
+        if faltan >= 15:
+            self.fecha_vencimiento_reserva = datetime.now() + timedelta(days=8)
+        else:
+            self.fecha_vencimiento_reserva = self.desde - timedelta(days=faltan//2)
