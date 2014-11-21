@@ -9,7 +9,7 @@ from lacalma.models import Reserva
 class ReservaForm(forms.ModelForm):
     desde = forms.CharField(widget=forms.HiddenInput, required=False)
     hasta = forms.CharField(widget=forms.HiddenInput, required=False)
-    fechas = forms.CharField(label='¿Qué días quiere reservar?',
+    fechas = forms.CharField(label='¿Durante qué días quiere reservar?',
                 help_text='Seleccione hasta la última noche que duerme')
 
     def __init__(self, *args, **kwargs):
@@ -45,5 +45,5 @@ class ReservaForm(forms.ModelForm):
     class Meta:
         model = Reserva
         fields = ('departamento', 'fechas', 'desde', 'hasta', 'nombre_y_apellido', 'email',
-                  'procedencia', 'telefono', 'como_se_entero')
+                  'procedencia', 'telefono', 'como_se_entero', 'comentario')
 

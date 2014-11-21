@@ -12,7 +12,15 @@
                     <dd>{{ reserva.dias_media }}</dd>
                 <dt>Dias en temporada baja</dt>
                     <dd>{{ reserva.dias_baja }}</dd>
+
+                {% if reserva.descuento.0 %}
+                    <dt>Descuento por quincena aplicado</dt>
+                    <dd>$ {{ reserva.descuento.1 }} ({{ reserva.descuento.0 }} %)</dd>
+                {% endif %}
+
                 <dt>Costo total</dt>
                     <dd>$ {{ reserva.costo_total }}</dd>
 
+                <dt>Depósito de seña requerido</dt>
+                    <dd>$ {{ reserva.deposito_requerido.1 }} ({{ reserva.deposito_requerido.0 }} %)</dd>
             </dl>
