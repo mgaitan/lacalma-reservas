@@ -1,9 +1,10 @@
 from datetime import date
 import json
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, render_to_response
 from django.template.loader import render_to_string
 from django.contrib.formtools.preview import FormPreview
 from django.core.mail import send_mail
+from django.template import RequestContext
 from lacalma.models import Reserva, Departamento
 from lacalma.forms import ReservaForm
 
