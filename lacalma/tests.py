@@ -120,6 +120,19 @@ class TestValidar(TestCase):
         self.assertEqual(form._errors, {'fechas': [u'Hay reservas realizadas durante esas fechas']})
 
 
+    def test_ignora_vencidas(self):
+        reserva = ReservaFactory(desde=date(2014, 11, 1), hasta=date(2014, 11, 30))
+        reserva.estado = 'vencida'
+        reserva.save()
+        form = ReservaForm({'fechas': '10-11-2014 al 29-11-2014',
+            'procedencia': None,
+             'nombre_y_apellido': 'tin',
+             'departamento': 1,
+             'como_se_entero': None,
+             'telefono': '33',
+             'email': 'gaitan@gmail.com'})
+        self.assertTrue(form.is_valid())
+
 
 class TestVencidas(TestCase):
 
