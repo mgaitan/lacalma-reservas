@@ -109,10 +109,10 @@
 
 					dia = moment(t).format('YYYY-MM-DD');
 
-					if(pendientes[depto].indexOf(dia) > -1){
+					if($.inArray(dia, pendientes[depto]) > -1){
 						return [false,'pendiente','Reserva pendiente'];
 					}
-					if(confirmadas[depto].indexOf(dia) > -1){
+					if($.inArray(dia, confirmadas[depto]) > -1){
 						return [false,'confirmada','Reserva confirmada'];
 					}
 					return [true,'',''];
