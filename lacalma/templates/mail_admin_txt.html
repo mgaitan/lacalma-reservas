@@ -1,10 +1,16 @@
 
-Hemos recibido su solicitud de reserva con los siguientes detalles:
+Hay una nueva solicitud de reserva para  el {{ reserva.departamento }}:
 
+    * Nombre: {{ reserva.nombre_y_apellido }}
+    * Procedencia: {{ reserva.procedencia }}
+    * Teléfono: {{ reserva.telefono }}
+    * Email: {{ reserva.email }}
 
-    * Departamento: {{ reserva.departamento }}
+    * Conoció por: {{ reserva.get_como_se_entero_display }}
+
     * Fecha de llegada: {{ reserva.desde|date:"l j \d\e F \d\e Y" }} (desde las 14hs)
     * Fecha de salida: {{ reserva.hasta|date:"l j \d\e F \d\e Y" }} (hasta las 10hs)
+
     * Dias en temporada alta: {{ reserva.dias_alta }}
     * Dias en temporada media: {{ reserva.dias_media }}
     * Dias en temporada baja: {{ reserva.dias_baja }}{% if reserva.descuento.0 %}
@@ -13,23 +19,9 @@ Hemos recibido su solicitud de reserva con los siguientes detalles:
 
     * Depósito de seña requerido: $ {{ reserva.deposito_requerido.1 }} ({{ reserva.deposito_requerido.0 }} %)
 
-Para confirmar, debe realizar un deposito del 50% a la siguiente cuenta
+{% if reserva.comentario %}
+Comentario del visitante:
 
+    {{ reserva.comentario }}
 
-    Caja de Ahorro en Pesos Nº 6886076973
-    Banco HSBC Bank Argentina
-    Titular: Martín E. Gaitán
-    CUIT: 20-29224785-1
-    CBU 1500688400068860769732
-
-Responda este mensaje con el comprobante de pago e inmediatamente su reserva estará confirmada.
-
-
-Quedo a su entera disposición
-
-Ing. Martín Gaitán
-Complejo La Calma
-Las Grutas - Patagonia Argentina
-
-
-ref: #{{ reserva.id }}
+{% endif %}

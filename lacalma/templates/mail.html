@@ -366,7 +366,7 @@
                                                     <tr>
                                                         <td valign="top">
                                                             <div mc:edit="std_content00">
-                                                                <h4 class="h4">Solicitud de reserva - Complejo La Calma</h4>
+                                                                <h4 class="h4">Solicitud de reserva  - Complejo La Calma</h4>
                                                                 <br />
 
                                                                 <p>Sr./Sra.  {{ reserva.nombre_y_appelido }}:</p>
@@ -377,7 +377,8 @@
                                                                 {% include "detalles_reserva.html" %}
 
 
-                                                                <p>Para confirmar, debe realizar un deposito del 50% a la siguiente cuenta</p>
+
+                                                                <p>Para confirmar, debe realizar el depósito de seña. El saldo será abonado al momento de ingresar. </p>
 
                                                                 <table class="spip">
                                                                     <tbody><tr class="row_even">
@@ -396,7 +397,7 @@
                                                                     </tbody></table>
 
 
-                                                            <p>Una vez realizado la transferencia este mensaje con el comprobante de pago e inmediatamente su reserva estará confirmada</p>
+                                                            <p>Una vez realizada la transferencia, responda este mensaje con el comprobante de pago e inmediatamente su reserva quedará confirmada</p>
 
                                                             <p></p>
 
@@ -405,8 +406,12 @@
                                                             <p>Ing. Martín Gaitán
 
                                                             <br />
-                                                            Complejo La Calma - Las Grutas - Patagonia Argentina
+                                                            Complejo La Calma <br>
+                                                            Las Grutas - Patagonia Argentina
                                                              </p>
+
+
+                                                            <p styl>ref: #{{ reserva.id }}</p>
 
 
                                                             </div>
