@@ -1,0 +1,18 @@
+
+            <dl>
+                <dt>Departamento</dt>
+                    <dd>{{ reserva.departamento }}</dd>
+                <dt>Fecha de llegada</dt>
+                    <dd>{{ reserva.desde|date:"l j \d\e F \d\e Y" }} (desde las 14hs)</dd>
+                <dt>Fecha de salida</dt>
+                    <dd>{{ reserva.hasta|date:"l j \d\e F \d\e Y" }} (hasta las 10hs)</dd>
+                <dt>Dias en temporada alta</dt>
+                    <dd>{{ reserva.dias_alta }}</dd>
+                <dt>Dias en temporada media</dt>
+                    <dd>{{ reserva.dias_media }}</dd>
+                <dt>Dias en temporada baja</dt>
+                    <dd>{{ reserva.dias_baja }}</dd>
+                <dt>Costo total</dt>
+                    <dd>$ {{ reserva.costo_total }}</dd>
+
+            </dl>

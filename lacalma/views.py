@@ -1,7 +1,9 @@
 from datetime import date
 import json
 from django.shortcuts import render, redirect
+from django.template.loader import render_to_string
 from django.contrib.formtools.preview import FormPreview
+from django.core.mail import send_mail
 from lacalma.models import Reserva, Departamento
 from lacalma.forms import ReservaForm
 
@@ -51,6 +53,12 @@ class ReservaViewWithPreview(FormPreview):
                 context_instance=RequestContext(request))
 
     def done(self, request, cleaned_data, form):
+        reserva = form.save()
+        mail_txt = render_to_string('mail_txt.html', {'reserva': reserva})
+        mail_html = render_to_string('mail.html', {'reserva': reserva})
+
+        send_mail('Reserva La Calma - Las Grutas', mail_txt,
+                  'gaitan@gmail.com', [reserva.email], html_message=mail_html)
 
         return redirect('/gracias/')
 
