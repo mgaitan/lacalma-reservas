@@ -31,7 +31,8 @@ class ReservaForm(forms.ModelForm):
 
         # ( start1 <= end1 and start2 <= end2 )
         # import ipdb; ipdb.set_trace()
-        if Reserva.objects.filter(departamento=cleaned_data['departamento']).filter(
+        if Reserva.objects.filter(departamento=cleaned_data['departamento']).\
+                           exclude(estado=Reserva.ESTADOS.vencida).filter(
                                   Q(desde__range=(desde, hasta - timedelta(days=1))) |
                                   Q(hasta__range=(desde + timedelta(days=1), hasta)) |
                                   Q(desde__lte=desde,hasta__gte=hasta)).exists():

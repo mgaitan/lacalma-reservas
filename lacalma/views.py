@@ -26,7 +26,7 @@ class ReservaViewWithPreview(FormPreview):
             confirmadas = []
             for reserva in Reserva.objects.filter(departamento=depto, desde__gte=hoy, estado=Reserva.ESTADOS.pendiente):
                 pendientes.extend((d.isoformat() for d in reserva.rango()))
-            for reserva in Reserva.objects.filter(departamento=depto, desde__gte=hoy, estado='confirmada'):
+            for reserva in Reserva.objects.filter(departamento=depto, desde__gte=hoy, estado=Reserva.ESTADOS.confirmada):
                 confirmadas.extend((d.isoformat() for d in reserva.rango()))
 
             reservas_pendientes[str(depto.id)] = pendientes

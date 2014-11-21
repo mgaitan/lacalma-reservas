@@ -36,7 +36,7 @@ class Departamento(models.Model):
 
 
 class Reserva(TimeStampedModel):
-    ESTADOS = Choices('pendiente', 'confirmada', 'descartada')
+    ESTADOS = Choices('pendiente', 'confirmada', 'vencida')
     ENTERO = Choices(('buscador', 'Por un buscador'),
                      ('facebook', 'Por Facebook'),
                      ('habitual', 'Ya alquilé anteriormente'),

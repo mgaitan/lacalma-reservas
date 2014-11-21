@@ -1,7 +1,7 @@
-from datetime import date, timedelta
+from datetime import date, timedelta, datetime
 from decimal import Decimal
 from django.test import TestCase
-
+from django.core.management import call_command
 from lacalma.models import Reserva, Departamento, TEMPORADA_MEDIA, TEMPORADA_ALTA
 from lacalma.forms import ReservaForm
 
@@ -121,3 +121,24 @@ class TestValidar(TestCase):
 
 
 
+class TestVencidas(TestCase):
+
+    fixtures = ['deptos.json']
+
+    def test_simple_vencida(self):
+        reserva1 = ReservaFactory(desde=date(2014, 11, 1), hasta=date(2014, 11, 30))
+        reserva1.fecha_vencimiento_reserva = datetime.now() - timedelta(days=1)
+        reserva2 = ReservaFactory(desde=date(2014, 11, 1), hasta=date(2014, 11, 30), depto=2)
+        reserva2.fecha_vencimiento_reserva = datetime.now() + timedelta(days=1)
+
+        reserva3 = ReservaFactory(desde=date(2014, 11, 1), hasta=date(2014, 11, 30), depto=3)
+        reserva3.fecha_vencimiento_reserva = datetime.now() - timedelta(days=1)     # vencidaza
+        reserva3.estado = Reserva.ESTADOS.confirmada
+
+        reserva1.save()
+        reserva2.save()
+        reserva3.save()
+        call_command('limpiar_reservas')
+        self.assertEqual(Reserva.objects.get(id=reserva1.id).estado, Reserva.ESTADOS.vencida)
+        self.assertEqual(Reserva.objects.get(id=reserva2.id).estado, Reserva.ESTADOS.pendiente)
+        self.assertEqual(Reserva.objects.get(id=reserva3.id).estado, Reserva.ESTADOS.confirmada)
