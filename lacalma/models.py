@@ -33,7 +33,7 @@ class Departamento(models.Model):
 
 
 class Reserva(TimeStampedModel):
-    ESTADOS = Choices(('pendiente', 'confirmada'))
+    ESTADOS = Choices('pendiente', 'confirmada')
     departamento = models.ForeignKey(Departamento)
     desde = models.DateField()          # dia de entrada
     hasta = models.DateField()          # dia de salida

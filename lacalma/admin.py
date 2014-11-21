@@ -1,3 +1,13 @@
 from django.contrib import admin
+from lacalma.models import Departamento, Reserva
 
-# Register your models here.
+class DepartamentoAdmin(admin.ModelAdmin):
+    pass
+
+class ReservaAdmin(admin.ModelAdmin):
+    list_display = ('departamento', 'nombre_y_apellido', 'desde', 'hasta', 'estado')
+    list_filter = ('departamento', 'estado')
+    search_fields = ('nombre_y_apellido', 'email')
+
+admin.site.register(Departamento, DepartamentoAdmin)
+admin.site.register(Reserva, ReservaAdmin)
