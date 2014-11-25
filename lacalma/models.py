@@ -101,8 +101,7 @@ class Reserva(TimeStampedModel):
                                 self.dias_baja * self.departamento.dia_baja,
                                 ))
 
-        if self.dias_total >= 15:
-            self.costo_total *= DESCUENTO_QUINCENA
+        self.costo_total -= self.descuento()[1]
 
         # fecha vencimiento
         faltan = (self.desde - date.today()).days
