@@ -70,6 +70,15 @@
 			<h1>Haga su reserva online</h1>
 
 
+
+	<p>
+    Al hacer click en el campo de fechas aparecererá el calendario de ocupación asociado al departamento seleccionado (aparecerán en naranja o verde los dias para los que hay reservas vigentes).
+	</p>		 <p>
+    Por favor, si no hay disponibilidad en la fecha que usted busca para un departamento, verifique si existe en alguno de los otros.
+
+    </p>
+
+
 		<form action="" method="post">
 		{% csrf_token %}
     	{{ form|crispy }}

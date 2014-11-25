@@ -105,7 +105,7 @@ class Reserva(TimeStampedModel):
 
         # fecha vencimiento
         faltan = (self.desde - date.today()).days
-        if faltan >= 15:
-            self.fecha_vencimiento_reserva = datetime.now() + timedelta(days=8)
+        if faltan >= 10:
+            self.fecha_vencimiento_reserva = datetime.now() + timedelta(days=3)
         else:
-            self.fecha_vencimiento_reserva = self.desde - timedelta(days=faltan//2)
+            self.fecha_vencimiento_reserva = self.desde - timedelta(days=faltan*0.7)

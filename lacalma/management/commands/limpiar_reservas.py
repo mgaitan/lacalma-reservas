@@ -19,6 +19,6 @@ class Command(BaseCommand):
             reserva.estado = Reserva.ESTADOS.vencida
             reserva.save(update_fields=['estado'])
 
-            send_mail('[La Calma] Reserva vencida', u"La reserva #%d se venció" % reserva.id,
-                  'gaitan@gmail.com', ['gaitan@gmail.com', 'gracielamothe@gmail.com'])
+            send_mail('[La Calma] Reserva vencida ref #%s' % reserva.id, u"La reserva #%d se venció" % reserva.id,
+                  'info@lacalma-lasgrutas.com.ar', ['gaitan@gmail.com', 'gracielamothe@gmail.com'])
 
