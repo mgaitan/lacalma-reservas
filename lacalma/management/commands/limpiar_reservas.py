@@ -1,6 +1,4 @@
-import os
-from optparse import make_option
-from django.conf import settings
+# -*- coding: utf-8 -*-
 from django.core.management.base import BaseCommand  # CommandError
 from datetime import datetime
 from lacalma.models import Reserva
