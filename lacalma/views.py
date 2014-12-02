@@ -1,10 +1,10 @@
 from datetime import date
-from decimal import Decimal
 import json
 from django.shortcuts import render, redirect, render_to_response
 from django.template.loader import render_to_string
 from django.contrib.formtools.preview import FormPreview
-from django.core.mail import send_mail
+
+from django.core.mail import EmailMultiAlternatives
 from django.template import RequestContext
 from lacalma.models import Reserva, Departamento
 from lacalma.forms import ReservaForm
@@ -61,16 +61,15 @@ class ReservaViewWithPreview(FormPreview):
         mail_txt = render_to_string('mail_txt.html', {'reserva': reserva})
         mail_html = render_to_string('mail.html', {'reserva': reserva})
 
-        send_mail('Reserva en La Calma - Las Grutas /ref. #%s' % reserva.id, mail_txt,
-                  'info@lacalma-lasgrutas.com.ar', [reserva.email],
-                  bcc=['gaitan@gmail.com', 'gracielamothe@gmail.com'],
-                  html_message=mail_html)
+        msg = EmailMultiAlternatives('Reserva en La Calma - Las Grutas /ref. #%s' % reserva.id,
+                               mail_txt, 'info@lacalma-lasgrutas.com.ar', [reserva.email],
+                               bcc=['gaitan@gmail.com', 'gracielamothe@gmail.com'])
+        msg.attach_alternative(mail_html, "text/html")
+        msg.send()
 
         # mail_admin = render_to_string('mail_admin_txt.html', {'reserva': reserva})
-
         # send_mail('[La Calma] Nueva Reserva - ref #%s' % reserva.id, mail_admin,
         #          'info@lacalma-lasgrutas.com.ar', ['gaitan@gmail.com', 'gracielamothe@gmail.com'])
-
         return redirect('/gracias/')
 
 
