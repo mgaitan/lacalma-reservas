@@ -3,6 +3,7 @@ from django.db import models
 from model_utils import Choices
 from model_utils.models import TimeStampedModel
 from decimal import Decimal
+from pytz import UTC
 from django.utils import timezone
 from datetime import datetime, date, timedelta, time
 
@@ -105,7 +106,7 @@ class Reserva(TimeStampedModel):
         self.costo_total -= self.descuento()[1]
 
         # fecha vencimiento
-        desde = timezone.make_aware(datetime.combine(self.desde, time(14, 0)), timezone.get_current_timezone())
+        desde = datetime.combine(self.desde, time(14, 0, tzinfo=UTC))
         faltan = int((desde - timezone.now()).total_seconds() / 3600)
         if faltan >= 240:
             # mas de 10 dias?
