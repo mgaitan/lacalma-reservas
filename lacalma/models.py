@@ -71,6 +71,9 @@ class Reserva(TimeStampedModel):
     deposito_reserva = models.DecimalField(max_digits=7, decimal_places=2, default=0)
 
 
+    def __unicode__(self):
+        return u'Reserva #%d' % self.id
+
     def rango(self):
         return dias_en_rango(self.hasta, self.desde)
 
