@@ -1,4 +1,5 @@
-from datetime import date, timedelta, datetime
+from datetime import date, timedelta
+from django.utils import timezone
 from decimal import Decimal
 from django.test import TestCase
 from django.core.management import call_command
@@ -140,12 +141,12 @@ class TestVencidas(TestCase):
 
     def test_simple_vencida(self):
         reserva1 = ReservaFactory(desde=date(2014, 11, 1), hasta=date(2014, 11, 30))
-        reserva1.fecha_vencimiento_reserva = datetime.now() - timedelta(days=1)
+        reserva1.fecha_vencimiento_reserva = timezone.now() - timedelta(days=1)
         reserva2 = ReservaFactory(desde=date(2014, 11, 1), hasta=date(2014, 11, 30), depto=2)
-        reserva2.fecha_vencimiento_reserva = datetime.now() + timedelta(days=1)
+        reserva2.fecha_vencimiento_reserva = timezone.now() + timedelta(days=1)
 
         reserva3 = ReservaFactory(desde=date(2014, 11, 1), hasta=date(2014, 11, 30), depto=3)
-        reserva3.fecha_vencimiento_reserva = datetime.now() - timedelta(days=1)     # vencidaza
+        reserva3.fecha_vencimiento_reserva = timezone.now() - timedelta(days=1)     # vencidaza
         reserva3.estado = Reserva.ESTADOS.confirmada
 
         reserva1.save()

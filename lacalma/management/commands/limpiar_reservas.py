@@ -1,11 +1,10 @@
 # -*- coding: utf-8 -*-
 from django.core.management.base import BaseCommand  # CommandError
-from datetime import datetime
+from django.utils import timezone
 from lacalma.models import Reserva
 from django.core.mail import send_mail
 
-
-AHORA = datetime.now()
+AHORA = timezone.now()
 
 
 class Command(BaseCommand):
