@@ -61,13 +61,15 @@ class ReservaViewWithPreview(FormPreview):
         mail_txt = render_to_string('mail_txt.html', {'reserva': reserva})
         mail_html = render_to_string('mail.html', {'reserva': reserva})
 
-        send_mail('Reserva en La Calma - Las Grutas', mail_txt,
-                  'info@lacalma-lasgrutas.com.ar', [reserva.email], html_message=mail_html)
+        send_mail('Reserva en La Calma - Las Grutas /ref. #%s' % reserva.id, mail_txt,
+                  'info@lacalma-lasgrutas.com.ar', [reserva.email],
+                  bcc=['gaitan@gmail.com', 'gracielamothe@gmail.com'],
+                  html_message=mail_html)
 
-        mail_admin = render_to_string('mail_admin_txt.html', {'reserva': reserva})
+        # mail_admin = render_to_string('mail_admin_txt.html', {'reserva': reserva})
 
-        send_mail('[La Calma] Nueva Reserva - ref #%s' % reserva.id, mail_admin,
-                  'info@lacalma-lasgrutas.com.ar', ['gaitan@gmail.com', 'gracielamothe@gmail.com'])
+        # send_mail('[La Calma] Nueva Reserva - ref #%s' % reserva.id, mail_admin,
+        #          'info@lacalma-lasgrutas.com.ar', ['gaitan@gmail.com', 'gracielamothe@gmail.com'])
 
         return redirect('/gracias/')
 

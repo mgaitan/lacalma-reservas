@@ -13,11 +13,16 @@ Hemos recibido su solicitud de reserva con los siguientes detalles:
 
     * Depósito de seña requerido: $ {{ reserva.deposito_requerido.1 }} ({{ reserva.deposito_requerido.0 }} %)
 
+    * Comentario o consulta:
+
+        {{ reserva.comentario|default:"-"}}
+
 Para confirmar, debe realizar un deposito del 50% a la siguiente cuenta:
 
     Caja de Ahorro en Pesos Nº 25403769081732
     Banco de la Nación Argentina
-    Titulares: Graciela Lamothe y Walter Gaitán
+    Sucursal 2540
+    Titular: Graciela Lamothe Coulomme
     CBU 0110376030037690817329
 
 Responda este mensaje con el comprobante de pago e inmediatamente su reserva estará confirmada.
@@ -25,9 +30,10 @@ Responda este mensaje con el comprobante de pago e inmediatamente su reserva est
 
 Quedo a su entera disposición.
 
-Ing. Martín Gaitán
+Ing. Graciela Lamothe
 Complejo La Calma
 Las Grutas - Patagonia Argentina
 
+cel: 0299 154160450
 
 ref: #{{ reserva.id }}
