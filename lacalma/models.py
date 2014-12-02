@@ -105,9 +105,9 @@ class Reserva(TimeStampedModel):
 
         # fecha vencimiento
         desde = datetime.combine(self.desde, time(14, 0))
-        faltan = int((self.desde - datetime.now()).total_seconds() / 3600)
+        faltan = int((desde - datetime.now()).total_seconds() / 3600)
         if faltan >= 240:
             # mas de 10 dias?
             self.fecha_vencimiento_reserva = datetime.now() + timedelta(hours=72)
         else:
-            self.fecha_vencimiento_reserva = self.desde - timedelta(hour=faltan*0.75)
+            self.fecha_vencimiento_reserva = self.desde - timedelta(hours=faltan*0.75)
