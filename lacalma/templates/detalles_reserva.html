@@ -39,7 +39,7 @@
                     <dd>$ {{ reserva.deposito_requerido.1 }} ({{ reserva.deposito_requerido.0 }} %)</dd>
 
                 <dt>Fecha de vencimiento de la reserva pendiente</dt>
-                    <dd>{{ reserva.fecha_vencimiento_reserva|date:"l j \d\e F \d\e Y - H:m \h\s" }}</dd>
+                    <dd>{{ reserva.fecha_vencimiento_reserva|date:"l j \d\e F \d\e Y - H:i \h\s" }}</dd>
                 </dl>
                 <dt>Comentario o consulta</dt>
                     <dd>{{ reserva.comentario|default:"-" }}</dd>

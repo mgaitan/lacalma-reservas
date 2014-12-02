@@ -13,6 +13,10 @@ Hemos recibido su solicitud de reserva con los siguientes detalles:
 
     * Depósito de seña requerido: $ {{ reserva.deposito_requerido.1 }} ({{ reserva.deposito_requerido.0 }} %)
 
+   * Fecha de vencimiento de la reserva pendiente:
+
+        {{ reserva.fecha_vencimiento_reserva|date:"l j \d\e F \d\e Y - H:i \h\s" }}
+
     * Comentario o consulta:
 
         {{ reserva.comentario|default:"-"}}
