@@ -1,6 +1,7 @@
 from datetime import date
+from django.contrib.auth.decorators import login_required
 import json
-from django.shortcuts import render, redirect, render_to_response
+from django.shortcuts import render, redirect, render_to_response, get_object_or_404
 from django.template.loader import render_to_string
 from django.contrib.formtools.preview import FormPreview
 
@@ -76,6 +77,11 @@ class ReservaViewWithPreview(FormPreview):
 def gracias(request):
     return render(request, 'index.html', {'gracias': True})
 
+
+@login_required
+def detalle(request, id):
+    reserva = get_object_or_404(Reserva, id=id)
+    return render(request, 'detalles_reserva.html', {'reserva': reserva})
 
 
 reserva_view = ReservaViewWithPreview(ReservaForm)
