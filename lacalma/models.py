@@ -3,7 +3,7 @@ from django.db import models
 from model_utils import Choices
 from model_utils.models import TimeStampedModel
 from decimal import Decimal
-from datetime import datetime, date, timedelta
+from datetime import datetime, date, timedelta, time
 
 
 def dias_en_rango(inicio, fin):
@@ -44,8 +44,8 @@ class Reserva(TimeStampedModel):
                      ('inmobiliaria', u'Por la inmobiliaria'),
                      ('otro', 'Otro'),)
     departamento = models.ForeignKey(Departamento)
-    desde = models.DateField()          # dia de entrada
-    hasta = models.DateField()          # dia de salida
+    desde = models.DateField()          # dia de entrada desde las 14hs
+    hasta = models.DateField()          # dia de salida hasta las 10hs
     nombre_y_apellido = models.CharField(max_length=50)
     procedencia = models.CharField(max_length=50, null=True, blank=True, help_text='¿De qué ciudad nos visita?')
     telefono = models.CharField(max_length=50, help_text=u'Por favor, incluya la característica')
@@ -104,8 +104,10 @@ class Reserva(TimeStampedModel):
         self.costo_total -= self.descuento()[1]
 
         # fecha vencimiento
-        faltan = (self.desde - date.today()).days
-        if faltan >= 10:
-            self.fecha_vencimiento_reserva = datetime.now() + timedelta(days=3)
+        desde = datetime.combine(self.desde, time(14, 0))
+        faltan = int((self.desde - datetime.now()).total_seconds() / 3600)
+        if faltan >= 240:
+            # mas de 10 dias?
+            self.fecha_vencimiento_reserva = datetime.now() + timedelta(hours=72)
         else:
-            self.fecha_vencimiento_reserva = self.desde - timedelta(days=faltan*0.7)
+            self.fecha_vencimiento_reserva = self.desde - timedelta(hour=faltan*0.75)
