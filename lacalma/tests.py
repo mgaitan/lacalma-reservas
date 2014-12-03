@@ -3,7 +3,7 @@ from django.utils import timezone
 from decimal import Decimal
 from django.test import TestCase
 from django.core.management import call_command
-from lacalma.models import Reserva, Departamento, TEMPORADA_MEDIA, TEMPORADA_ALTA
+from lacalma.models import Reserva, Departamento, TEMPORADA_ALTA
 from lacalma.forms import ReservaForm
 
 
@@ -156,3 +156,20 @@ class TestVencidas(TestCase):
         self.assertEqual(Reserva.objects.get(id=reserva1.id).estado, Reserva.ESTADOS.vencida)
         self.assertEqual(Reserva.objects.get(id=reserva2.id).estado, Reserva.ESTADOS.pendiente)
         self.assertEqual(Reserva.objects.get(id=reserva3.id).estado, Reserva.ESTADOS.confirmada)
+
+
+class TestDescuento(TestCase):
+
+    fixtures = ['deptos.json']
+
+    def test_descuento(self):
+        PRECIO_DIA = Departamento.objects.get(pk=1).dia_alta
+        llega = date(2015, 1, 1)
+        sale = llega + timedelta(days=15)
+        reserva = ReservaFactory(desde=llega, hasta=sale)
+        reserva.calcular()
+        self.assertEqual(reserva.dias_total, 15)
+        self.assertEqual(reserva.descuento()[0], 10)
+        self.assertEqual(reserva.total_sin_descuento(), Decimal(PRECIO_DIA * 15))
+        self.assertEqual(reserva.descuento()[1], Decimal(PRECIO_DIA * 15) * Decimal('0.1'))
+        self.assertEqual(reserva.costo_total, Decimal(PRECIO_DIA * 15) * Decimal('0.9'))
