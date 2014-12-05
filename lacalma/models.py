@@ -46,8 +46,8 @@ class Reserva(TimeStampedModel):
                      ('inmobiliaria', u'Por la inmobiliaria'),
                      ('otro', 'Otro'),)
     departamento = models.ForeignKey(Departamento)
-    desde = models.DateField(label="Entra (14hs)")          # dia de entrada desde las 14hs
-    hasta = models.DateField(label="Sale (10hs)")          # dia de salida hasta las 10hs
+    desde = models.DateField(verbose_name="Entra (14hs)")          # dia de entrada desde las 14hs
+    hasta = models.DateField(verbose_name="Sale (10hs)")          # dia de salida hasta las 10hs
     nombre_y_apellido = models.CharField(max_length=50)
     procedencia = models.CharField(max_length=50, null=True, blank=True, help_text='¿De qué ciudad nos visita?')
     telefono = models.CharField(max_length=50, help_text=u'Por favor, incluya la característica')
