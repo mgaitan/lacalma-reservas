@@ -65,7 +65,7 @@ class ReservaViewWithPreview(FormPreview):
 
         msg = EmailMultiAlternatives('Reserva en La Calma - Las Grutas /ref. #%s' % reserva.id,
                                mail_txt, 'info@lacalma-lasgrutas.com.ar', [reserva.email],
-                               bcc=['gaitan@gmail.com', 'gracielamothe@gmail.com'])
+                               bcc=['info@lacalma-lasgrutas.com.ar'])
         msg.attach_alternative(mail_html, "text/html")
         msg.send()
 
