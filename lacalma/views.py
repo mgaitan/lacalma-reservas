@@ -34,6 +34,7 @@ class ReservaViewWithPreview(FormPreview):
             reservas_confirmadas[str(depto.id)] = confirmadas
         context['reservas_pendientes'] = json.dumps(reservas_pendientes)
         context['reservas_confirmadas'] = json.dumps(reservas_confirmadas)
+        context['deptos'] = Departamento.objects.all()
         return context
 
     def process_preview(self, request, form, context):
