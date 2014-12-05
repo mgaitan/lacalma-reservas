@@ -168,10 +168,10 @@
 					dia = moment(t).format('YYYY-MM-DD');
 
 					if($.inArray(dia, pendientes[depto]) > -1){
-						return [false,'pendiente','Reserva pendiente'];
+						return [false,'pendiente','Hay una reserva pendiente en esta fecha. Por favor, revise nuevamente en las próximas horas.'];
 					}
 					if($.inArray(dia, confirmadas[depto]) > -1){
-						return [false,'confirmada','Reserva confirmada'];
+						return [false,'confirmada','Hay una reserva confirmada en esta fecha'];
 					}
 					return [true,'',''];
 				}
