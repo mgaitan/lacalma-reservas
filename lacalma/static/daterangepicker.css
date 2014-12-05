@@ -20,9 +20,9 @@
 	z-index:1;
 	border:1px solid #bfbfbf;
 	background-color:#efefef;
-	width:428px;
+	width:628px;
 	padding: 5px 12px;
-	font-size:12px;
+	font-size:15px;
 	line-height:20px;
 	color:#aaa;
 	font-family:Arial;
@@ -34,7 +34,7 @@
 .date-picker-wrapper.no-shortcuts { padding-bottom:12px;}
 .date-picker-wrapper .footer
 {
-	font-size:11px;
+	font-size:13px;
 	padding-top: 3px;
 }
 .date-picker-wrapper b
@@ -42,7 +42,7 @@
 	color:#666;
 	font-weight:700;
 }
-.date-picker-wrapper a 
+.date-picker-wrapper a
 {
 	color: rgb(107, 180, 214);
 	text-decoration:underline;
@@ -59,12 +59,12 @@
 }
 .date-picker-wrapper .month-wrapper table
 {
-	width:190px;
+	width:260px;
 	float:left;
 }
 .date-picker-wrapper .month-wrapper table.month2
 {
-	width:190px;
+	width:260px;
 	float:right;
 }
 .date-picker-wrapper .month-wrapper table th,
@@ -72,15 +72,15 @@
 {
 	vertical-align:middle;
 	text-align:center;
-	line-height:14px;
+	line-height:20px;
 	margin : 0px;
 	padding : 0px;
 }
 .date-picker-wrapper .month-wrapper table .day
 {
-	height:19px;
-	line-height:19px;
-	font-size:12px;
+	height:24px;
+	line-height:24px;
+	font-size:14px;
 	margin-bottom:1px;
 	color:#999;
 	cursor:default;
@@ -135,7 +135,7 @@
 	position:absolute;
 	display:none;
 	top:0px;
-	left:204px;
+	left:305px;
 	z-index: 1;
 	width:15px;
 	height: 100%;
@@ -174,14 +174,14 @@
 .date-picker-wrapper .drp_top-bar .apply-btn
 {
 	position:absolute;
-	right: 0px; 
+	right: 0px;
 	top: 6px;
 	padding:3px 5px;
 	margin:0;
 	font-size:12px;
 	border-radius:4px;
 	cursor:pointer;
-	
+
 	color: #d9eef7;
 	border: solid 1px #0076a3;
 	background: #0095cd;
@@ -217,7 +217,7 @@
 	float: left;
 }
 .time2 {
-	float: right;	
+	float: right;
 }
 .hour, .minute {
 	text-align: right;

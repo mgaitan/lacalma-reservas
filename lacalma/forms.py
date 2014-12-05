@@ -2,7 +2,7 @@
 from datetime import datetime, timedelta
 from django import forms
 from django.db.models import Q
-from lacalma.models import Reserva
+from lacalma.models import Reserva, Departamento
 
 
 
@@ -14,8 +14,9 @@ class ReservaForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(ReservaForm, self).__init__(*args, **kwargs)
-        self.fields['departamento'].empty_label = None
-
+        self.fields['departamento'].widget = forms.HiddenInput()
+        self.fields['departamento'].initial = Departamento.objects.all()[0]
+        self.fields['fechas'].widget = forms.HiddenInput()
 
     def clean(self):
         cleaned_data = super(ReservaForm, self).clean()
@@ -23,8 +24,7 @@ class ReservaForm(forms.ModelForm):
             desde, hasta = [datetime.strptime(d, "%d-%m-%Y").date() for d in cleaned_data.get("fechas").split(' al ')]
             hasta += timedelta(days=1)
         except:
-            msg = u"Rango de fecha no válido"
-            self.add_error('fechas', msg)
+            raise forms.ValidationError(u"Rango de fecha no válido")
 
         cleaned_data['desde'] = desde
         cleaned_data['hasta'] = hasta  # + timedelta(days=1)   # dia de salida

@@ -34,6 +34,7 @@ class ReservaViewWithPreview(FormPreview):
             reservas_confirmadas[str(depto.id)] = confirmadas
         context['reservas_pendientes'] = json.dumps(reservas_pendientes)
         context['reservas_confirmadas'] = json.dumps(reservas_confirmadas)
+        context['deptos'] = Departamento.objects.all()
         return context
 
     def process_preview(self, request, form, context):
@@ -64,7 +65,7 @@ class ReservaViewWithPreview(FormPreview):
 
         msg = EmailMultiAlternatives('Reserva en La Calma - Las Grutas /ref. #%s' % reserva.id,
                                mail_txt, 'info@lacalma-lasgrutas.com.ar', [reserva.email],
-                               bcc=['gaitan@gmail.com', 'gracielamothe@gmail.com'])
+                               bcc=['info@lacalma-lasgrutas.com.ar'])
         msg.attach_alternative(mail_html, "text/html")
         msg.send()
 
