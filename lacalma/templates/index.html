@@ -85,8 +85,6 @@
 
 
 	<p>
-    Al hacer click en el campo de fechas aparecererá el calendario de ocupación asociado al departamento seleccionado (aparecerán en naranja o verde los dias para los que hay reservas vigentes).
-	</p>		 <p>
     Por favor, si no hay disponibilidad en la fecha que usted busca para un departamento, verifique si existe en alguno de los otros.
 
     </p>
@@ -110,6 +108,12 @@
 		  <div class="tab-content">
 		  	{% for depto in deptos %}
 		    <div role="tabpanel" class="tab-pane fade {% if forloop.first %}in active{% endif %}" id="depto-{{ depto.id }}">
+
+
+		    	<p>
+    			Seleccione la fecha de su estadía (hasta la última noche que duerme) para el {{ depto }}.
+				</p>
+
 		    	<input class="fechas" type="hidden" id="date-{{ depto.id }}" value="">
 
 		    	<div id="container-{{ depto.id }}"></div>
