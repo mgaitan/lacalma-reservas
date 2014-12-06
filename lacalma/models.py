@@ -86,6 +86,11 @@ class Reserva(TimeStampedModel):
     def deposito_requerido(self):
         return DEPOSITO_REQUERIDO, self.total_sin_descuento() * Decimal(str(DEPOSITO_REQUERIDO / 100.0))
 
+    def detalle(self):
+        return {'media': self.dias_media * self.departamento.dia_media,
+                'alta': self.dias_alta * self.departamento.dia_alta,
+                'baja': self.dias_baja * self.departamento.dia_baja}
+
     def total_sin_descuento(self):
         return sum((self.dias_media * self.departamento.dia_media,
                     self.dias_alta * self.departamento.dia_alta,
