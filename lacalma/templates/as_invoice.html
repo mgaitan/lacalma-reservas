@@ -1,18 +1,3 @@
-{% load staticfiles %}
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8">
-    <title>Sample Invoice</title>
-        <link rel="stylesheet" href="{% static "css/bootstrap.min.css"  %}"/>
-
-  </head>
-
-  <body>
-    <div class="container">
-
-
-
 
         <dl class="dl-horizontal">
 
@@ -31,6 +16,13 @@
                     <dd>{{ reserva.email }}</dd>
                 <dt>Teléfono</dt>
                     <dd>{{ reserva.telefono }}</dd>
+
+                {% if reserva.id %}
+
+                    <dt>Referencia </dt>
+                    <dd>#{{ reserva.id }}</dd>
+
+                {% endif %}
         </dl>
 
 
@@ -118,7 +110,3 @@
 
 
             </dl>
-
-</div>
-</body>
-</html>

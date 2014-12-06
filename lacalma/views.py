@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required
 import json
 from django.shortcuts import render, redirect, render_to_response, get_object_or_404
 from django.template.loader import render_to_string
+from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.formtools.preview import FormPreview
 
 from django.core.mail import EmailMultiAlternatives
@@ -79,10 +80,10 @@ def gracias(request):
     return render(request, 'index.html', {'gracias': True})
 
 
-@login_required
+@staff_member_required
 def detalle(request, id):
     reserva = get_object_or_404(Reserva, id=id)
-    return render(request, 'detalles_reserva.html', {'reserva': reserva})
+    return render(request, 'index.html', {'reserva': reserva, 'presupuesto': True})
 
 
 reserva_view = ReservaViewWithPreview(ReservaForm)
