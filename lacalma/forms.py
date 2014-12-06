@@ -4,6 +4,18 @@ from django import forms
 from lacalma.models import Reserva, Departamento
 
 
+class ReservaAdminForm(forms.ModelForm):
+    class Meta:
+        model = Reserva
+
+    def clean(self):
+        cleaned_data = super(ReservaAdminForm, self).clean()
+        if not Reserva.fecha_libre(cleaned_data['departamento'], cleaned_data['desde'], cleaned_data['hasta'], exclude=self.instance):
+            raise forms.ValidationError('Hay reservas realizadas durante estas fechas para este departamento')
+
+        return cleaned_data
+
+
 
 class ReservaForm(forms.ModelForm):
     desde = forms.CharField(widget=forms.HiddenInput, required=False)

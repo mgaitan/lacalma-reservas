@@ -127,16 +127,20 @@ class Reserva(TimeStampedModel):
         super(Reserva, self).save(*args, **kwargs)
 
     @classmethod
-    def fecha_libre(cls, departamento, desde, hasta):
-        return not Reserva.objects.filter(departamento=departamento).\
+    def fecha_libre(cls, departamento, desde, hasta, exclude=None):
+        qs = Reserva.objects.filter(departamento=departamento).\
                            exclude(estado=Reserva.ESTADOS.vencida).filter(
                                   Q(desde__range=(desde, hasta - timedelta(days=1))) |
                                   Q(hasta__range=(desde + timedelta(days=1), hasta)) |
-                                  Q(desde__lte=desde,hasta__gte=hasta)).exists()
+                                  Q(desde__lte=desde,hasta__gte=hasta))
+        if exclude:
+            qs = qs.exclude(id=exclude.id)
+
+        return not qs.exists()
 
 
 class ConceptoFacturable(TimeStampedModel):
-    """use para descuentos o cobrar conceptos especiales"""
+    """para descuentos o cobrar conceptos especiales"""
 
     reserva = models.ForeignKey(Reserva, related_name='facturables')
     concepto = models.CharField(max_length=200)
