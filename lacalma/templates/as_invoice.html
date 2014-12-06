@@ -81,6 +81,14 @@
             <td><div class="text-right">$ -{{ reserva.departamento.1 }}</div></td>
           </tr>
         {% endif %}
+        {% for facturable in  reserva.facturables.all %}
+          <tr>
+            <td> {{ facturable.concepto }} </td>
+            <td><div class="text-right"></div></td>
+            <td><div class="text-right"></div></td>
+            <td><div class="text-right">$ {{ facturable.monto }}</div></td>
+          </tr>
+        {% endfor %}
 
         <tr>
             <td colspan="3"><p class="text-right" > <strong>Total: </strong></p></td>

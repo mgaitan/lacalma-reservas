@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from django.db import models
+from django.db.models import Q
 from model_utils import Choices
 from model_utils.models import TimeStampedModel
 from decimal import Decimal
@@ -96,7 +97,7 @@ class Reserva(TimeStampedModel):
                     self.dias_alta * self.departamento.dia_alta,
                     self.dias_baja * self.departamento.dia_baja))
 
-    def calcular(self, aplicar_descuento=False):
+    def calcular_costo(self, aplicar_descuento=False):
         reserva = self.rango()
         self.dias_total = len(reserva)
         self.dias_media = len(set(reserva).intersection(TEMPORADA_MEDIA))
@@ -107,6 +108,11 @@ class Reserva(TimeStampedModel):
 
         self.costo_total -= self.descuento()[1]
 
+        for facturable in self.facturables.all():
+            self.costo_total += facturable.monto
+
+
+    def calcular_vencimiento(self):
         # fecha vencimiento
         desde = datetime.combine(self.desde, time(14, 0, tzinfo=UTC))
         faltan = int((desde - timezone.now()).total_seconds() / 3600)
@@ -115,3 +121,23 @@ class Reserva(TimeStampedModel):
             self.fecha_vencimiento_reserva = timezone.now() + timedelta(hours=72)
         else:
             self.fecha_vencimiento_reserva = desde - timedelta(hours=faltan*0.75)
+
+    def save(self, *args, **kwargs):
+        self.calcular_costo()
+        super(Reserva, self).save(*args, **kwargs)
+
+    @classmethod
+    def fecha_libre(cls, departamento, desde, hasta):
+        return not Reserva.objects.filter(departamento=departamento).\
+                           exclude(estado=Reserva.ESTADOS.vencida).filter(
+                                  Q(desde__range=(desde, hasta - timedelta(days=1))) |
+                                  Q(hasta__range=(desde + timedelta(days=1), hasta)) |
+                                  Q(desde__lte=desde,hasta__gte=hasta)).exists()
+
+
+class ConceptoFacturable(TimeStampedModel):
+    """use para descuentos o cobrar conceptos especiales"""
+
+    reserva = models.ForeignKey(Reserva, related_name='facturables')
+    concepto = models.CharField(max_length=200)
+    monto = models.DecimalField(max_digits=7, decimal_places=2, default=0)

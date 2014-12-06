@@ -3,7 +3,7 @@ from django.utils import timezone
 from decimal import Decimal
 from django.test import TestCase
 from django.core.management import call_command
-from lacalma.models import Reserva, Departamento, TEMPORADA_ALTA
+from lacalma.models import Reserva, Departamento, TEMPORADA_ALTA, ConceptoFacturable
 from lacalma.forms import ReservaForm
 
 
@@ -20,17 +20,17 @@ class TestCalcular(TestCase):
 
     def test_1_dias_temporada_baja(self):
         reserva = ReservaFactory(desde=date(2014, 11, 20), hasta=date(2014, 11, 21))
-        reserva.calcular()
+        reserva.calcular_costo()
         self.assertEqual(reserva.costo_total,  1 * Decimal(890.00))
 
     def test_2_dias_temporada_baja(self):
         reserva = ReservaFactory(desde=date(2014, 11, 20), hasta=date(2014, 11, 22))
-        reserva.calcular()
+        reserva.calcular_costo()
         self.assertEqual(reserva.costo_total,  2 * Decimal(890.00))
 
     def test_7_dias_temporada_media(self):
         reserva = ReservaFactory(desde=date(2015, 2, 11), hasta=date(2015, 2, 11) + timedelta(days=7))
-        reserva.calcular()
+        reserva.calcular_costo()
         self.assertEqual(reserva.costo_total,  7 * Decimal(1070.00))
         self.assertEqual(reserva.dias_media, 7)
 
@@ -38,7 +38,7 @@ class TestCalcular(TestCase):
         desde = TEMPORADA_ALTA[0] - timedelta(days=3)   # 3 dias de baja
         hasta = TEMPORADA_ALTA[0] + timedelta(days=4)   # 4 dias de alta
         reserva = ReservaFactory(desde=desde, hasta=hasta)
-        reserva.calcular()
+        reserva.calcular_costo()
         self.assertEqual(reserva.costo_total,  4 * Decimal(1400.00) + 3 * Decimal(890.00))
         self.assertEqual(reserva.dias_media, 0)
         self.assertEqual(reserva.dias_baja, 3)
@@ -48,7 +48,7 @@ class TestCalcular(TestCase):
         desde = date(2015, 2, 8)        #   3 dias alta
         hasta = date(2015, 2, 12)   # 1 dia media
         reserva = ReservaFactory(desde=desde, hasta=hasta)
-        reserva.calcular()
+        reserva.calcular_costo()
         self.assertEqual(reserva.costo_total,  3 * Decimal(1400.00) + 1 * Decimal(1070.00))
         self.assertEqual(reserva.dias_media, 1)
         self.assertEqual(reserva.dias_baja, 0)
@@ -69,7 +69,7 @@ class TestValidar(TestCase):
              'telefono': '33',
              'email': 'gaitan@gmail.com'})
         self.assertFalse(form.is_valid())
-        self.assertEqual(form._errors, {'fechas': [u'Hay reservas realizadas durante esas fechas']})
+        self.assertEqual(form._errors, {'fechas': [u'Hay reservas realizadas durante esas fechas para este departamento']})
 
     def test_comienza_mismo_dia_fin_anterior(self):
         ReservaFactory(desde=date(2014, 11, 20), hasta=date(2014, 11, 24)).save()
@@ -94,7 +94,7 @@ class TestValidar(TestCase):
              'telefono': '33',
              'email': 'gaitan@gmail.com'})
         self.assertFalse(form.is_valid())
-        self.assertEqual(form._errors, {'fechas': [u'Hay reservas realizadas durante esas fechas']})
+        self.assertEqual(form._errors, {'fechas': [u'Hay reservas realizadas durante esas fechas para este departamento']})
 
     def test_termina_dia_reserva(self):
         ReservaFactory(desde=date(2014, 11, 20), hasta=date(2014, 11, 24)).save()
@@ -118,7 +118,7 @@ class TestValidar(TestCase):
              'telefono': '33',
              'email': 'gaitan@gmail.com'})
         self.assertFalse(form.is_valid())
-        self.assertEqual(form._errors, {'fechas': [u'Hay reservas realizadas durante esas fechas']})
+        self.assertEqual(form._errors, {'fechas': [u'Hay reservas realizadas durante esas fechas para este departamento']})
 
 
     def test_ignora_vencidas(self):
@@ -167,9 +167,26 @@ class TestDescuento(TestCase):
         llega = date(2015, 1, 1)
         sale = llega + timedelta(days=15)
         reserva = ReservaFactory(desde=llega, hasta=sale)
-        reserva.calcular()
+        reserva.calcular_costo()
         self.assertEqual(reserva.dias_total, 15)
         self.assertEqual(reserva.descuento()[0], 10)
         self.assertEqual(reserva.total_sin_descuento(), Decimal(PRECIO_DIA * 15))
         self.assertEqual(reserva.descuento()[1], Decimal(PRECIO_DIA * 15) * Decimal('0.1'))
         self.assertEqual(reserva.costo_total, Decimal(PRECIO_DIA * 15) * Decimal('0.9'))
+
+
+class TestFacturables(TestCase):
+
+    fixtures = ['deptos.json']
+
+    def test_descuento_especial(self):
+        PRECIO_DIA = Departamento.objects.get(pk=1).dia_alta
+        llega = date(2015, 1, 1)
+        sale = llega + timedelta(days=2)
+        reserva = ReservaFactory(desde=llega, hasta=sale)
+        reserva.save()
+        ConceptoFacturable(reserva=reserva, concepto='descuento especial 15%', monto='-10').save()
+        reserva.calcular_costo()
+        self.assertEqual(reserva.total_sin_descuento(), Decimal(PRECIO_DIA * 2))
+        self.assertEqual(reserva.costo_total, Decimal(PRECIO_DIA * 2) - Decimal('10'))
+

@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from datetime import datetime, timedelta
 from django import forms
-from django.db.models import Q
 from lacalma.models import Reserva, Departamento
 
 
@@ -26,22 +25,10 @@ class ReservaForm(forms.ModelForm):
         except:
             raise forms.ValidationError(u"Rango de fecha no válido")
 
-        cleaned_data['desde'] = desde
-        cleaned_data['hasta'] = hasta  # + timedelta(days=1)   # dia de salida
-
-        # ( start1 <= end1 and start2 <= end2 )
-        # import ipdb; ipdb.set_trace()
-        if Reserva.objects.filter(departamento=cleaned_data['departamento']).\
-                           exclude(estado=Reserva.ESTADOS.vencida).filter(
-                                  Q(desde__range=(desde, hasta - timedelta(days=1))) |
-                                  Q(hasta__range=(desde + timedelta(days=1), hasta)) |
-                                  Q(desde__lte=desde,hasta__gte=hasta)).exists():
-
-            self.add_error('fechas', 'Hay reservas realizadas durante esas fechas')
+        if not Reserva.fecha_libre(cleaned_data['departamento'], desde, hasta):
+            self.add_error('fechas', 'Hay reservas realizadas durante esas fechas para este departamento')
 
         return cleaned_data
-
-
 
     class Meta:
         model = Reserva

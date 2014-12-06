@@ -40,7 +40,7 @@ class ReservaViewWithPreview(FormPreview):
 
     def process_preview(self, request, form, context):
         reserva = form.save(commit=False)
-        reserva.calcular()
+        reserva.calcular_vencimiento()
         context['reserva'] = reserva
 
 
@@ -59,7 +59,7 @@ class ReservaViewWithPreview(FormPreview):
 
     def done(self, request, cleaned_data, form):
         reserva = form.save(commit=False)
-        reserva.calcular()
+        reserva.calcular_vencimiento()
         reserva.save()
         mail_txt = render_to_string('mail_txt.html', {'reserva': reserva})
         mail_html = render_to_string('mail.html', {'reserva': reserva})
