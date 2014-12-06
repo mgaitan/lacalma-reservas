@@ -1,124 +1,48 @@
-{% load staticfiles %}
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8">
-    <title>Sample Invoice</title>
-        <link rel="stylesheet" href="{% static "css/bootstrap.min.css"  %}"/>
 
-  </head>
-
-  <body>
-    <div class="container">
+            <dl>
 
 
 
-
-        <dl class="dl-horizontal">
-
-             <dt>Departamento</dt>
+                <dt>Departamento</dt>
                     <dd>{{ reserva.departamento }}</dd>
-
-
                 <dt>Fecha de llegada</dt>
                     <dd>{{ reserva.desde|date:"l j \d\e F \d\e Y" }} (desde las 14hs)</dd>
                 <dt>Fecha de salida</dt>
                     <dd>{{ reserva.hasta|date:"l j \d\e F \d\e Y" }} (hasta las 10hs)</dd>
 
-            <dt>Nombre y apellido</dt>
+                <dt>Nombre y apellido</dt>
                     <dd>{{ reserva.nombre_y_apellido }}</dd>
                 <dt>Email</dt>
                     <dd>{{ reserva.email }}</dd>
                 <dt>Teléfono</dt>
                     <dd>{{ reserva.telefono }}</dd>
-        </dl>
 
 
-      <!-- / end client details section -->
-      <table class="table table-bordered">
-         <caption><h5>Presupuesto</h5></caption>
-
-        <thead>
-          <tr>
-            <th>
-              <h4>Descripción</h4>
-            </th>
-            <th>
-              <h4>Cantidad</h4>
-            </th>
-            <th>
-              <h4>Precio unitario</h4>
-            </th>
-            <th>
-              <h4>Subtotal</h4>
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-
-
-          {% if reserva.dias_alta %}
-          <tr>
-            <td>Dias en temporada alta</td>
-            <td><div class="text-right">{{ reserva.dias_alta }}</div></td>
-            <td><div class="text-right">$ {{ reserva.departamento.dia_alta }}</div></td>
-            <td><div class="text-right">$ {{ reserva.detalle.alta }}</div></td>
-          </tr>
-          {% endif %}
-          {% if reserva.dias_media %}
-          <tr>
-            <td>Dias en temporada media</td>
-            <td><div class="text-right">{{ reserva.dias_media }}</div></td>
-            <td><div class="text-right">$ {{ reserva.departamento.dia_media }}</div></td>
-            <td><div class="text-right">$ {{ reserva.detalle.media }}</div></td>
-          </tr>
-          {% endif %}
-          {% if reserva.dias_baja %}
-          <tr>
-            <td>Dias en temporada baja</td>
-            <td><div class="text-right">{{ reserva.dias_baja }}</div></td>
-            <td><div class="text-right">$ {{ reserva.departamento.dia_baja }}</div></td>
-            <td><div class="text-right">$ {{ reserva.detalle.baja }}</div></td>
-          </tr>
-        {% endif %}
-        {% if reserva.descuento.0 %}
-          <tr>
-            <td>Descuento por reserva mayor a 15 días</td>
-            <td><div class="text-right">- {{ reserva.descuento.0 }} %</div></td>
-            <td><div class="text-right">$ {{ reserva.departamento.1 }}</div></td>
-            <td><div class="text-right">$ -{{ reserva.departamento.1 }}</div></td>
-          </tr>
-        {% endif %}
-
-        <tr>
-            <td colspan="3"><p class="text-right" > <strong>Total: </strong></p></td>
-            <td><p class="text-right"><strong>$ {{ reserva.costo_total }}</strong></p></td>
-          </tr>
-
-
-        <tr>
-            <td colspan="3"><p class="text-right" > <br> <br><strong>Depósito de seña requerido ({{ reserva.deposito_requerido.0 }} %): </strong></p></td>
-            <td><p class="text-right"><br> <br><strong>$ {{ reserva.deposito_requerido.1 }} </strong></p></td>
-          </tr>
-     <tr>
-            <td colspan="4"><p class="text-center"><br><strong>Fecha de vencimiento de la reserva pendiente</strong>:  <mark> {{ reserva.fecha_vencimiento_reserva|date:"l j \d\e F \d\e Y - H:i \h\s" }}</mark></p></td>
-
-          </tr>
+                <dt>Dias en temporada alta</dt>
+                    <dd>{{ reserva.dias_alta }}</dd>
+                <dt>Dias en temporada media</dt>
+                    <dd>{{ reserva.dias_media }}</dd>
+                <dt>Dias en temporada baja</dt>
+                    <dd>{{ reserva.dias_baja }}</dd>
 
 
 
-        </tbody>
-      </table>
+                {% if reserva.descuento.0 %}
+                    <dt>Descuento por quincena aplicado</dt>
+                    <dd>$ {{ reserva.descuento.1 }} ({{ reserva.descuento.0 }} %)</dd>
+                {% endif %}
 
+                <dt>Costo total</dt>
+                    <dd>$ {{ reserva.costo_total }}</dd>
 
+                <dt>Depósito de seña requerido</dt>
+                    <dd>$ {{ reserva.deposito_requerido.1 }} ({{ reserva.deposito_requerido.0 }} %)</dd>
 
-
-                <p><strong>Comentario o consulta:</strong>
-                    {{ reserva.comentario|default:"-" }}</p>
-
+                <dt>Fecha de vencimiento de la reserva pendiente</dt>
+                    <dd>{{ reserva.fecha_vencimiento_reserva|date:"l j \d\e F \d\e Y - H:i \h\s" }}</dd>
+                </dl>
+                <dt>Comentario o consulta</dt>
+                    <dd>{{ reserva.comentario|default:"-" }}</dd>
+                </dl>
 
             </dl>
-
-</div>
-</body>
-</html>
