@@ -37,6 +37,9 @@ class ReservaForm(forms.ModelForm):
         except:
             raise forms.ValidationError(u"Rango de fecha no válido")
 
+        cleaned_data['desde'] = desde
+        cleaned_data['hasta'] = hasta
+
         if not Reserva.fecha_libre(cleaned_data['departamento'], desde, hasta):
             self.add_error('fechas', 'Hay reservas realizadas durante esas fechas para este departamento')
 
