@@ -40,6 +40,7 @@ class ReservaViewWithPreview(FormPreview):
 
     def process_preview(self, request, form, context):
         reserva = form.save(commit=False)
+        reserva.calcular_costo()
         reserva.calcular_vencimiento()
         context['reserva'] = reserva
 
