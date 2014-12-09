@@ -10,12 +10,17 @@
                 <dt>Fecha de salida</dt>
                     <dd>{{ reserva.hasta|date:"l j \d\e F \d\e Y" }} (hasta las 10hs)</dd>
 
-            <dt>Nombre y apellido</dt>
+
+            {% if reserva.nombre_y_apellido %}
+
+                <dt>Nombre y apellido</dt>
                     <dd>{{ reserva.nombre_y_apellido }}</dd>
                 <dt>Email</dt>
                     <dd>{{ reserva.email }}</dd>
                 <dt>Teléfono</dt>
                     <dd>{{ reserva.telefono }}</dd>
+            {% endif %}
+
 
                 {% if reserva.id %}
 
@@ -77,8 +82,8 @@
           <tr>
             <td>Descuento por reserva mayor a 15 días</td>
             <td><div class="text-right">- {{ reserva.descuento.0 }} %</div></td>
-            <td><div class="text-right">$ {{ reserva.departamento.1 }}</div></td>
-            <td><div class="text-right">$ -{{ reserva.departamento.1 }}</div></td>
+            <td><div class="text-right">$ {{ reserva.descuento.1 }}</div></td>
+            <td><div class="text-right">$ -{{ reserva.descuento.1 }}</div></td>
           </tr>
         {% endif %}
         {% for facturable in  reserva.facturables.all %}
@@ -111,10 +116,11 @@
       </table>
 
 
-
+      {% if reserva.id %}
 
                 <p><strong>Comentario o consulta:</strong>
                     {{ reserva.comentario|default:"-" }}</p>
 
 
-            </dl>
+      {% endif %}
+

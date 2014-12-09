@@ -17,36 +17,52 @@ class ReservaAdminForm(forms.ModelForm):
 
 
 
-class ReservaForm(forms.ModelForm):
-    desde = forms.CharField(widget=forms.HiddenInput, required=False)
-    hasta = forms.CharField(widget=forms.HiddenInput, required=False)
+class ReservaForm1(forms.Form):
+    departamento = forms.ModelChoiceField(queryset=Departamento.objects.all(), empty_label=None)
+    desde = forms.DateField(required=False, ) #widget=forms.HiddenInput)
+    hasta = forms.DateField(required=False, ) #widget=forms.HiddenInput, )
     fechas = forms.CharField(label='¿Durante qué días quiere reservar?',
-                help_text='Seleccione hasta la última noche que duerme')
+                help_text='Seleccione hasta la última noche que duerme', required=False)
 
     def __init__(self, *args, **kwargs):
-        super(ReservaForm, self).__init__(*args, **kwargs)
+        super(ReservaForm1, self).__init__(*args, **kwargs)
         self.fields['departamento'].widget = forms.HiddenInput()
         self.fields['departamento'].initial = Departamento.objects.all()[0]
         self.fields['fechas'].widget = forms.HiddenInput()
 
     def clean(self):
-        cleaned_data = super(ReservaForm, self).clean()
-        try:
-            desde, hasta = [datetime.strptime(d, "%d-%m-%Y").date() for d in cleaned_data.get("fechas").split(' al ')]
-            hasta += timedelta(days=1)
-        except:
-            raise forms.ValidationError(u"Rango de fecha no válido")
+        cleaned_data = super(ReservaForm1, self).clean()
 
-        cleaned_data['desde'] = desde
-        cleaned_data['hasta'] = hasta
+        if not cleaned_data.get('desde', False) or not cleaned_data.get('hasta', False):
+            try:
+                desde, hasta = [datetime.strptime(d, "%d/%m/%Y").date() for d in cleaned_data.get("fechas").split(' al ')]
+                hasta += timedelta(days=1)
+            except:
+                raise forms.ValidationError(u"Rango de fecha no válido")
 
-        if not Reserva.fecha_libre(cleaned_data['departamento'], desde, hasta):
+            cleaned_data['desde'] = desde
+            cleaned_data['hasta'] = hasta
+
+        if not Reserva.fecha_libre(cleaned_data['departamento'],
+                                   cleaned_data['desde'],
+                                   cleaned_data['hasta']):
             self.add_error('fechas', 'Hay reservas realizadas durante esas fechas para este departamento')
 
         return cleaned_data
 
+
+class ReservaForm2(forms.ModelForm):
+    CHOICES = (('deposito', u'Depositaré una seña del 50% vía transferencia bancaria'),
+               ('mercadopago', 'Abonaré con tarjeta de crédito (hasta 12 cuotas)'))
+    forma_pago = forms.ChoiceField(widget=forms.RadioSelect, choices=CHOICES)
+
+    def __init__(self, *args, **kwargs):
+        super(ReservaForm2, self).__init__(*args, **kwargs)
+        for field in ('nombre_y_apellido', 'email', 'telefono'):
+            self.fields[field].required = True
+
     class Meta:
         model = Reserva
-        fields = ('departamento', 'fechas', 'desde', 'hasta', 'nombre_y_apellido', 'email',
-                  'procedencia', 'telefono', 'como_se_entero', 'comentario')
+        fields = ('nombre_y_apellido', 'email', 'procedencia',
+                  'telefono', 'como_se_entero', 'comentario', 'forma_pago')
 

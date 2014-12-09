@@ -1,6 +1,6 @@
 from django.conf.urls import patterns, include, url
 from django.contrib import admin
-from lacalma.views import reserva_view, gracias, detalle
+from lacalma.views import reserva_view, gracias, detalle, mp_notification
 
 urlpatterns = patterns('',
     # Examples:
@@ -10,6 +10,7 @@ urlpatterns = patterns('',
     url(r'^admin/', include(admin.site.urls)),
     url(r'^gracias/$', gracias),
     url(r'^detalle/(?P<id>\d+)$', detalle),
-    url(r'^', reserva_view)
+    url(r'^mp-notificacion$', mp_notification),
+    url(r'^$', reserva_view)
 
 )

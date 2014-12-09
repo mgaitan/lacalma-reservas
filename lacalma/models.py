@@ -39,24 +39,28 @@ class Departamento(models.Model):
 
 
 class Reserva(TimeStampedModel):
-    ESTADOS = Choices('pendiente', 'confirmada', 'vencida')
+    ESTADOS = Choices('pendiente', 'confirmada', 'vencida', 'cancelada')
     ENTERO = Choices(('buscador', 'Por un buscador'),
                      ('facebook', 'Por Facebook'),
                      ('habitual', 'Ya alquilé anteriormente'),
                      ('recomendacion', u'Por una recomendación'),
                      ('inmobiliaria', u'Por la inmobiliaria'),
                      ('otro', 'Otro'),)
+    METODO = Choices('deposito', 'mercadopago')
+
     departamento = models.ForeignKey(Departamento)
     desde = models.DateField(verbose_name="Entra (14hs)")          # dia de entrada desde las 14hs
     hasta = models.DateField(verbose_name="Sale (10hs)")          # dia de salida hasta las 10hs
-    nombre_y_apellido = models.CharField(max_length=50)
+    nombre_y_apellido = models.CharField(max_length=50, null=True, blank=True)
     procedencia = models.CharField(max_length=50, null=True, blank=True, help_text='¿De qué ciudad nos visita?')
-    telefono = models.CharField(max_length=50, help_text=u'Por favor, incluya la característica')
-    whatsapp = models.BooleanField('utiliza whatsapp', default=False)
-    email = models.EmailField()
+    telefono = models.CharField(max_length=50, null=True, blank=True, help_text=u'Por favor, incluya la característica')
+    whatsapp = models.BooleanField('Utiliza whatsapp?', default=False)
+    email = models.EmailField(null=True, blank=True, )
     estado = models.CharField(max_length=50, choices=ESTADOS, default=ESTADOS.pendiente)
-    como_se_entero = models.CharField(verbose_name=u'¿Cómo conoció La Calma?',  max_length=50, choices=ENTERO, null=True, blank=True)
+    como_se_entero = models.CharField(verbose_name=u'¿Cómo conoció La Calma?', max_length=50, choices=ENTERO, null=True, blank=True)
     comentario = models.TextField(verbose_name=u'¿Algún comentario?', null=True, blank=True)
+    forma_pago = models.CharField(max_length=50, choices=METODO, default=METODO.deposito)
+
 
     dias_total = models.IntegerField(default=0)
     dias_baja = models.IntegerField(default=0)
@@ -73,7 +77,7 @@ class Reserva(TimeStampedModel):
 
 
     def __unicode__(self):
-        return u'Reserva #%d' % self.id
+        return u'Reserva #%s' % self.id
 
     def rango(self):
         return dias_en_rango(self.hasta, self.desde)

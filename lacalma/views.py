@@ -1,23 +1,30 @@
-from datetime import date
-from django.contrib.auth.decorators import login_required
+from datetime import date, timedelta, datetime
 import json
+from django.conf import settings
 from django.shortcuts import render, redirect, render_to_response, get_object_or_404
 from django.template.loader import render_to_string
 from django.contrib.admin.views.decorators import staff_member_required
-from django.contrib.formtools.preview import FormPreview
+from django.views.decorators.csrf import csrf_exempt
+from django.contrib.formtools.wizard.views import SessionWizardView
 
 from django.core.mail import EmailMultiAlternatives
 from django.template import RequestContext
+import mercadopago
 from lacalma.models import Reserva, Departamento
-from lacalma.forms import ReservaForm
+from lacalma.forms import ReservaForm1, ReservaForm2
 
 
 
-class ReservaViewWithPreview(FormPreview):
-    form_template = preview_template = 'index.html'
 
-    def get_context(self, request, form):
-        context = super(ReservaViewWithPreview, self).get_context(request, form)
+class ReservaWizard(SessionWizardView):
+    _reserva = None
+
+    def get_template_names(self):
+        return 'step_%s.html' % self.steps.current
+
+    def get_context_data(self, form, **kwargs):
+
+        context = super(ReservaWizard, self).get_context_data(form=form, **kwargs)
         hoy = date.today()
         context['hoy'] = str(hoy)
 
@@ -36,49 +43,76 @@ class ReservaViewWithPreview(FormPreview):
         context['reservas_pendientes'] = json.dumps(reservas_pendientes)
         context['reservas_confirmadas'] = json.dumps(reservas_confirmadas)
         context['deptos'] = Departamento.objects.all()
+
+        if self.steps.current != 'fechas':
+            fe = self.get_form('fechas', data=self.storage.get_step_data('fechas'))
+            fe.is_valid()
+            reserva = Reserva(desde=fe.cleaned_data['desde'],
+                              hasta=fe.cleaned_data['hasta'],
+                              departamento=fe.cleaned_data['departamento'])
+            reserva.calcular_costo()
+            reserva.calcular_vencimiento()
+            context['reserva'] = reserva
         return context
 
-    def process_preview(self, request, form, context):
-        reserva = form.save(commit=False)
-        reserva.calcular_costo()
-        reserva.calcular_vencimiento()
-        context['reserva'] = reserva
-
-
-    def post_post(self, request):
-        "Validates the POST data. If valid, calls done(). Else, redisplays form."
-        f = self.form(request.POST, auto_id=self.get_auto_id())
-        if f.is_valid():
-            if not self._check_security_hash(request.POST.get(self.unused_name('hash'), ''),
-                                             request, f):
-                return self.failed_hash(request)  # Security hash failed.
-            return self.done(request, f.cleaned_data, f)
-        else:
-            return render_to_response(self.form_template,
-                self.get_context(request, f),
-                context_instance=RequestContext(request))
-
-    def done(self, request, cleaned_data, form):
-        reserva = form.save(commit=False)
+    def done(self, form_list, **kwargs):
+        data = self.get_all_cleaned_data()
+        del data['fechas']
+        reserva = Reserva(**data)
         reserva.calcular_vencimiento()
         reserva.save()
-        mail_txt = render_to_string('mail_txt.html', {'reserva': reserva})
-        mail_html = render_to_string('mail.html', {'reserva': reserva})
 
-        msg = EmailMultiAlternatives('Reserva en La Calma - Las Grutas /ref. #%s' % reserva.id,
-                               mail_txt, 'info@lacalma-lasgrutas.com.ar', [reserva.email],
-                               bcc=['info@lacalma-lasgrutas.com.ar'])
-        msg.attach_alternative(mail_html, "text/html")
-        msg.send()
+        if reserva.forma_pago == 'deposito':
 
-        # mail_admin = render_to_string('mail_admin_txt.html', {'reserva': reserva})
-        # send_mail('[La Calma] Nueva Reserva - ref #%s' % reserva.id, mail_admin,
-        #          'info@lacalma-lasgrutas.com.ar', ['gaitan@gmail.com', 'gracielamothe@gmail.com'])
-        return redirect('/gracias/')
+            mail_txt = render_to_string('mail_txt.html', {'reserva': reserva})
+            mail_html = render_to_string('mail.html', {'reserva': reserva})
+
+            msg = EmailMultiAlternatives('Reserva en La Calma - Las Grutas /ref. #%s' % reserva.id,
+                                   mail_txt, 'info@lacalma-lasgrutas.com.ar', [reserva.email],
+                                   bcc=['info@lacalma-lasgrutas.com.ar'])
+            msg.attach_alternative(mail_html, "text/html")
+            msg.send()
+
+            return redirect('/gracias/')
+        else:
+            mp = mercadopago.MP(settings.MP_CLIENT_ID, settings.MP_CLIENT_SECRET)
+
+            title = "La Calma {}: {} al {} inclusive".format(reserva.departamento.nombre,
+                                                             reserva.desde.strftime("%d/%m/%Y"),
+                                                             (reserva.hasta - timedelta(days=1)).strftime("%d/%m/%Y"))
+
+            preference = {
+                "items": [
+                    {
+                        "id": str(reserva.id),
+                        "title": title,
+                        "quantity": 1,
+                        "currency_id": "ARS",
+                        "unit_price": float(reserva.costo_total)
+                    }
+                ],
+                "payer": {
+                    "name": reserva.nombre_y_apellido,
+                    "email": reserva.email,
+                    "date_created": reserva.created.isoformat(),
+                },
+                "back_urls": {
+                    "success": "http://reserva.lacalma-lasgrutas.com.ar/gracias",
+                },
+                "auto_return": "approved",
+            }
+
+
+
+            preference = mp.create_preference(preference)
+            import ipdb; ipdb.set_trace()
+            url = preference['response']['sandbox_init_point'];
+
+            return redirect(url)
 
 
 def gracias(request):
-    return render(request, 'index.html', {'gracias': True})
+    return render(request, 'gracias.html', {'gracias': True})
 
 
 @staff_member_required
@@ -87,7 +121,16 @@ def detalle(request, id):
     return render(request, 'index.html', {'reserva': reserva, 'presupuesto': True})
 
 
-reserva_view = ReservaViewWithPreview(ReservaForm)
+@csrf_exempt
+def mp_notification(request):
+    mp = mercadopago.MP(settings.MP_CLIENT_ID, settings.MP_CLIENT_SECRET)
+    mp.sandbox_mode(True)
+    payment_info = mp.get_payment_info(request.GET["id"])
+    import ipdb; ipdb.set_trace()
+
+
+
+reserva_view = ReservaWizard.as_view([('fechas', ReservaForm1), ('datos', ReservaForm2)])
 
 
 """
