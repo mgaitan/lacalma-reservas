@@ -64,25 +64,25 @@ class ReservaWizard(SessionWizardView):
         reserva.calcular_vencimiento()
         reserva.save()
 
+        site = Site.objects.get_current()
         self.request.session['reserva_reciente'] = reserva.id
         if reserva.forma_pago == 'deposito':
 
             mail_txt = render_to_string('mail_txt.html', {'reserva': reserva})
             mail_html = render_to_string('mail.html', {'reserva': reserva})
 
-            msg = EmailMultiAlternatives('Reserva en La Calma - Las Grutas /ref. #%s' % reserva.id,
+            msg = EmailMultiAlternatives('Reserva %s - Las Grutas /ref. #%s' % (site.name, reserva.id),
                                    mail_txt, 'info@lacalma-lasgrutas.com.ar', [reserva.email],
                                    bcc=['info@lacalma-lasgrutas.com.ar'])
             msg.attach_alternative(mail_html, "text/html")
             msg.send()
-            return redirect('/gracias/')
+            return redirect('gracias')
         else:
             mp = mercadopago.MP(settings.MP_CLIENT_ID, settings.MP_CLIENT_SECRET)
 
             title = "La Calma {}: {} al {} inclusive".format(reserva.departamento.nombre,
                                                              reserva.desde.strftime("%d/%m/%Y"),
                                                              (reserva.hasta - timedelta(days=1)).strftime("%d/%m/%Y"))
-            site = Site.objects.get_current()
             preference = {
                 "items": [
                     {

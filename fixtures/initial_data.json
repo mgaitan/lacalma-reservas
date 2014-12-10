@@ -5,7 +5,7 @@
         "model": "sites.site",
         "fields": {
             "domain": "reservas.lacalma-lasgrutas.com.ar",
-            "name": "La Calma - Sistema de Reservas"
+            "name": "La Calma"
         }
     },
     {
@@ -13,7 +13,7 @@
         "model": "sites.site",
         "fields": {
             "domain": "reservas-test.lacalma-lasgrutas.com.ar",
-            "name": "[TEST] La Calma - Sistema de Reservas"
+            "name": "La Calma - TEST"
         }
     },
     {
@@ -21,7 +21,7 @@
         "model": "sites.site",
         "fields": {
             "domain": "localhost:8000",
-            "name": "[DESARROLLO] La Calma - Sistema de Reservas"
+            "name": "La Calma - DESARROLLO"
         }
     },
 
