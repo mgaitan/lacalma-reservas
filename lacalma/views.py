@@ -104,6 +104,9 @@ class ReservaWizard(SessionWizardView):
             }
 
             preference = mp.create_preference(preference)
+
+            send_mail('MP preference info', json.dumps(preference, indent=2), 'info@lacalma-lasgrutas.com.ar',
+                    ['gaitan@gmail.com'], fail_silently=False)
             if settings.MP_SANDBOX_MODE:
                 url = preference['response']['sandbox_init_point']
             else:
@@ -138,12 +141,29 @@ def mp_notification(request):
     mp = mercadopago.MP(settings.MP_CLIENT_ID, settings.MP_CLIENT_SECRET)
     if settings.MP_SANDBOX_MODE:
         mp.sandbox_mode(True)
-    payment_info = mp.get_payment_info(request.GET["id"])
 
-    send_mail('MP payment info', json.dumps(payment_info, indent=2), 'info@lacalma-lasgrutas.com.ar',
-    ['gaitan@gmail.com'], fail_silently=False)
-    return HttpResponse('ok')
-    # return HttpResponseBadRequest('bad boy')
+    if request.GET.get('topic', '') == 'payment':
+        payment_info = mp.get_payment_info(request.GET["id"])
+        send_mail('MP payment info', json.dumps(payment_info, indent=2), 'info@lacalma-lasgrutas.com.ar',
+                  ['gaitan@gmail.com'], fail_silently=False)
+
+        if payment_info['status'] == 200:
+            mp_id = payment_info['response']['collections']['id']
+            status = payment_info['response']['collections']['status']
+            if status == 'approved':
+                reserva = get_object_or_404(Reserva, mp_id=mp_id)
+
+                mail_txt = render_to_string('mail_mp_txt.html', {'reserva': reserva})
+                mail_html = render_to_string('mail_mp.html', {'reserva': reserva})
+
+                msg = EmailMultiAlternatives('Confirmación de Reserva %s - Las Grutas /ref. #%s' % (site.name, reserva.id),
+                                       mail_txt, 'info@lacalma-lasgrutas.com.ar', [reserva.email],
+                                       bcc=['info@lacalma-lasgrutas.com.ar'])
+                msg.attach_alternative(mail_html, "text/html")
+                msg.send()
+
+            return HttpResponse('ok')
+    return HttpResponseBadRequest('bad boy')
 
 
 
