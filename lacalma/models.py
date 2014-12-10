@@ -55,7 +55,7 @@ class Reserva(TimeStampedModel):
     procedencia = models.CharField(max_length=50, null=True, blank=True, help_text='¿De qué ciudad nos visita?')
     telefono = models.CharField(max_length=50, null=True, blank=True, help_text=u'Por favor, incluya la característica')
     whatsapp = models.BooleanField('Utiliza whatsapp?', default=False)
-    email = models.EmailField(null=True, blank=True, )
+    email = models.EmailField(null=True, blank=True, help_text="Por favor, revise atentamente que su dirección sea la correcta")
     estado = models.CharField(max_length=50, choices=ESTADOS, default=ESTADOS.pendiente)
     como_se_entero = models.CharField(verbose_name=u'¿Cómo conoció La Calma?', max_length=50, choices=ENTERO, null=True, blank=True)
     comentario = models.TextField(verbose_name=u'¿Algún comentario?', null=True, blank=True)
@@ -115,14 +115,13 @@ class Reserva(TimeStampedModel):
         for facturable in self.facturables.all():
             self.costo_total += facturable.monto
 
-
     def calcular_vencimiento(self):
         # fecha vencimiento
         desde = datetime.combine(self.desde, time(14, 0, tzinfo=UTC))
         faltan = int((desde - timezone.now()).total_seconds() / 3600)
         if faltan >= 240:
             # mas de 10 dias?
-            self.fecha_vencimiento_reserva = timezone.now() + timedelta(hours=72)
+            self.fecha_vencimiento_reserva = timezone.now() + timedelta(hours=48)
         else:
             self.fecha_vencimiento_reserva = desde - timedelta(hours=faltan*0.75)
 

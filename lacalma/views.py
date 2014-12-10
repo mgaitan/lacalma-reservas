@@ -72,7 +72,7 @@ class ReservaWizard(SessionWizardView):
                                    bcc=['info@lacalma-lasgrutas.com.ar'])
             msg.attach_alternative(mail_html, "text/html")
             msg.send()
-
+            self.request.session['reserva_reciente'] = reserva.id
             return redirect('/gracias/')
         else:
             mp = mercadopago.MP(settings.MP_CLIENT_ID, settings.MP_CLIENT_SECRET)
@@ -112,7 +112,9 @@ class ReservaWizard(SessionWizardView):
 
 
 def gracias(request):
-    return render(request, 'gracias.html', {'gracias': True})
+    reserva_id = request.session.pop('reserva_reciente', None)
+    reserva = Reserva.objects.get(id=reserva_id) if reserva_id else None
+    return render(request, 'gracias.html', {'gracias': True, 'reserva': reserva})
 
 
 @staff_member_required

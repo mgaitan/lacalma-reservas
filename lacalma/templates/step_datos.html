@@ -17,6 +17,18 @@
             {% include "as_invoice.html" %}
 
 
+        <a id="back" class="btn">Volver</a>
+        <button id="btn-toggle-reservar" class="btn btn-success">Continuar con la reserva</button>
+
+        <div id="div-toggle-reservar" class="{% if not wizard.form.errors %}hide{% endif %}">
+
+            <p></p>
+
+
+
+        <p>Por favor, complete los siguientes datos:</p>
+
+
         <form action="" method="post">{% csrf_token %}
         {% csrf_token %}
         {{ wizard.management_form }}
@@ -24,12 +36,35 @@
 
         {% if not presupuesto %}
 
-        <a id="back" class="btn">Volver</a>
-        <input type="submit"  class="btn" value="Confirmar reserva" /></p>
+            <a id="back" class="btn">Volver</a>
+
+            <input id="btn-reserva-submit" type="submit"  class="btn btn-success" value="Confirmar reserva" /></p>
 
         {% endif %}
 
         </form>
 
+        </div>
 
 {% endblock body %}
+
+{% block extra_scripts %}
+    {{ block.super }}
+
+    <script type="text/javascript">
+    $(function(){
+        $('#btn-toggle-reservar').on('click', function() {
+            $('#div-toggle-reservar').fadeIn('slow');
+        });
+
+
+        $('input[type=radio][name=datos-forma_pago]').change(function() {
+            if ($(this).val() == 'mercadopago') {
+                $('#btn-reserva-submit').val('Pagar via MercadoPago')
+            }else {
+                $('#btn-reserva-submit').val('Confirmar reserva')
+            }
+        });
+    });
+    </script>
+{% endblock extra_scripts %}

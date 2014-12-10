@@ -6,8 +6,21 @@
 
                 <div class="alert alert-success" >
 
-    <strong>¡Felicitaciones!</strong> Hemos recibido su solicitud. En breve recibirá un correo electrónico con las instrucciones para realizar el depósito de seña y confirmar su reserva. ¡Gracias por visitar Las Grutas!
+    <strong>¡Felicitaciones!</strong>
+
+    <p>Hemos recibido su solicitud y aguardaremos su depósito dentro de las próximas 48hs para dejar sus reserva confirmada.</p>
+
+    <p>En breve recibirá un correo electrónico con las instrucciones para realizar el depósito. ¡Gracias por visitar Las Grutas!</p>
+
     </div>
+
+    {% if reserva %}
+    <h3>Información de su reserva pendiente</h3>
+
+         {% include "as_invoice.html" %}
+
+
+    {% endif %}
 
 
     {% endblock body %}

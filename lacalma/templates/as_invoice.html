@@ -56,7 +56,7 @@
 
           {% if reserva.dias_alta %}
           <tr>
-            <td>Dias en temporada alta</td>
+            <td>Dias en temporada alta {{ reserva.departamento.nombre }}</td>
             <td><div class="text-right">{{ reserva.dias_alta }}</div></td>
             <td><div class="text-right">$ {{ reserva.departamento.dia_alta }}</div></td>
             <td><div class="text-right">$ {{ reserva.detalle.alta }}</div></td>
@@ -64,7 +64,7 @@
           {% endif %}
           {% if reserva.dias_media %}
           <tr>
-            <td>Dias en temporada media</td>
+            <td>Dias en temporada media {{ reserva.departamento.nombre }}</td>
             <td><div class="text-right">{{ reserva.dias_media }}</div></td>
             <td><div class="text-right">$ {{ reserva.departamento.dia_media }}</div></td>
             <td><div class="text-right">$ {{ reserva.detalle.media }}</div></td>
@@ -72,7 +72,7 @@
           {% endif %}
           {% if reserva.dias_baja %}
           <tr>
-            <td>Dias en temporada baja</td>
+            <td>Dias en temporada baja {{ reserva.departamento.nombre }}</td>
             <td><div class="text-right">{{ reserva.dias_baja }}</div></td>
             <td><div class="text-right">$ {{ reserva.departamento.dia_baja }}</div></td>
             <td><div class="text-right">$ {{ reserva.detalle.baja }}</div></td>
@@ -100,7 +100,7 @@
             <td><p class="text-right"><strong>$ {{ reserva.costo_total }}</strong></p></td>
           </tr>
 
-
+  {% if reserva.id %}
         <tr>
             <td colspan="3"><p class="text-right" > <br> <br><strong>Depósito de seña requerido ({{ reserva.deposito_requerido.0 }} %): </strong></p></td>
             <td><p class="text-right"><br> <br><strong>$ {{ reserva.deposito_requerido.1 }} </strong></p></td>
@@ -109,18 +109,18 @@
             <td colspan="4"><p class="text-center"><br><strong>Fecha de vencimiento de la reserva pendiente</strong>:  <mark> {{ reserva.fecha_vencimiento_reserva|date:"l j \d\e F \d\e Y - H:i \h\s" }}</mark></p></td>
 
           </tr>
-
+  {% endif %}
 
 
         </tbody>
       </table>
 
 
-      {% if reserva.id %}
+          {% if reserva.id %}
 
                 <p><strong>Comentario o consulta:</strong>
                     {{ reserva.comentario|default:"-" }}</p>
 
+          {% endif %}
 
-      {% endif %}
 

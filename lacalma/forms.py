@@ -52,9 +52,9 @@ class ReservaForm1(forms.Form):
 
 
 class ReservaForm2(forms.ModelForm):
-    CHOICES = (('deposito', u'Depositaré una seña del 50% vía transferencia bancaria'),
+    CHOICES = (('deposito', u'Realizaré una seña del 50% vía transferencia bancaria en las próximas 48hs'),
                ('mercadopago', 'Abonaré con tarjeta de crédito (hasta 12 cuotas)'))
-    forma_pago = forms.ChoiceField(widget=forms.RadioSelect, choices=CHOICES)
+    forma_pago = forms.ChoiceField(widget=forms.RadioSelect, choices=CHOICES, initial='deposito')
 
     def __init__(self, *args, **kwargs):
         super(ReservaForm2, self).__init__(*args, **kwargs)
@@ -63,6 +63,6 @@ class ReservaForm2(forms.ModelForm):
 
     class Meta:
         model = Reserva
-        fields = ('nombre_y_apellido', 'email', 'procedencia',
-                  'telefono', 'como_se_entero', 'comentario', 'forma_pago')
+        fields = ('nombre_y_apellido', 'email', 'telefono', 'procedencia',
+                  'como_se_entero', 'comentario', 'forma_pago')
 
