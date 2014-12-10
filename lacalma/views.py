@@ -109,6 +109,7 @@ class ReservaWizard(SessionWizardView):
                 },
                 "auto_return": "approved",
                 "external_reference": reserva.mp_id,
+                "notification_url": site.domain + reverse('ipn'),
             }
 
             preference = mp.create_preference(preference)
