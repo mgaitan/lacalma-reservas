@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import json
+import uuid
 from datetime import date, timedelta
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.conf import settings
@@ -9,6 +10,7 @@ from django.core.mail import EmailMultiAlternatives, send_mail
 from django.template.loader import render_to_string
 from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import render, redirect, get_object_or_404
+from django.utils import timezone
 from django.contrib.formtools.wizard.views import SessionWizardView
 from django.contrib.admin.views.decorators import staff_member_required
 
@@ -79,6 +81,9 @@ class ReservaWizard(SessionWizardView):
             msg.send()
             return redirect('gracias')
         else:
+
+            reserva.mp_id = str(uuid.uuid1())
+            reserva.save(update_fields=['mp_id'])
             mp = mercadopago.MP(settings.MP_CLIENT_ID, settings.MP_CLIENT_SECRET)
 
             title = "La Calma {}: {} al {} inclusive".format(reserva.departamento.nombre,
@@ -102,6 +107,7 @@ class ReservaWizard(SessionWizardView):
                     "success": site.domain + reverse('gracias_mp'),
                 },
                 "auto_return": "approved",
+                "external_reference": "Reference_1234",
             }
 
             preference = mp.create_preference(preference)
@@ -149,10 +155,17 @@ def mp_notification(request):
                   ['gaitan@gmail.com'], fail_silently=False)
 
         if payment_info['status'] == 200:
-            mp_id = payment_info['response']['collections']['id']
+            mp_id = payment_info['response']['collections']['external_reference']
             status = payment_info['response']['collections']['status']
             if status == 'approved':
                 reserva = get_object_or_404(Reserva, mp_id=mp_id)
+
+                reserva.estado = reserva.ESTADOS.confirmada
+                reserva.fecha_deposito_reserva = timezone.now()
+                reserva.deposito_reserva = reserva.costo_total
+                reserva.save()
+
+                site = Site.objects.get_current()
 
                 mail_txt = render_to_string('mail_mp_txt.html', {'reserva': reserva})
                 mail_html = render_to_string('mail_mp.html', {'reserva': reserva})
