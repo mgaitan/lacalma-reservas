@@ -151,9 +151,12 @@ def mp_notification(request):
     if settings.MP_SANDBOX_MODE:
         mp.sandbox_mode(True)
 
+
     if request.GET.get('topic', '') == 'payment':
+        site = Site.objects.get_current()
+
         payment_info = mp.get_payment_info(request.GET["id"])
-        send_mail('MP payment info', json.dumps(payment_info, indent=2), 'info@lacalma-lasgrutas.com.ar',
+        send_mail('MP payment info - %s' % site.name, json.dumps(payment_info, indent=2), 'info@lacalma-lasgrutas.com.ar',
                   ['gaitan@gmail.com'], fail_silently=False)
 
         if payment_info['status'] == 200:
@@ -167,7 +170,7 @@ def mp_notification(request):
                 reserva.deposito_reserva = reserva.costo_total
                 reserva.save()
 
-                site = Site.objects.get_current()
+
 
                 mail_txt = render_to_string('mail_mp_txt.html', {'reserva': reserva})
                 mail_html = render_to_string('mail_mp.html', {'reserva': reserva})
