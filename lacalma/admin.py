@@ -30,7 +30,7 @@ class ReservaAdmin(admin.ModelAdmin):
 
     fieldsets = (
         ('Reserva', {
-            'fields': ('departamento', 'desde', 'hasta', 'estado')
+            'fields': ('departamento', 'desde', 'hasta', 'estado', 'mp_id')
         }),
         ('Vencimiento', {
             'fields': ('fecha_vencimiento_reserva',)
