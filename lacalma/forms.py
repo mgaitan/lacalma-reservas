@@ -19,8 +19,8 @@ class ReservaAdminForm(forms.ModelForm):
 
 class ReservaForm1(forms.Form):
     departamento = forms.ModelChoiceField(queryset=Departamento.objects.all(), empty_label=None)
-    desde = forms.DateField(required=False, ) #widget=forms.HiddenInput)
-    hasta = forms.DateField(required=False, ) #widget=forms.HiddenInput, )
+    desde = forms.DateField(required=False, widget=forms.HiddenInput)
+    hasta = forms.DateField(required=False, widget=forms.HiddenInput, )
     fechas = forms.CharField(label='¿Durante qué días quiere reservar?',
                 help_text='Seleccione hasta la última noche que duerme', required=False)
 

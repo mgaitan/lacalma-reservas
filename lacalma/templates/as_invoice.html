@@ -33,8 +33,9 @@
 
       <!-- / end client details section -->
       <table class="table table-bordered">
+         {% if not reserva.id %}
          <caption><h5>Presupuesto</h5></caption>
-
+         {% endif %}
         <thead>
           <tr>
             <th>

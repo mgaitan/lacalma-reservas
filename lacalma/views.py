@@ -1,14 +1,16 @@
-from datetime import date, timedelta, datetime
 import json
+from datetime import date, timedelta
+from django.http import HttpResponse, HttpResponseBadRequest
 from django.conf import settings
-from django.shortcuts import render, redirect, render_to_response, get_object_or_404
-from django.template.loader import render_to_string
-from django.contrib.admin.views.decorators import staff_member_required
-from django.views.decorators.csrf import csrf_exempt
-from django.contrib.formtools.wizard.views import SessionWizardView
-
+from django.contrib.sites.models import Site
+from django.core.urlresolvers import reverse
 from django.core.mail import EmailMultiAlternatives
-from django.template import RequestContext
+from django.template.loader import render_to_string
+from django.views.decorators.csrf import csrf_exempt
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.formtools.wizard.views import SessionWizardView
+from django.contrib.admin.views.decorators import staff_member_required
+
 import mercadopago
 from lacalma.models import Reserva, Departamento
 from lacalma.forms import ReservaForm1, ReservaForm2
@@ -62,6 +64,7 @@ class ReservaWizard(SessionWizardView):
         reserva.calcular_vencimiento()
         reserva.save()
 
+        self.request.session['reserva_reciente'] = reserva.id
         if reserva.forma_pago == 'deposito':
 
             mail_txt = render_to_string('mail_txt.html', {'reserva': reserva})
@@ -72,7 +75,6 @@ class ReservaWizard(SessionWizardView):
                                    bcc=['info@lacalma-lasgrutas.com.ar'])
             msg.attach_alternative(mail_html, "text/html")
             msg.send()
-            self.request.session['reserva_reciente'] = reserva.id
             return redirect('/gracias/')
         else:
             mp = mercadopago.MP(settings.MP_CLIENT_ID, settings.MP_CLIENT_SECRET)
@@ -80,7 +82,7 @@ class ReservaWizard(SessionWizardView):
             title = "La Calma {}: {} al {} inclusive".format(reserva.departamento.nombre,
                                                              reserva.desde.strftime("%d/%m/%Y"),
                                                              (reserva.hasta - timedelta(days=1)).strftime("%d/%m/%Y"))
-
+            site = Site.objects.get_current()
             preference = {
                 "items": [
                     {
@@ -94,10 +96,9 @@ class ReservaWizard(SessionWizardView):
                 "payer": {
                     "name": reserva.nombre_y_apellido,
                     "email": reserva.email,
-                    "date_created": reserva.created.isoformat(),
                 },
                 "back_urls": {
-                    "success": "http://reserva.lacalma-lasgrutas.com.ar/gracias",
+                    "success": site.domain + reverse('gracias_mp'),
                 },
                 "auto_return": "approved",
             }
@@ -105,16 +106,24 @@ class ReservaWizard(SessionWizardView):
 
 
             preference = mp.create_preference(preference)
-            import ipdb; ipdb.set_trace()
             url = preference['response']['sandbox_init_point'];
 
             return redirect(url)
+
+
+reserva_view = ReservaWizard.as_view([('fechas', ReservaForm1), ('datos', ReservaForm2)])
 
 
 def gracias(request):
     reserva_id = request.session.pop('reserva_reciente', None)
     reserva = Reserva.objects.get(id=reserva_id) if reserva_id else None
     return render(request, 'gracias.html', {'gracias': True, 'reserva': reserva})
+
+
+def gracias_mp(request):
+    reserva_id = request.session.pop('reserva_reciente', None)
+    reserva = Reserva.objects.get(id=reserva_id) if reserva_id else None
+    return render(request, 'gracias_mp.html', {'gracias': True, 'reserva': reserva})
 
 
 @staff_member_required
@@ -128,11 +137,10 @@ def mp_notification(request):
     mp = mercadopago.MP(settings.MP_CLIENT_ID, settings.MP_CLIENT_SECRET)
     mp.sandbox_mode(True)
     payment_info = mp.get_payment_info(request.GET["id"])
-    import ipdb; ipdb.set_trace()
+    print(payment_info)
+    return HttpResponse('ok')
+    # return HttpResponseBadRequest('bad boy')
 
-
-
-reserva_view = ReservaWizard.as_view([('fechas', ReservaForm1), ('datos', ReservaForm2)])
 
 
 """

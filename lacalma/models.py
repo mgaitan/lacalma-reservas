@@ -71,10 +71,9 @@ class Reserva(TimeStampedModel):
 
     fecha_vencimiento_reserva = models.DateTimeField(null=True, blank=True)
 
-
     fecha_deposito_reserva = models.DateTimeField(null=True, blank=True)
     deposito_reserva = models.DecimalField(max_digits=7, decimal_places=2, default=0)
-
+    mp_id = models.CharField(verbose_name=u'ID Transacción de Mercadopago', max_length=100, null=True, blank=True)
 
     def __unicode__(self):
         return u'Reserva #%s' % self.id

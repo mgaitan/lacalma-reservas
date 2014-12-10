@@ -6,12 +6,11 @@
 
 {% block body %}
 
-    <h1>Haga su reserva online</h1>
+    <h1>Obtenga un presupuesto y haga su reserva online</h1>
 
 
     <p>
     Por favor, si no hay disponibilidad en la fecha que usted busca para un departamento, verifique si existe en alguno de los otros.
-
     </p>
 
 
@@ -52,7 +51,7 @@
 
 
         {{ wizard.form|crispy }}
-        <input type="submit" class="btn" value="Siguiente" />
+        <input type="submit" class="btn btn-success"  value="Calcular presupuesto" />
         </form>
 
 {% endblock body %}

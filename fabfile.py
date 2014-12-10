@@ -1,13 +1,22 @@
 from fabric.api import env, run, cd
 
+def common():
+    env.host_string = 'nqnwebs.com'
+    env.user = 'nqnwebsc'
+    env.python = '/home/nqnwebsc/.virtualenv/reservas/bin/python'
+    env.pip = '/home/nqnwebsc/.virtualenv/reservas/bin/pip'
 
-env.host_string = 'nqnwebs.com'
-env.user = 'nqnwebsc'
-env.python = '/home/nqnwebsc/.virtualenv/reservas/bin/python'
-env.pip = '/home/nqnwebsc/.virtualenv/reservas/bin/pip'
-env.app = '/home/nqnwebsc/projects/reservas'
-env.domain = '/home/nqnwebsc/reservas.lacalma-lasgrutas.com.ar'
 
+def production():
+    env.app = '/home/nqnwebsc/projects/reservas'
+    env.domain = '/home/nqnwebsc/reservas.lacalma-lasgrutas.com.ar'
+    common()
+
+
+def develop():
+    env.app = '/home/nqnwebsc/projects/reservas_test'
+    env.domain = '/home/nqnwebsc/reservas-test.lacalma-lasgrutas.com.ar'
+    common()
 
 
 def restart():

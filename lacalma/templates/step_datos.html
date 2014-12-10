@@ -38,7 +38,7 @@
 
             <a id="back" class="btn">Volver</a>
 
-            <input id="btn-reserva-submit" type="submit"  class="btn btn-success" value="Confirmar reserva" /></p>
+            <input id="btn-reserva-submit" type="submit"  class="btn btn-success" value="" /></p>
 
         {% endif %}
 
@@ -65,6 +65,7 @@
                 $('#btn-reserva-submit').val('Confirmar reserva')
             }
         });
+        $('input[type=radio][name=datos-forma_pago]').trigger('change');
     });
     </script>
 {% endblock extra_scripts %}
