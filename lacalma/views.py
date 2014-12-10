@@ -84,6 +84,7 @@ class ReservaWizard(SessionWizardView):
 
             reserva.mp_id = str(uuid.uuid1())
             reserva.save(update_fields=['mp_id'])
+
             mp = mercadopago.MP(settings.MP_CLIENT_ID, settings.MP_CLIENT_SECRET)
 
             title = "La Calma {}: {} al {} inclusive".format(reserva.departamento.nombre,
@@ -107,7 +108,7 @@ class ReservaWizard(SessionWizardView):
                     "success": site.domain + reverse('gracias_mp'),
                 },
                 "auto_return": "approved",
-                "external_reference": "Reference_1234",
+                "external_reference": reserva.mp_id,
             }
 
             preference = mp.create_preference(preference)
