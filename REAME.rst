@@ -1,3 +1,5 @@
-sistema de administracion para alquileres temporarios. 
+sistema de administracion para alquileres temporarios.
 
-licencia BSD
+.. class:: alert tip
+
+    licencia BSD
