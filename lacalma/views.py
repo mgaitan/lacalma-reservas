@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import json
 from datetime import date, timedelta
 from django.http import HttpResponse, HttpResponseBadRequest
@@ -156,7 +157,7 @@ def mp_notification(request):
                 mail_txt = render_to_string('mail_mp_txt.html', {'reserva': reserva})
                 mail_html = render_to_string('mail_mp.html', {'reserva': reserva})
 
-                msg = EmailMultiAlternatives('Confirmación de Reserva %s - Las Grutas /ref. #%s' % (site.name, reserva.id),
+                msg = EmailMultiAlternatives(u'Confirmación de Reserva %s - Las Grutas /ref. #%s' % (site.name, reserva.id),
                                        mail_txt, 'info@lacalma-lasgrutas.com.ar', [reserva.email],
                                        bcc=['info@lacalma-lasgrutas.com.ar'])
                 msg.attach_alternative(mail_html, "text/html")
