@@ -46,7 +46,7 @@ class ReservaForm1(forms.Form):
         if not Reserva.fecha_libre(cleaned_data['departamento'],
                                    cleaned_data['desde'],
                                    cleaned_data['hasta']):
-            self.add_error('fechas', 'Hay reservas realizadas durante esas fechas para este departamento')
+            raise forms.ValidationError(u"Hay reservas realizadas durante esas fechas para este departamento")
 
         return cleaned_data
 
