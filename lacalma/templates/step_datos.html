@@ -58,14 +58,15 @@
         });
 
 
-        $('input[type=radio][name=datos-forma_pago]').change(function() {
-            if ($(this).val() == 'mercadopago') {
+        function update_submit() {
+            if ($('input[type=radio][name=datos-forma_pago]:checked').val() == 'mercadopago') {
                 $('#btn-reserva-submit').val('Pagar via MercadoPago')
             }else {
                 $('#btn-reserva-submit').val('Confirmar reserva')
             }
-        });
-        $('input[type=radio][name=datos-forma_pago]').trigger('change');
+        }
+        $('input[type=radio][name=datos-forma_pago]').change(update_submit);
+        update_submit()
     });
     </script>
 {% endblock extra_scripts %}
