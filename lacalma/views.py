@@ -4,7 +4,7 @@ from django.http import HttpResponse, HttpResponseBadRequest
 from django.conf import settings
 from django.contrib.sites.models import Site
 from django.core.urlresolvers import reverse
-from django.core.mail import EmailMultiAlternatives
+from django.core.mail import EmailMultiAlternatives, send_mail
 from django.template.loader import render_to_string
 from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import render, redirect, get_object_or_404
@@ -103,10 +103,11 @@ class ReservaWizard(SessionWizardView):
                 "auto_return": "approved",
             }
 
-
-
             preference = mp.create_preference(preference)
-            url = preference['response']['sandbox_init_point'];
+            if settings.MP_SANDBOX_MODE:
+                url = preference['response']['sandbox_init_point']
+            else:
+                url = preference['response']['init_point']
 
             return redirect(url)
 
@@ -135,9 +136,12 @@ def detalle(request, id):
 @csrf_exempt
 def mp_notification(request):
     mp = mercadopago.MP(settings.MP_CLIENT_ID, settings.MP_CLIENT_SECRET)
-    mp.sandbox_mode(True)
+    if settings.MP_SANDBOX_MODE:
+        mp.sandbox_mode(True)
     payment_info = mp.get_payment_info(request.GET["id"])
-    print(payment_info)
+
+    send_mail('MP payment info', json.dumps(payment_info, indent=2), 'info@lacalma-lasgrutas.com.ar',
+    ['gaitan@gmail.com'], fail_silently=False)
     return HttpResponse('ok')
     # return HttpResponseBadRequest('bad boy')
 

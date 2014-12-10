@@ -11,7 +11,7 @@ urlpatterns = patterns('',
     url(r'^gracias/$', gracias, name='gracias'),
     url(r'^gracias/success$', gracias_mp, name='gracias_mp'),
     url(r'^detalle/(?P<id>\d+)$', detalle),
-    url(r'^mp-notificacion$', mp_notification),
+    url(r'^ipn$', mp_notification, name='ipn'),
     url(r'^$', reserva_view)
 
 )
