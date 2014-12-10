@@ -156,8 +156,8 @@ def mp_notification(request):
                   ['gaitan@gmail.com'], fail_silently=False)
 
         if payment_info['status'] == 200:
-            mp_id = payment_info['response']['collections']['external_reference']
-            status = payment_info['response']['collections']['status']
+            mp_id = payment_info['response']['collection']['external_reference']
+            status = payment_info['response']['collection']['status']
             if status == 'approved':
                 reserva = get_object_or_404(Reserva, mp_id=mp_id)
 
