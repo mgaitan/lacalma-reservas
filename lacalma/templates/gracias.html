@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+        {% block body %}
+
+        <div class="row"></div>
+
+                <div class="alert alert-success" >
+
+    <strong>¡Felicitaciones!</strong>
+
+    <p>Hemos recibido su solicitud correctamente. </p>
+
+    <p>En breve recibirá un correo electrónico con las instrucciones para realizar el depósito de seña y confirmar su reserva.
+
+     <p> ¡Gracias por visitar Las Grutas!</p>
+
+    </div>
+
+    {% if reserva %}
+    <h3>Información de su reserva pendiente</h3>
+
+         {% include "as_invoice.html" %}
+
+
+    {% endif %}
+
+
+    {% endblock body %}

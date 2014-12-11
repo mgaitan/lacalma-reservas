@@ -1,0 +1,56 @@
+{% extends "base_wizard.html" %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+
+
+
+{% block body %}
+
+    <h1>Obtenga un presupuesto y reserve online</h1>
+
+    <p>
+    Por favor, si no hay disponibilidad en la fecha que usted busca para un departamento, verifique si existe en alguno de los otros.
+    </p>
+
+
+        <form action="" method="post">
+
+        {% csrf_token %}
+        {{ wizard.management_form }}
+
+
+        <div role="tabpanel">
+
+          <!-- Nav tabs -->
+          <ul class="nav nav-tabs" role="tablist">
+
+            {% for depto in deptos %}
+            <li role="presentation" {% if forloop.first %}class="active"{% endif %}><a href="#depto-{{ depto.id }}" aria-controls="#depto-{{ depto.id }}" role="tab" data-toggle="tab" data-depto="{{ depto.id }}">{{ depto }}</a></li>
+            {% endfor %}
+          </ul>
+
+          <!-- Tab panes -->
+          <div class="tab-content">
+            {% for depto in deptos %}
+            <div role="tabpanel" class="tab-pane fade {% if forloop.first %}in active{% endif %}" id="depto-{{ depto.id }}">
+
+
+                <p>
+                Seleccione la fecha de su estadía (hasta la última noche que duerme) para el {{ depto }}.
+                </p>
+
+                <input class="fechas" type="hidden" id="date-{{ depto.id }}" value="">
+
+                <div id="container-{{ depto.id }}"></div>
+            </div>
+            {% endfor %}
+          </div>
+
+        </div>
+
+
+        {{ wizard.form|crispy }}
+        <input type="submit" class="btn btn-success"  value="Calcular presupuesto" />
+        </form>
+
+{% endblock body %}

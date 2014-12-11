@@ -1,0 +1,26 @@
+[
+    {
+        "pk": 1,
+        "model": "sites.site",
+        "fields": {
+            "domain": "reservas.lacalma-lasgrutas.com.ar",
+            "name": "La Calma"
+        }
+    },
+    {
+        "pk": 2,
+        "model": "sites.site",
+        "fields": {
+            "domain": "reservas-test.lacalma-lasgrutas.com.ar",
+            "name": "La Calma - TEST"
+        }
+    },
+    {
+        "pk": 3,
+        "model": "sites.site",
+        "fields": {
+            "domain": "localhost:8000",
+            "name": "La Calma - DESARROLLO"
+        }
+    }
+]

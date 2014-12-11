@@ -1,0 +1,55 @@
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Reservas La Calma</title>
+
+		<link rel="stylesheet" href="{% static "css/bootstrap.min.css"  %}"/>
+
+		<style>
+		#wrapper
+		{
+			width:800px;
+			margin:0 auto;
+			color:#333;
+			font-family:"Droid Sans", sans-serif;
+			line-height:1.5;
+			font-size:14px;
+		}
+		.date-picker-wrapper .month-wrapper table .day.pendiente { background-color:orange; }
+		.date-picker-wrapper .month-wrapper table .day.confirmada { background-color:#99FF66; }
+		.options { display:none; border-left:6px solid #8ae; padding:10px; font-size:12px; line-height:1.4; background-color:#eee; border-radius:4px;}
+
+		.tab-pane { padding-left: 15px; padding-bottom: 15px;}
+
+		.help-block { font-size: 10px;}
+		</style>
+
+
+
+		{% block extra_head %}
+
+		{% endblock extra_head %}
+
+	</head>
+	<body>
+
+		<div id="wrapper">
+
+		{% block body %}
+
+
+		{% endblock body %}
+
+		</div>
+
+
+
+       {% block extra_scripts %}
+       {% endblock extra_scripts %}
+	</body>
+
+
+</html>

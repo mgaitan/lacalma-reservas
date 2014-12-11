@@ -10,26 +10,26 @@
                 <dt>Fecha de salida</dt>
                     <dd>{{ reserva.hasta|date:"l j \d\e F \d\e Y" }} (hasta las 10hs)</dd>
 
-            <dt>Nombre y apellido</dt>
+                <dt>Forma de pago</dt>
+                  <dd>{{ reserva.get_forma_pago_display }}</dd>
+
+
+            {% if not ignorar_detalles %}
+
+                <dt>Nombre y apellido</dt>
                     <dd>{{ reserva.nombre_y_apellido }}</dd>
                 <dt>Email</dt>
                     <dd>{{ reserva.email }}</dd>
                 <dt>Teléfono</dt>
                     <dd>{{ reserva.telefono }}</dd>
 
-                {% if reserva.id %}
 
-                    <dt>Referencia </dt>
-                    <dd>#{{ reserva.id }}</dd>
-
-                {% endif %}
+            {% endif %}
         </dl>
 
 
       <!-- / end client details section -->
       <table class="table table-bordered">
-         <caption><h5>Presupuesto</h5></caption>
-
         <thead>
           <tr>
             <th>
@@ -51,7 +51,7 @@
 
           {% if reserva.dias_alta %}
           <tr>
-            <td>Dias en temporada alta</td>
+            <td>Dias en temporada alta {{ reserva.departamento.nombre }}</td>
             <td><div class="text-right">{{ reserva.dias_alta }}</div></td>
             <td><div class="text-right">$ {{ reserva.departamento.dia_alta }}</div></td>
             <td><div class="text-right">$ {{ reserva.detalle.alta }}</div></td>
@@ -59,7 +59,7 @@
           {% endif %}
           {% if reserva.dias_media %}
           <tr>
-            <td>Dias en temporada media</td>
+            <td>Dias en temporada media {{ reserva.departamento.nombre }}</td>
             <td><div class="text-right">{{ reserva.dias_media }}</div></td>
             <td><div class="text-right">$ {{ reserva.departamento.dia_media }}</div></td>
             <td><div class="text-right">$ {{ reserva.detalle.media }}</div></td>
@@ -67,7 +67,7 @@
           {% endif %}
           {% if reserva.dias_baja %}
           <tr>
-            <td>Dias en temporada baja</td>
+            <td>Dias en temporada baja {{ reserva.departamento.nombre }}</td>
             <td><div class="text-right">{{ reserva.dias_baja }}</div></td>
             <td><div class="text-right">$ {{ reserva.departamento.dia_baja }}</div></td>
             <td><div class="text-right">$ {{ reserva.detalle.baja }}</div></td>
@@ -77,8 +77,8 @@
           <tr>
             <td>Descuento por reserva mayor a 15 días</td>
             <td><div class="text-right">- {{ reserva.descuento.0 }} %</div></td>
-            <td><div class="text-right">$ {{ reserva.departamento.1 }}</div></td>
-            <td><div class="text-right">$ -{{ reserva.departamento.1 }}</div></td>
+            <td><div class="text-right">$ {{ reserva.descuento.1 }}</div></td>
+            <td><div class="text-right">$ -{{ reserva.descuento.1 }}</div></td>
           </tr>
         {% endif %}
         {% for facturable in  reserva.facturables.all %}
@@ -95,16 +95,50 @@
             <td><p class="text-right"><strong>$ {{ reserva.costo_total }}</strong></p></td>
           </tr>
 
+  {% if reserva.id %}
 
+    {% if reserva.estado == 'confirmada' %}
+        <tr>
+            <td colspan="3"><p class="text-right" > <br> <br><strong>Depósito de seña realizado </strong></p></td>
+            <td><p class="text-right"><br> <br><strong>$ {{ reserva.deposito_reserva }} </strong></p></td>
+          </tr>
+          <tr>
+            <td colspan="3"><p class="text-right" > <br> <br><strong>Saldo a abonar </strong></p></td>
+            <td><p class="text-right"><br> <br><strong>$ {{ reserva.saldo }} </strong></p></td>
+          </tr>
+
+    {% elif reserva.estado == 'pendiente' %}
         <tr>
             <td colspan="3"><p class="text-right" > <br> <br><strong>Depósito de seña requerido ({{ reserva.deposito_requerido.0 }} %): </strong></p></td>
             <td><p class="text-right"><br> <br><strong>$ {{ reserva.deposito_requerido.1 }} </strong></p></td>
           </tr>
-     <tr>
-            <td colspan="4"><p class="text-center"><br><strong>Fecha de vencimiento de la reserva pendiente</strong>:  <mark> {{ reserva.fecha_vencimiento_reserva|date:"l j \d\e F \d\e Y - H:i \h\s" }}</mark></p></td>
+
+
+
+    {% endif %}
+
+
+
+      <tr>
+            <td colspan="4">
+
+            {% if reserva.estado == 'pendiente' %}
+
+              <p class="text-center"><br>Esta reserva se encuentra <strong>pendiente</strong>{% if reserva.fecha_vencimiento_reserva%}. Vence el  <mark> {{ reserva.fecha_vencimiento_reserva|date:"l j \d\e F \d\e Y - H:i \h\s" }}</mark>{% endif %}</p>
+
+            {% elif reserva.estado == 'confirmada' %}
+
+              <p class="text-center"><br>Esta reserva está <strong>confirmada </strong>{% if reserva.fecha_deposito_reserva %} desde el {{ reserva.fecha_deposito_reserva|date:"l j \d\e F \d\e Y - H:i \h\s" }} {% endif %}</p>
+            {% else %}
+
+              <p class="text-center"><br>Esta reserva se encuentra
+              <strong>vencida</strong> desde el {{ reserva.fecha_vencimiento_reserva|date:"l j \d\e F \d\e Y - H:i \h\s" }}</p>
+
+            {% endif %}
+            </td>
 
           </tr>
-
+  {% endif %}
 
 
         </tbody>
@@ -112,9 +146,3 @@
 
 
 
-
-                <p><strong>Comentario o consulta:</strong>
-                    {{ reserva.comentario|default:"-" }}</p>
-
-
-            </dl>

@@ -34,6 +34,7 @@ INSTALLED_APPS = (
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
+    'django.contrib.sites',
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.formtools',
@@ -79,6 +80,8 @@ USE_L10N = True
 
 USE_TZ = True
 
+SITE_ID = 3
+
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
@@ -86,6 +89,10 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 # https://docs.djangoproject.com/en/1.7/howto/static-files/
 
 STATIC_URL = '/static/'
+
+MP_CLIENT_ID = ''       # set it in your local_settings.py
+MP_CLIENT_SECRET = ''
+MP_SANDBOX_MODE = True
 
 try:
     from .local_settings import *

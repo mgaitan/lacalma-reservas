@@ -1,0 +1,92 @@
+{% extends "base_wizard.html" %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+
+
+
+{% block body %}
+
+            {% if presupuesto %}
+                <img src="http://www.lacalma-lasgrutas.com.ar/wp-content/uploads/2012/01/text2990.png" style="max-width:600px;" id="headerImage campaign-icon" mc:label="header_image" mc:edit="header_image" mc:allowdesigner mc:allowtext />
+            {% else %}
+
+                <h3>Presupuesto</h3>
+            {% endif %}
+
+
+            {% include "as_invoice.html" %}
+
+
+        <a id="back" class="btn">Volver</a>
+        <button id="btn-toggle-reservar" class="btn btn-success">Continuar con la reserva</button>
+
+        <div id="div-toggle-reservar" class="{% if not wizard.form.errors %}hide{% endif %}">
+
+            <p></p>
+
+
+
+        <p>Por favor, complete los siguientes datos:</p>
+
+
+        <form action="" method="post">{% csrf_token %}
+        {% csrf_token %}
+        {{ wizard.management_form }}
+        {{ wizard.form|crispy }}
+
+        {% if not presupuesto %}
+
+            <a id="back" class="btn">Volver</a>
+
+            <input id="btn-reserva-submit" type="submit"  class="btn btn-success" value="" /></p>
+
+        {% endif %}
+
+        </form>
+
+        </div>
+
+
+
+
+{% endblock body %}
+
+{% block extra_scripts %}
+    {{ block.super }}
+
+    <script type="text/javascript">
+    $(function(){
+        $('#btn-toggle-reservar').on('click', function() {
+            $('#div-toggle-reservar').fadeIn('slow');
+        });
+
+
+        function update_submit() {
+            if ($('input[type=radio][name=datos-forma_pago]:checked').val() == 'mercadopago') {
+                $('#btn-reserva-submit').val('Pagar via MercadoPago')
+            }else {
+                $('#btn-reserva-submit').val('Confirmar reserva')
+            }
+        }
+        $('input[type=radio][name=datos-forma_pago]').change(update_submit);
+        update_submit();
+
+        $('#id_datos-forma_pago_2').parent().append(' (<a class="modalButton" href="https://www.mercadopago.com/mla/credit_card_promos.htm">ver promociones</a>)');
+
+        $('a.modalButton').on('click', function(e) {
+            e.preventDefault();
+
+            var NWin = window.open($(this).prop('href'), 'Promociones vigentes con MercadoPago', 'height=700,width=830');
+             if (window.focus){
+               NWin.focus();
+             }
+
+        });
+
+
+    });
+
+
+
+    </script>
+{% endblock extra_scripts %}

@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+
+
+
+    {% block extra_head %}
+        <link rel="stylesheet" href="{% static "daterangepicker.css"  %}"/>
+
+
+        <script src="{% static "jquery-1.5.1.min.js" %}"></script>
+        <script type="text/javascript">
+            var jQuery_1_5_1 = $.noConflict(true);
+            var $_ = jQuery_1_5_1;
+        </script>
+
+        <script src="{% static "jquery-1.11.1.min.js" %}"></script>
+        <script src="{% static "js/bootstrap.min.js"  %}"></script>
+        <script src="{% static "moment.min.js" %}"></script>
+
+        <script src="{% static "jquery.daterangepicker.js" %}"></script>
+    {% endblock extra_head %}
+
+
+
+{% block extra_scripts %}
+
+
+    <script type="text/javascript">
+
+    var pendientes = {{ reservas_pendientes|safe }};
+    var confirmadas = {{ reservas_confirmadas|safe }};
+
+
+
+    function update_reservas(){
+        {% for depto in deptos %}
+
+        $_('#date-{{ depto.id }}').dateRangePicker({
+                separator: ' al ',
+                format: 'DD/MM/YYYY',
+                minDays: 5,
+                showShortcuts: false,
+                startOfWeek: 'monday',
+                language:'es',
+                alwaysOpen:true,
+                inline:true,
+                container: '#container-{{ depto.id }}',
+
+                beforeShowDay: function(t)
+                {
+                    depto = {{ depto.id }};
+
+                    hoy = moment('{{ hoy }}', 'YYYY-MM-DD').toDate();
+                    if (parseInt(moment(t).format('YYYYMMDD')) < parseInt(moment(hoy).format('YYYYMMDD'))){
+                        return [false,'',''];
+                    }
+
+                    dia = moment(t).format('YYYY-MM-DD');
+
+                    if($.inArray(dia, pendientes[depto]) > -1){
+                        return [false,'pendiente','Hay una reserva pendiente en esta fecha. Por favor, revise nuevamente en las próximas horas.'];
+                    }
+                    if($.inArray(dia, confirmadas[depto]) > -1){
+                        return [false,'confirmada','Hay una reserva confirmada en esta fecha'];
+                    }
+                    return [true,'',''];
+                }
+
+            }).bind('datepicker-change',function(event,obj) {
+                $('#id_fechas-fechas').val(obj.value);
+            });
+
+        {% endfor %}
+    }
+
+
+    $_(function(){
+      $(function(){
+        update_reservas();
+
+        $('#back').click(function(e){
+            e.preventDefault();
+            window.history.back();
+            return false;
+        })
+
+        $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+            $('#id_fechas-departamento').val($(e.target).data('depto'));
+            $('#id_fechas-fechas').val('');
+        })
+
+
+        });
+     });
+
+    </script>
+
+
+{% endblock extra_scripts %}

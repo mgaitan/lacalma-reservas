@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+{% block body %}
+
+<div class="row">
+        <div class="col-xs-6">
+          <h1>
+            <img src="{% static "img/logo.png" %}" />
+          </h1>
+        </div>
+        <div class="col-xs-6 text-right">
+          <h1>{% if reserva.estado == 'confirmada' %}REMITO{% else %}PRESUPUESTO{% endif %}</h1>
+          <h1><small>{{ reserva }}</small></h1>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-xs-5">
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <h4>De: <a href="#">Graciela Lamothe Coulomme</a></h4>
+            </div>
+            <div class="panel-body">
+              <p>
+                info@lacalma-lasgrutas.com.ar <br>
+                Tel. 0299 154160450<br>
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="col-xs-5 col-xs-offset-2 text-right">
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <h4>Para: <a href="#">{{ reserva.nombre_y_apellido }}</a></h4>
+            </div>
+            <div class="panel-body">
+              <p>
+              {% if reserva.procedencia %}
+                {{ reserva.procedencia }}<br>
+              {% endif %}
+                {{ reserva.email }}<br>
+                {{ reserva.telefono }}<br>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+    {% include "as_invoice.html" with ignorar_detalles=True %}
+
+
+    {% if reserva.saldo > 0 %}
+
+    <p>Los datos de la cuenta bancaria para realizar el depósito {% if reserva.estado == 'confirmada' %}por el saldo{% else %}de seña{% endif %} son los siguientes:</p>
+
+    <div class="col-md-3" style="width: 40%">
+        <table class="table table-condensed table-bordered table-striped">
+            <tbody>
+            <tr>
+            <td> Caja de Ahorro en Pesos <strong>Nº 25403769081732 </strong></td></tr>
+            <tr>
+            <td> Banco de la Nación Argentina - Sucursal 2540</td></tr>
+            <td> Titular: <strong>Graciela Lamothe Coulomme</strong> </td></tr>
+            <tr>
+            <td> CBU 0110376030037690817329 </td></tr>
+            </tbody>
+        </table>
+    </div>
+
+     <p>Por favor, envíe el comprobante a nuestro correo electrónico</p>
+
+    {% endif %}
+
+
+          {% if reserva.observaciones %}
+
+                <p><strong>Observaciones:</strong>
+                    {{ reserva.observaciones }}</p>
+
+          {% endif %}
+
+
+    <p>¡Gracias por visitarnos!<br>
+    Complejo La Calma - Las Grutas - Patagonia Argentina<br>
+    <a href="#">www.lacalma-lasgrutas.com.ar</a>
+    </p>
+
+
+{% endblock %}
