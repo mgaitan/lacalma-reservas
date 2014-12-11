@@ -10,6 +10,9 @@
                 <dt>Fecha de salida</dt>
                     <dd>{{ reserva.hasta|date:"l j \d\e F \d\e Y" }} (hasta las 10hs)</dd>
 
+                <dt>Forma de pago</dt>
+                  <dd>{{ reserva.get_forma_pago_display }}</dd>
+
 
             {% if not ignorar_detalles %}
 
@@ -121,7 +124,7 @@
 
             {% if reserva.estado == 'pendiente' %}
 
-              <p class="text-center"><br><strong>Fecha de vencimiento de la reserva pendiente</strong>:  <mark> {{ reserva.fecha_vencimiento_reserva|date:"l j \d\e F \d\e Y - H:i \h\s" }}</mark></p>
+              <p class="text-center"><br>Esta reserva se encuentra <strong>pendiente</strong>{% if reserva.fecha_vencimiento_reserva%}. Vence el  <mark> {{ reserva.fecha_vencimiento_reserva|date:"l j \d\e F \d\e Y - H:i \h\s" }}</mark>{% endif %}</p>
 
             {% elif reserva.estado == 'confirmada' %}
 

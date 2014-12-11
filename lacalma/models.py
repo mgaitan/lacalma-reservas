@@ -46,7 +46,7 @@ class Reserva(TimeStampedModel):
                      ('recomendacion', u'Por una recomendación'),
                      ('inmobiliaria', u'Por la inmobiliaria'),
                      ('otro', 'Otro'),)
-    METODO = Choices('deposito', 'mercadopago')
+    METODO = Choices(('deposito', u'Depósito bancario'), ('mercadopago', 'Mercadopago'))
 
     departamento = models.ForeignKey(Departamento)
     desde = models.DateField(verbose_name="Entra (14hs)")          # dia de entrada desde las 14hs
