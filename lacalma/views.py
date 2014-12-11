@@ -140,9 +140,9 @@ def gracias_mp(request):
 
 
 @staff_member_required
-def detalle(request, id):
+def presupuesto(request, id):
     reserva = get_object_or_404(Reserva, id=id)
-    return render(request, 'index.html', {'reserva': reserva, 'presupuesto': True})
+    return render(request, 'presupuesto.html', {'reserva': reserva})
 
 
 @csrf_exempt

@@ -74,6 +74,8 @@ class Reserva(TimeStampedModel):
     fecha_deposito_reserva = models.DateTimeField(null=True, blank=True)
     deposito_reserva = models.DecimalField(max_digits=7, decimal_places=2, default=0)
     mp_id = models.CharField(verbose_name=u'ID Transacción de Mercadopago', max_length=100, null=True, blank=True)
+    observaciones = models.TextField(help_text="Se mostraran en el presupuesto o remito", null=True, blank=True)
+
 
     def __unicode__(self):
         return u'Reserva #%s' % self.id
@@ -113,6 +115,9 @@ class Reserva(TimeStampedModel):
 
         for facturable in self.facturables.all():
             self.costo_total += facturable.monto
+
+    def saldo(self):
+        return self.costo_total - self.deposito_reserva
 
     def calcular_vencimiento(self):
         # fecha vencimiento
