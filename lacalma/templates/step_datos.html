@@ -46,26 +46,6 @@
 
         </div>
 
-<!-- Modal -->
-<div class="modal fade " id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="margin-left: -400px; width: 830px; ">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                 <h4 class="modal-title">Promociones vigentes de MercadoPago </h4>
-
-            </div>
-            <div class="modal-body" style="width: 805px; overflow: hidden; height:500px"><iframe frameborder="0"></iframe></div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
-            </div>
-        </div>
-        <!-- /.modal-content -->
-    </div>
-    <!-- /.modal-dialog -->
-</div>
-<!-- /.modal -->
-
 
 
 
@@ -91,18 +71,17 @@
         $('input[type=radio][name=datos-forma_pago]').change(update_submit);
         update_submit();
 
-        $('#id_datos-forma_pago_2').parent().append(' (<a  data-toggle="modal" data-target="#myModal" class="modalButton" data-src="https://www.mercadopago.com/mla/credit_card_promos.htm">ver promociones</a>)');
+        $('#id_datos-forma_pago_2').parent().append(' (<a class="modalButton" href="https://www.mercadopago.com/mla/credit_card_promos.htm">ver promociones</a>)');
 
         $('a.modalButton').on('click', function(e) {
             e.preventDefault();
-            var src = $(this).data('src');
-            var height = "500";
-            var width = "800";
 
-            $("#myModal iframe").attr({'src':src,
-                                       'height': height,
-                                       'width': width});
-});
+            var NWin = window.open($(this).prop('href'), 'Promociones vigentes con MercadoPago', 'height=700,width=830');
+             if (window.focus){
+               NWin.focus();
+             }
+
+        });
 
 
     });
