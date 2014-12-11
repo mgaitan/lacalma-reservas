@@ -15,11 +15,8 @@ class FacturableInline(admin.TabularInline):
 
 class ReservaAdmin(admin.ModelAdmin):
 
-
-    form = ReservaAdminForm
-
-    list_display = ('__unicode__', 'departamento', 'nombre_y_apellido', 'desde', 'hasta', 'estado', 'fecha_vencimiento_reserva')
-    list_filter = ('departamento', 'estado', 'desde', 'hasta', 'fecha_vencimiento_reserva')
+    list_display = ('__unicode__', 'departamento', 'nombre_y_apellido', 'desde', 'hasta', 'estado', 'fecha_vencimiento_reserva', 'forma_pago')
+    list_filter = ('departamento', 'estado', 'desde', 'hasta', 'fecha_vencimiento_reserva', 'forma_pago')
     search_fields = ('nombre_y_apellido', 'email')
     readonly_fields = ('dias_alta', 'dias_baja', 'dias_media', 'dias_total', 'total_sin_descuento', 'costo_total')
 

@@ -59,7 +59,7 @@ class Reserva(TimeStampedModel):
     estado = models.CharField(max_length=50, choices=ESTADOS, default=ESTADOS.pendiente)
     como_se_entero = models.CharField(verbose_name=u'¿Cómo conoció La Calma?', max_length=50, choices=ENTERO, null=True, blank=True)
     comentario = models.TextField(verbose_name=u'¿Algún comentario?', null=True, blank=True)
-    forma_pago = models.CharField(max_length=50, choices=METODO, default=METODO.deposito)
+    forma_pago = models.CharField(verbose_name='Forma de pago', max_length=50, choices=METODO, default=METODO.deposito)
 
 
     dias_total = models.IntegerField(default=0)
