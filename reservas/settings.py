@@ -40,7 +40,8 @@ INSTALLED_APPS = (
     'django.contrib.formtools',
     'crispy_forms',
     'reservas',
-    'lacalma'
+    'lacalma',
+    'raven.contrib.django.raven_compat',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -93,6 +94,11 @@ STATIC_URL = '/static/'
 MP_CLIENT_ID = ''       # set it in your local_settings.py
 MP_CLIENT_SECRET = ''
 MP_SANDBOX_MODE = True
+
+
+RAVEN_CONFIG = {
+    'dsn': 'https://:8cf565593e7e42a38a3332b567601034@app.getsentry.com/34941',
+}
 
 try:
     from .local_settings import *
