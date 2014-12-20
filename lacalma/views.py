@@ -177,7 +177,7 @@ def mp_notification(request):
 
                 msg = EmailMultiAlternatives(u'Confirmación de Reserva %s - Las Grutas /ref. #%s' % (site.name, reserva.id),
                                        mail_txt, 'info@lacalma-lasgrutas.com.ar', [reserva.email],
-                                       bcc=['info@lacalma-lasgrutas.com.ar'])
+                                       cc=['info@lacalma-lasgrutas.com.ar'])
                 msg.attach_alternative(mail_html, "text/html")
                 msg.send()
 
