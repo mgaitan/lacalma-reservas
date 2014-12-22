@@ -160,3 +160,16 @@ class TestFacturables(TestCase):
         self.assertEqual(reserva.total_sin_descuento(), Decimal(PRECIO_DIA * 2))
         self.assertEqual(reserva.costo_total, Decimal(PRECIO_DIA * 2) - Decimal('10'))
 
+
+class TestDiasOcupadosEnFrontEnd(TestCase):
+
+    fixtures = ['deptos.json']
+
+    def test_pendiente_proximo_simple(self):
+        maniana = date.today() + timedelta(days=1)
+        rango = [(maniana + timedelta(days=i)) for i in range(5)]
+        ReservaFactory(desde=rango[0],
+                       hasta=rango[-1]).save()
+        response = self.client.get('/')
+        fechas = json.loads(response.context['reservas_pendientes'])["1"]
+        self.assertEqual(fechas, [d.isoformat() for d in rango[:-1]])
