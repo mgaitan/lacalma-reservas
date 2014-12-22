@@ -38,9 +38,9 @@ class ReservaWizard(SessionWizardView):
         for depto in Departamento.objects.all():
             pendientes = []
             confirmadas = []
-            for reserva in Reserva.objects.filter(departamento=depto, desde__gte=hoy, estado=Reserva.ESTADOS.pendiente):
+            for reserva in Reserva.objects.filter(departamento=depto, hasta__gte=hoy, estado=Reserva.ESTADOS.pendiente):
                 pendientes.extend((d.isoformat() for d in reserva.rango()))
-            for reserva in Reserva.objects.filter(departamento=depto, desde__gte=hoy, estado=Reserva.ESTADOS.confirmada):
+            for reserva in Reserva.objects.filter(departamento=depto, hasta__gte=hoy, estado=Reserva.ESTADOS.confirmada):
                 confirmadas.extend((d.isoformat() for d in reserva.rango()))
 
             reservas_pendientes[str(depto.id)] = pendientes

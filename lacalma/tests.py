@@ -173,3 +173,15 @@ class TestDiasOcupadosEnFrontEnd(TestCase):
         response = self.client.get('/')
         fechas = json.loads(response.context['reservas_pendientes'])["1"]
         self.assertEqual(fechas, [d.isoformat() for d in rango[:-1]])
+
+
+    def test_confirmada_en_curso(self):
+        ayer = date.today() + timedelta(days=-1)
+        rango = [(ayer + timedelta(days=i)) for i in range(5)]
+        r = ReservaFactory(desde=rango[0],
+                       hasta=rango[-1])
+        r.estado = Reserva.ESTADOS.confirmada
+        r.save()
+        response = self.client.get('/')
+        fechas = json.loads(response.context['reservas_confirmadas'])["1"]
+        self.assertEqual(fechas, [d.isoformat() for d in rango[:-1]])
