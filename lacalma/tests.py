@@ -1,10 +1,11 @@
+import json
 from datetime import date, timedelta
 from django.utils import timezone
 from decimal import Decimal
 from django.test import TestCase
 from django.core.management import call_command
 from lacalma.models import Reserva, Departamento, TEMPORADA_ALTA, ConceptoFacturable
-from lacalma.forms import ReservaForm
+from lacalma.forms import ReservaForm1, ReservaForm2
 
 
 
@@ -61,77 +62,46 @@ class TestValidar(TestCase):
 
     def test_comienza_entre_reserva(self):
         ReservaFactory(desde=date(2014, 11, 20), hasta=date(2014, 11, 24)).save()
-        form = ReservaForm({'fechas': '23-11-2014 al 27-11-2014',
-            'procedencia': None,
-             'nombre_y_apellido': 'tin',
-             'departamento': 1,
-             'como_se_entero': None,
-             'telefono': '33',
-             'email': 'gaitan@gmail.com'})
+        form = ReservaForm1({'fechas': '23/11/2014 al 27/11/2014',
+             'departamento': 1})
         self.assertFalse(form.is_valid())
-        self.assertEqual(form._errors, {'fechas': [u'Hay reservas realizadas durante esas fechas para este departamento']})
+        self.assertEqual(form._errors, {'__all__': [u'Hay reservas realizadas durante esas fechas para este departamento']})
 
     def test_comienza_mismo_dia_fin_anterior(self):
         ReservaFactory(desde=date(2014, 11, 20), hasta=date(2014, 11, 24)).save()
         # entra el mismo dia
-        form = ReservaForm({'fechas': '24-11-2014 al 27-11-2014',
-            'procedencia': None,
-             'nombre_y_apellido': 'tin',
-             'departamento': 1,
-             'como_se_entero': None,
-             'telefono': '33',
-             'email': 'gaitan@gmail.com'})
+        form = ReservaForm1({'fechas': '24/11/2014 al 27/11/2014',
+             'departamento': 1})
         self.assertTrue(form.is_valid())
 
     def test_termina_despues_de_reserva_previa(self):
         ReservaFactory(desde=date(2014, 11, 20), hasta=date(2014, 11, 24)).save()
         # entra el mismo dia
-        form = ReservaForm({'fechas': '10-11-2014 al 21-11-2014',
-            'procedencia': None,
-             'nombre_y_apellido': 'tin',
-             'departamento': 1,
-             'como_se_entero': None,
-             'telefono': '33',
-             'email': 'gaitan@gmail.com'})
+        form = ReservaForm1({'fechas': '10/11/2014 al 21/11/2014',
+             'departamento': 1})
         self.assertFalse(form.is_valid())
-        self.assertEqual(form._errors, {'fechas': [u'Hay reservas realizadas durante esas fechas para este departamento']})
+        self.assertEqual(form._errors, {'__all__': [u'Hay reservas realizadas durante esas fechas para este departamento']})
 
     def test_termina_dia_reserva(self):
         ReservaFactory(desde=date(2014, 11, 20), hasta=date(2014, 11, 24)).save()
         # entra el mismo dia
-        form = ReservaForm({'fechas': '10-11-2014 al 19-11-2014',
-            'procedencia': None,
-             'nombre_y_apellido': 'tin',
-             'departamento': 1,
-             'como_se_entero': None,
-             'telefono': '33',
-             'email': 'gaitan@gmail.com'})
+        form = ReservaForm1({'fechas': '10/11/2014 al 19/11/2014',
+             'departamento': 1})
         self.assertTrue(form.is_valid())
 
     def test_solapamiento_total(self):
         ReservaFactory(desde=date(2014, 11, 1), hasta=date(2014, 11, 30)).save()
-        form = ReservaForm({'fechas': '10-11-2014 al 29-11-2014',
-            'procedencia': None,
-             'nombre_y_apellido': 'tin',
-             'departamento': 1,
-             'como_se_entero': None,
-             'telefono': '33',
-             'email': 'gaitan@gmail.com'})
+        form = ReservaForm1({'fechas': '10/11/2014 al 29/11/2014',
+             'departamento': 1})
         self.assertFalse(form.is_valid())
-        self.assertEqual(form._errors, {'fechas': [u'Hay reservas realizadas durante esas fechas para este departamento']})
-
+        self.assertEqual(form._errors, {'__all__': [u'Hay reservas realizadas durante esas fechas para este departamento']})
 
     def test_ignora_vencidas(self):
         reserva = ReservaFactory(desde=date(2014, 11, 1), hasta=date(2014, 11, 30))
         reserva.estado = 'vencida'
         reserva.save()
-        form = ReservaForm({'fechas': '10-11-2014 al 29-11-2014',
-            'procedencia': None,
-             'nombre_y_apellido': 'tin',
-             'departamento': 1,
-             'como_se_entero': None,
-             'telefono': '33',
-             'email': 'gaitan@gmail.com'})
+        form = ReservaForm1({'fechas': '10/11/2014 al 29/11/2014',
+             'departamento': 1})
         self.assertTrue(form.is_valid())
 
 
