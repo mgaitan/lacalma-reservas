@@ -136,7 +136,8 @@ class Reserva(TimeStampedModel):
     @classmethod
     def fecha_libre(cls, departamento, desde, hasta, exclude=None):
         qs = Reserva.objects.filter(departamento=departamento).\
-                           exclude(estado=Reserva.ESTADOS.vencida).filter(
+                           exclude(estado=Reserva.ESTADOS.vencida).\
+                           exclude(estado=Reserva.ESTADOS.cancelada).filter(
                                   Q(desde__range=(desde, hasta - timedelta(days=1))) |
                                   Q(hasta__range=(desde + timedelta(days=1), hasta)) |
                                   Q(desde__lte=desde,hasta__gte=hasta))

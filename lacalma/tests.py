@@ -104,6 +104,34 @@ class TestValidar(TestCase):
              'departamento': 1})
         self.assertTrue(form.is_valid())
 
+    def test_ignora_canceladas(self):
+        reserva = ReservaFactory(desde=date(2014, 11, 1), hasta=date(2014, 11, 30))
+        reserva.estado = 'cancelada'
+        reserva.save()
+        form = ReservaForm1({'fechas': '10/11/2014 al 29/11/2014',
+             'departamento': 1})
+        self.assertTrue(form.is_valid())
+
+    def test_mercadopago_vencida(self):
+        reserva = ReservaFactory(desde=date(2014, 11, 1), hasta=date(2014, 11, 30))
+        reserva.estado = 'mercadopago'
+        reserva.estado = 'vencida'
+        reserva.save()
+        form = ReservaForm1({'fechas': '10/11/2014 al 29/11/2014',
+             'departamento': 1})
+        self.assertTrue(form.is_valid())
+
+    def test_mercadopago_cancelada(self):
+        reserva = ReservaFactory(desde=date(2014, 11, 1), hasta=date(2014, 11, 30))
+        reserva.estado = 'mercadopago'
+        reserva.estado = 'cancelada'
+        reserva.save()
+        form = ReservaForm1({'fechas': '10/11/2014 al 29/11/2014',
+             'departamento': 1})
+        self.assertTrue(form.is_valid())
+
+
+
 
 class TestVencidas(TestCase):
 
