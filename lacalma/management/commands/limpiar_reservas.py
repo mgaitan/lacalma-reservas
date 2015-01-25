@@ -23,7 +23,7 @@ class Command(BaseCommand):
 
         for reserva in Reserva.objects.filter(estado=Reserva.ESTADOS.pendiente,
                                               forma_pago=Reserva.METODO.mercadopago,
-                                              created__lt=AHORA - timedelta(hours=5)).\
+                                              created__lt=AHORA - timedelta(hours=2)).\
                                               exclude(mp_pendiente=True):
             reserva.mp_pendiente = True
             reserva.save(update_fields=['mp_pendiente'])
