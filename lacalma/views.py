@@ -83,7 +83,7 @@ class ReservaWizard(SessionWizardView):
         else:
 
             reserva.mp_id = str(uuid.uuid1())
-            reserva.save(update_fields=['mp_id'])
+
 
             mp = mercadopago.MP(settings.MP_CLIENT_ID, settings.MP_CLIENT_SECRET)
 
@@ -120,7 +120,8 @@ class ReservaWizard(SessionWizardView):
                 url = preference['response']['sandbox_init_point']
             else:
                 url = preference['response']['init_point']
-
+            reserva.mp_url = url
+            reserva.save(update_fields=['mp_id', 'mp_url'])
             return redirect(url)
 
 

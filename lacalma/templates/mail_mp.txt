@@ -1,0 +1,27 @@
+Estimado/a {{ reserva.nombre_y_apellido }},
+
+Notamos que hace algunas horas realizó una reserva para el {{ reserva.departamento }} intentando pagar con tarjeta de crédito a través de Mercado Pago, pero por algún motivo no se completó la transacción.
+
+Si desea reintentar el pago con tarjeta ingrese a este link:
+
+    {{ reserva.mp_url }}
+
+Si en cambio desea confirmar su reserva vía transferencia bancaria, por favor proceda con los siguientes datos:
+
+    Depósito requerido: $ {{ reserva.deposito_requerido.1 }} ({{ reserva.deposito_requerido.0 }} %)
+    Caja de Ahorro en Pesos Nº 25403769081732
+    Banco de la Nación Argentina
+    Sucursal 2540
+    Titular: Graciela Lamothe Coulomme
+    CBU 0110376030037690817329
+
+Su pre-reserva permanecerá vigente hasta el {{ reserva.fecha_vencimiento_reserva|date:"l j \d\e F \d\e Y" }}
+
+Por favor, no dude en consultarnos ante cualquier duda o inconveniente.
+
+
+Saludos,
+El equipo de La Calma
+
+
+ref: #{{ reserva.id }}
