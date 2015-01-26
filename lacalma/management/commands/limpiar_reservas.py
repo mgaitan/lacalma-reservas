@@ -29,4 +29,4 @@ class Command(BaseCommand):
             reserva.save(update_fields=['mp_pendiente'])
             mail_txt = render_to_string('mail_mp.txt', {'reserva': reserva})
             send_mail('Sobre su reserva en Complejo La Calma (ref #%i)?' % reserva.id, mail_txt,
-                reserva.email, ['info@lacalma-lasgrutas.com.ar'])
+                'info@lacalma-lasgrutas.com.ar', [reserva.email, 'info@lacalma-lasgrutas.com.ar'])

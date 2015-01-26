@@ -8,7 +8,6 @@ from lacalma.models import Reserva, Departamento, TEMPORADA_ALTA, ConceptoFactur
 from lacalma.forms import ReservaForm1, ReservaForm2
 
 
-
 def ReservaFactory(desde, hasta, depto=1):
     departamento = Departamento.objects.get(pk=depto)
     return Reserva(departamento=departamento, desde=desde, hasta=hasta,
@@ -131,9 +130,7 @@ class TestValidar(TestCase):
         self.assertTrue(form.is_valid())
 
 
-
-
-class TestVencidas(TestCase):
+class TestLimpiar(TestCase):
 
     fixtures = ['deptos.json']
 
@@ -154,6 +151,25 @@ class TestVencidas(TestCase):
         self.assertEqual(Reserva.objects.get(id=reserva1.id).estado, Reserva.ESTADOS.vencida)
         self.assertEqual(Reserva.objects.get(id=reserva2.id).estado, Reserva.ESTADOS.pendiente)
         self.assertEqual(Reserva.objects.get(id=reserva3.id).estado, Reserva.ESTADOS.confirmada)
+
+    def test_mp_fallo_envia_mail(self):
+        from django.core.mail import outbox
+
+        reserva1 = ReservaFactory(desde=date(2014, 11, 1), hasta=date(2014, 11, 30))
+        reserva1.fecha_vencimiento_reserva = timezone.now() + timedelta(days=1)
+        reserva1.forma_pago = Reserva.METODO.mercadopago
+        reserva1.created = timezone.now() - timedelta(hours=2.1)
+        assert reserva1.estado == Reserva.ESTADOS.pendiente
+        assert not reserva1.mp_pendiente
+        assert len(outbox) == 0
+        reserva1.save()
+        call_command('limpiar_reservas')
+        reserva1 = Reserva.objects.get(id=reserva1.id)
+        self.assertEqual(reserva1.estado, Reserva.ESTADOS.pendiente)
+        self.assertTrue(reserva1.mp_pendiente)
+        self.assertEqual(len(outbox), 1)
+        mail = outbox[0]
+        self.assertTrue(mail.body.startswith('Estimado/a'))
 
 
 class TestDescuento(TestCase):
