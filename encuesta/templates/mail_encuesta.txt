@@ -1,0 +1,14 @@
+Estimado/a {{ reserva.nombre_y_apellido }},
+
+Hace algunos tuvimos el agrado de recibir a su familia en nuestro complejo.
+
+En La Calma queremos mejorar todos los años nuestro servicio y por ello le solicitamos que complete una muy breve encuesta con las apreciaciones de su última estadía. No le llevará más de 5 minutos.
+
+Para completar la encuesta ingrese al siguiente link:
+
+
+     http://{{ site.domain }}{% url 'encuesta' reserva.uuid %}
+
+
+Saludos,
+El equipo de La Calma

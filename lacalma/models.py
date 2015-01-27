@@ -79,6 +79,7 @@ class Reserva(TimeStampedModel):
     mp_url = models.CharField(max_length=255, default='')
     observaciones = models.TextField(help_text="Se mostraran en el presupuesto o remito", null=True, blank=True)
     uuid = models.CharField(max_length=8, null=True, editable=False)
+    envio_encuesta = models.DateTimeField(null=True, blank=True)
 
     def __unicode__(self):
         return u'Reserva #%s' % self.id
