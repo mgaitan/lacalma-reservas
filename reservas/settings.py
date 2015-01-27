@@ -40,6 +40,7 @@ INSTALLED_APPS = (
     'django.contrib.formtools',
     'crispy_forms',
     'reservas',
+    'encuesta',
     'lacalma',
     'raven.contrib.django.raven_compat',
 )
