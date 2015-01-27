@@ -6,6 +6,7 @@ from model_utils.models import TimeStampedModel
 from decimal import Decimal
 from pytz import UTC
 from django.utils import timezone
+import uuid
 from datetime import datetime, date, timedelta, time
 
 
@@ -77,7 +78,8 @@ class Reserva(TimeStampedModel):
     mp_pendiente = models.BooleanField(default=False)
     mp_url = models.CharField(max_length=255, default='')
     observaciones = models.TextField(help_text="Se mostraran en el presupuesto o remito", null=True, blank=True)
-
+    uuid = models.CharField(max_length=8, null=True, editable=False)
+    envio_encuesta = models.DateTimeField(null=True, blank=True)
 
     def __unicode__(self):
         return u'Reserva #%s' % self.id
@@ -133,7 +135,10 @@ class Reserva(TimeStampedModel):
 
     def save(self, *args, **kwargs):
         self.calcular_costo()
+        if not self.uuid:
+            self.uuid = str(uuid.uuid1()).split('-')[0]
         super(Reserva, self).save(*args, **kwargs)
+
 
     @classmethod
     def fecha_libre(cls, departamento, desde, hasta, exclude=None):

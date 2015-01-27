@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+        {% block body %}
+
+        <div class="row"></div>
+
+    <h1>Encuesta de satisfacción</h1>
+
+
+    <p>Estimado/a {{ reserva.nombre_y_apellido }}:</p>
+
+
+    <p>En La Calma queremos mejorar todos los años nuestro servicio. Completando esta breve encuesta con las apreciaciones de su última estadía nos ayudará a este proposito.</p>
+
+     <p> ¡Muchas gracias por su tiempo!</p>
+
+    <hr>
+
+ <form action="" method="post">{% csrf_token %}
+        {% csrf_token %}
+        {{ form|crispy }}
+
+        <input id="btn-reserva-submit" type="submit"  class="btn btn-success" value="Enviar respuesta" />
+
+ </form>
+
+
+    {% endblock body %}

@@ -1,0 +1,12 @@
+Se completó la encuesta de satisfaccion para la reserva ref #{{ encuesta.reserva_relacionada.id }}:
+
+
+    * {{ encuesta.reserva_relacionada.departamento }}:
+    * Nombre: {{ encuesta.reserva_relacionada.nombre_y_apellido }}
+    * Procedencia: {{ encuesta.reserva_relacionada.procedencia }}
+    * Fecha de llegada: {{ encuesta.reserva_relacionada.desde|date:"l j \d\e F \d\e Y" }} (desde las 14hs)
+    * Fecha de salida: {{ encuesta.reserva_relacionada.hasta|date:"l j \d\e F \d\e Y" }} (hasta las 10hs)
+
+Para ver la encuesta, ingresa al siguiente link:
+
+    http://reservas.lacalma-lasgrutas.com.ar{% url 'admin:encuesta_encuestasatisfaccion_change' encuesta.id %}

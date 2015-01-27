@@ -185,15 +185,3 @@ def mp_notification(request):
             return HttpResponse('ok')
     return HttpResponseBadRequest('bad boy')
 
-
-
-"""
-A futuro. la inmobiliaria manejaba su propio calendario de ubicacion.
-
-http://sanmatiaspropiedades.com/api-v2/rentals/www_query_all
-
-76251878  La Calma 1
-76251879  La Calma 2
-76251910  La Calma 3
-76251909  La Calma 4
-"""
