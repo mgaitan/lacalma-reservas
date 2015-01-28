@@ -130,6 +130,19 @@ class TestValidar(TestCase):
         self.assertTrue(form.is_valid())
 
 
+class TestForm2(TestCase):
+
+    def test_validar_emails_falla(self):
+        form = ReservaForm2(data={'email': 'gaitan@gmail.com', 'email_confirma': 'otro@gimail.com'})
+        form.is_valid()
+        self.assertEqual(form._errors['email'], ['Las direcciones no coinciden'])
+
+    def test_validar_emails_coinciden(self):
+        form = ReservaForm2(data={'email': 'gaitan@gmail.com', 'email_confirma': 'gaitan@gmail.com'})
+        form.is_valid()
+        self.assertNotIn('email', form._errors)
+
+
 class TestLimpiar(TestCase):
 
     fixtures = ['deptos.json']

@@ -55,14 +55,20 @@ class ReservaForm2(forms.ModelForm):
     CHOICES = (('deposito', u'Realizaré una seña del 50% vía transferencia bancaria en las próximas 48hs'),
                ('mercadopago', 'Abonaré con tarjeta de crédito (hasta 12 cuotas)'))
     forma_pago = forms.ChoiceField(widget=forms.RadioSelect, choices=CHOICES, initial='deposito')
+    email_confirma = forms.EmailField(label='Confirme su email')
+
+    class Meta:
+        model = Reserva
+        fields = ('nombre_y_apellido', 'email', 'email_confirma', 'telefono', 'procedencia',
+                  'como_se_entero', 'comentario', 'forma_pago')
 
     def __init__(self, *args, **kwargs):
         super(ReservaForm2, self).__init__(*args, **kwargs)
         for field in ('nombre_y_apellido', 'email', 'telefono'):
             self.fields[field].required = True
 
-    class Meta:
-        model = Reserva
-        fields = ('nombre_y_apellido', 'email', 'telefono', 'procedencia',
-                  'como_se_entero', 'comentario', 'forma_pago')
-
+    def clean(self):
+        cleaned_data = super(ReservaForm2, self).clean()
+        if cleaned_data['email'] != cleaned_data['email_confirma']:
+            self.add_error('email', 'Las direcciones no coinciden')
+        return cleaned_data
