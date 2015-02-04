@@ -63,6 +63,7 @@ class ReservaWizard(SessionWizardView):
     def done(self, form_list, **kwargs):
         data = self.get_all_cleaned_data()
         del data['fechas']
+        del data['email_confirma']
         reserva = Reserva(**data)
         reserva.calcular_vencimiento()
         reserva.save()
