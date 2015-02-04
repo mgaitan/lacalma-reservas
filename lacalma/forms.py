@@ -57,10 +57,15 @@ class ReservaForm2(forms.ModelForm):
     forma_pago = forms.ChoiceField(widget=forms.RadioSelect, choices=CHOICES, initial='deposito')
     email_confirma = forms.EmailField(label='Confirme su email')
 
+
     class Meta:
         model = Reserva
         fields = ('nombre_y_apellido', 'email', 'email_confirma', 'telefono', 'procedencia',
                   'como_se_entero', 'comentario', 'forma_pago')
+        widgets = {
+          'comentario': forms.Textarea(attrs={'rows':3, 'cols':30}),
+        }
+
 
     def __init__(self, *args, **kwargs):
         super(ReservaForm2, self).__init__(*args, **kwargs)
