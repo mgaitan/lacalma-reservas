@@ -10,11 +10,14 @@
                 <dt>Fecha de salida</dt>
                     <dd>{{ reserva.hasta|date:"l j \d\e F \d\e Y" }} (hasta las 10hs)</dd>
 
-                <dt>Forma de pago</dt>
-                  <dd>{{ reserva.get_forma_pago_display }}</dd>
 
 
             {% if not ignorar_detalles %}
+
+               <dt>Forma de pago</dt>
+                  <dd>{{ reserva.get_forma_pago_display }}</dd>
+
+
 
                 <dt>Nombre y apellido</dt>
                     <dd>{{ reserva.nombre_y_apellido }}</dd>
