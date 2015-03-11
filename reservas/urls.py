@@ -13,6 +13,7 @@ urlpatterns = patterns('',
     url(r'^presupuesto/(?P<id>\d+)$', presupuesto, name="presupuesto"),
     url(r'^ipn$', mp_notification, name='ipn'),
     url(r'^encuesta/', include('encuesta.urls')),
+    url(r'^retiros/', include('retiros.urls')),
 
     url(r'^$', reserva_view)
 

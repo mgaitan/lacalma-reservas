@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+
+
+    {% block extra_head %}
+
+        <script src="{% static "jquery-1.11.1.min.js" %}"></script>
+        <script src="{% static "js/bootstrap.min.js"  %}"></script>
+
+    {% endblock extra_head %}
+
+
+
+
+{% block body %}
+
+    <h1>{{ retiro }}</h1>
+
+    <h2>Formulario de inscripción</h2>
+
+    <p>
+    </p>
+
+
+        <form action="" method="post">
+
+        {% csrf_token %}
+        {{ form|crispy }}
+
+        <input id="btn-reserva-submit" type="submit"  class="btn btn-success" value="" /></p>
+
+
+        </form>
+
+{% endblock body %}
+
+
+
+{% block extra_scripts %}
+    {{ block.super }}
+
+    <script type="text/javascript">
+    $(function(){
+        $('#btn-toggle-reservar').on('click', function() {
+            $('#div-toggle-reservar').fadeIn('slow');
+        });
+
+
+        function update_submit() {
+            if ($('input[type=radio][name=datos-forma_pago]:checked').val() == 'mercadopago') {
+                $('#btn-reserva-submit').val('Pagar inscipción via MercadoPago')
+            }else {
+                $('#btn-reserva-submit').val('Confirmar pre-reserva')
+            }
+        }
+        $('input[type=radio][name=datos-forma_pago]').change(update_submit);
+        update_submit();
+
+        $('#id_datos-forma_pago_2').parent().append(' (<a class="modalButton" href="https://www.mercadopago.com/mla/credit_card_promos.htm">ver promociones</a>)');
+
+        $('a.modalButton').on('click', function(e) {
+            e.preventDefault();
+
+            var NWin = window.open($(this).prop('href'), 'Promociones vigentes con MercadoPago', 'height=700,width=830');
+             if (window.focus){
+               NWin.focus();
+             }
+
+        });
+
+    });
+
+
+
+    </script>
+{% endblock extra_scripts %}
