@@ -4,6 +4,7 @@ from model_utils.models import TimeStampedModel
 from model_utils import Choices
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.utils import timezone
+from datetime import timedelta
 import uuid
 
 
@@ -96,4 +97,8 @@ class Inscripcion(TimeStampedModel):
             self.uuid = str(uuid.uuid1()).split('-')[0]
         if not self.costo_total:
             self.costo_total = self.retiro.precio
+
+        if not self.fecha_vencimiento_reserva:
+            self.fecha_vencimiento_reserva = timezone.now() + timedelta(days=2)
+
         super(Inscripcion, self).save(*args, **kwargs)
