@@ -1,43 +1,23 @@
+Estimado/a {{ incripcion.nombre_completo }}:
 
-Hemos recibido su solicitud de reserva con los siguientes detalles:
+Hemos recibido su solicitud de insripción a {{ inscripcion.retiro }} a realizarse en
+la ciudad de {{ inscripcion.retiro.ciudad }} desde el {{ inscripcion.retiro.desde|date:"l j \d\e F \d\e Y" }}.
 
+El costo total es de ${{ inscripcion.retiro.precio }}. Debe realizar un depósito o transferencia bancaria por este importe a la siguiente cuenta:
 
-    * Departamento: {{ reserva.departamento }}
-    * Fecha de llegada: {{ reserva.desde|date:"l j \d\e F \d\e Y" }} (desde las 14hs)
-    * Fecha de salida: {{ reserva.hasta|date:"l j \d\e F \d\e Y" }} (hasta las 10hs)
-    * Dias en temporada alta: {{ reserva.dias_alta }}
-    * Dias en temporada media: {{ reserva.dias_media }}
-    * Dias en temporada baja: {{ reserva.dias_baja }}{% if reserva.descuento.0 %}
-    * Descuento por quincena aplicado: $ {{ reserva.descuento.1 }} ({{ reserva.descuento.0 }} %){% endif %}
-    * Costo total: $ {{ reserva.costo_total }}
+    BBVA Banco Francés
+    Cuenta Corriente en pesos Nº 174-1927/1
+    Centro Internacional de Yoga Sivananda
+    CBU 0170174220000000192716
 
-    * Depósito de seña requerido: $ {{ reserva.deposito_requerido.1 }} ({{ reserva.deposito_requerido.0 }} %)
+Tenga en cuenta que los cupos son limitados. La fecha de vencimiento de esta
+pre-inscripción es el {{ inscripcion.fecha_vencimiento_reserva|date:"l j \d\e F \d\e Y - H:i \h\s" }}.
 
-   * Fecha de vencimiento de la reserva pendiente:
+Responda este mensaje con el comprobante de pago para confirmar sus incripción
 
-        {{ reserva.fecha_vencimiento_reserva|date:"l j \d\e F \d\e Y - H:i \h\s" }}
+Quedamos a su entera disposición
 
-    * Comentario o consulta:
-
-        {{ reserva.comentario|default:"-"}}
-
-Para confirmar, debe realizar un deposito del 50% a la siguiente cuenta:
-
-    Caja de Ahorro en Pesos Nº 25403769081732
-    Banco de la Nación Argentina
-    Sucursal 2540
-    Titular: Graciela Lamothe Coulomme
-    CBU 0110376030037690817329
-
-Responda este mensaje con el comprobante de pago e inmediatamente su reserva estará confirmada.
+Centro Internacional de Yoga Sivananda
 
 
-Quedo a su entera disposición.
-
-Ing. Graciela Lamothe
-Complejo La Calma
-Las Grutas - Patagonia Argentina
-
-cel: 0299 154160450
-
-ref: #{{ reserva.id }}
+ref: #{{ inscripcion.id }}

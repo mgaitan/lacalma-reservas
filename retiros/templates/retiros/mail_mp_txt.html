@@ -1,27 +1,8 @@
+Estimado/a {{ incripcion.nombre_completo }}:
 
-Hemos recibido la confirmación de pago de su reserva con los siguientes detalles:
+¡Felicitaciones! Hemos recibido el pago de su inscripción a {{ inscripcion.retiro }} a realizarse en la ciudad de {{ inscripcion.retiro.ciudad }} desde el {{ inscripcion.retiro.desde|date:"l j \d\e F \d\e Y" }}.
 
-    * Departamento: {{ reserva.departamento }}
-    * Fecha de llegada: {{ reserva.desde|date:"l j \d\e F \d\e Y" }} (desde las 14hs)
-    * Fecha de salida: {{ reserva.hasta|date:"l j \d\e F \d\e Y" }} (hasta las 10hs)
-    * Dias en temporada alta: {{ reserva.dias_alta }}
-    * Dias en temporada media: {{ reserva.dias_media }}
-    * Dias en temporada baja: {{ reserva.dias_baja }}{% if reserva.descuento.0 %}
-    * Descuento por quincena aplicado: $ {{ reserva.descuento.1 }} ({{ reserva.descuento.0 }} %){% endif %}
-    * Costo total: $ {{ reserva.costo_total }}
+¡Esperamos su participación!
+Centro Internacional de Yoga Sivananda
 
-    * Comentario o consulta:
-
-        {{ reserva.comentario|default:"-"}}
-
-
-¡Esperamos su visita!
-
-
-Ing. Graciela Lamothe
-Complejo La Calma
-Las Grutas - Patagonia Argentina
-
-cel: 0299 154160450
-
-ref: #{{ reserva.id }}
+ref: #{{ inscripcion.id }}

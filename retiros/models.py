@@ -48,7 +48,7 @@ class Inscripcion(TimeStampedModel):
     retiro = models.ForeignKey(Retiro)
     apellido = models.CharField(max_length=50)
     nombres = models.CharField(max_length=100)
-    fecha_nacimiento = models.DateField()
+    fecha_nacimiento = models.DateField(help_text='Ej: 22/03/82')
     documento = models.CharField(max_length=50)
     ciudad = models.CharField(max_length=50)
     provincia = models.CharField(max_length=50)

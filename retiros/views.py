@@ -1,11 +1,18 @@
 # -*- coding: utf-8 -*-
+import json
+import uuid
+
 from django.shortcuts import render, get_object_or_404, redirect
 from .forms import InscripcionForm
 from .models import Retiro, Inscripcion
 from django.contrib.sites.models import Site
 from django.views.decorators.csrf import csrf_exempt
 from django.template.loader import render_to_string
+from django.core.urlresolvers import reverse
 from django.core.mail import send_mail
+from django.http import HttpResponse, HttpResponseBadRequest
+from django.conf import settings
+
 
 import mercadopago
 
@@ -14,7 +21,8 @@ def inscripcion(request, retiro_id):
 
     retiro = get_object_or_404(Retiro, id=retiro_id)
     data = request.POST if request.method == 'POST' else None
-    form = InscripcionForm(data, instance=None)
+    instance = Inscripcion.objects.first() if not data else None
+    form = InscripcionForm(data, instance=instance)
     if form.is_valid():
         inscripcion = form.save(commit = False)
         inscripcion.retiro = retiro
@@ -95,6 +103,7 @@ def mp_notification(request):
         site = Site.objects.get_current()
 
         payment_info = mp.get_payment_info(request.GET["id"])
+        print(payment_info)
         if payment_info['status'] == 200:
             mp_id = payment_info['response']['collection']['external_reference']
             status = payment_info['response']['collection']['status']
@@ -102,8 +111,8 @@ def mp_notification(request):
                 inscripcion = get_object_or_404(Inscripcion, mp_id=mp_id)
 
                 inscripcion.estado = inscripcion.ESTADOS.confirmada
-                inscripcion.fecha_deposito_inscripcion = timezone.now()
-                inscripcion.deposito_inscripcion = inscripcion.costo_total
+                inscripcion.fecha_deposito_reserva = timezone.now()
+                inscripcion.deposito_reveserva = inscripcion.costo_total
                 inscripcion.save()
 
 

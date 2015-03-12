@@ -7,9 +7,7 @@
 
         <script src="{% static "jquery-1.11.1.min.js" %}"></script>
         <script src="{% static "js/bootstrap.min.js"  %}"></script>
-        <script src="{% static "moment.min.js" %}"></script>
 
-        <script src="{% static "jquery.daterangepicker.js" %}"></script>
     {% endblock extra_head %}
 
 
@@ -50,26 +48,32 @@
 
 
         function update_submit() {
-            if ($('input[type=radio][name=datos-forma_pago]:checked').val() == 'mercadopago') {
-                $('#btn-reserva-submit').val('Pagar inscipción via MercadoPago')
+            if ($('input[type=radio][name=forma_pago]:checked').val() == 'mercadopago') {
+                $('#btn-reserva-submit').val('Pagar inscripción via MercadoPago')
             }else {
                 $('#btn-reserva-submit').val('Confirmar pre-reserva')
             }
         }
-        $('input[type=radio][name=datos-forma_pago]').change(update_submit);
+        $('input[type=radio][name=forma_pago]').change(update_submit);
         update_submit();
 
-        $('#id_datos-forma_pago_2').parent().append(' (<a class="modalButton" href="https://www.mercadopago.com/mla/credit_card_promos.htm">ver promociones</a>)');
+        $('#id_forma_pago_2').parent().append(' (<a class="modalButton" data-title="Promociones vigentes con MercadoPago" href="https://www.mercadopago.com/mla/credit_card_promos.htm">ver promociones</a>)');
+
+        $('#id_acepto').parent().append(' las <a class="modalButton" data-title="Normas de Funcionamiento" href="{% url 'retiros_normas' %}">Normas de Funcionamiento</a>');
+
+
+
 
         $('a.modalButton').on('click', function(e) {
             e.preventDefault();
-
-            var NWin = window.open($(this).prop('href'), 'Promociones vigentes con MercadoPago', 'height=700,width=830');
+            var NWin = window.open($(this).prop('href'), $(this).data('title'), 'height=800,width=830,scrollbars=1');
              if (window.focus){
                NWin.focus();
              }
 
         });
+
+
 
     });
 

@@ -1,10 +1,8 @@
-La reserva #{{ reserva.id }} a nombre de {{ reserva.nombre_y_apellido }} se venció.
+La inscripcion #{{ inscripcion.id }} a nombre de {{ inscripcion.nombre_completo }} se venció.
 
-Hay nuevamente disponibilidad entre el {{ reserva.desde|date:"l j \d\e F \d\e Y" }} y {{ reserva.hasta|date:"l j \d\e F \d\e Y" }} para el {{ reserva.departamento }}
+Email: {{ inscripcion.email }}
+Teléfono: {{ inscripcion.telefono }}
 
-Email: {{ reserva.email }}
-Teléfono: {{ reserva.telefono }}
+Si querés darle más tiempo podés actualizar la inscripcion desde esta url:
 
-Si querés darle más tiempo podés actualizar la reserva desde esta url:
-
-http://reservas.lacalma-lasgrutas.com.ar{% url 'admin:lacalma_reserva_change' reserva.id %}
+http://reservas.lacalma-lasgrutas.com.ar{% url 'admin:retiros_inscripcion_change' inscripcion.id %}

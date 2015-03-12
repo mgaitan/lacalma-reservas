@@ -102,6 +102,8 @@ RAVEN_CONFIG = {
     'dsn': 'https://:8cf565593e7e42a38a3332b567601034@app.getsentry.com/34941',
 }
 
+EMAIL_ADMIN_RETIROS = 'gaitan@gmail.com'
+
 try:
     from .local_settings import *
 except:
