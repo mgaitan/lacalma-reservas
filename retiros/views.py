@@ -32,9 +32,9 @@ def inscripcion(request, retiro_id):
         if inscripcion.forma_pago == 'deposito':
 
             mail_txt = render_to_string('retiros/mail_txt.html', {'inscripcion': inscripcion})
-            for to in (inscripcion.email, 'buenosaires@sivananda.org'):
-                send_mail(u'Pre-Inscripción - Centro Sivananda',
-                          mail_txt, 'buenosaires@sivananda.org', [to])
+            for to in (inscripcion.email, settings.EMAIL_ADMIN_RETIROS):
+                send_mail(u'Pre-Inscripción - Centro Sivananda /ref #%s' % inscripcion.id',
+                          mail_txt, settings.EMAIL_ADMIN_RETIROS, [to])
             return redirect('retiros_gracias')
         else:
 
@@ -118,10 +118,10 @@ def mp_notification(request):
 
 
                 mail_txt = render_to_string('retiros/mail_mp_txt.html', {'inscripcion': inscripcion})
-                for to in (inscripcion.email, 'buenosaires@sivananda.org', 'gracielamothe@gmail.com'):
+                for to in (inscripcion.email, settings.EMAIL_ADMIN_RETIROS, 'gracielamothe@gmail.com'):
 
-                    send_mail(u'Inscripción Confirmada - Centro Sivananda',
-                      mail_txt, 'buenosaires@sivananda.org', [to])
+                    send_mail(u'Inscripción Confirmada - Centro Sivananda /ref #%s' % inscripcion.id,
+                      mail_txt, settings.EMAIL_ADMIN_RETIROS, [to])
 
             return HttpResponse('ok')
     return HttpResponseBadRequest('bad boy')
