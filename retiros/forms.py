@@ -4,7 +4,7 @@ from .models import Inscripcion
 
 
 class InscripcionForm(forms.ModelForm):
-    CHOICES = (('deposito', u'Realizaré una seña del 50% vía transferencia bancaria en las próximas 48hs'),
+    CHOICES = (('deposito', u'Realizaré un deposito o transferencia bancaria en las próximas 48hs'),
                ('mercadopago', 'Abonaré con tarjeta de crédito (hasta 12 cuotas)'))
 
 
