@@ -33,7 +33,7 @@ def inscripcion(request, retiro_id):
 
             mail_txt = render_to_string('retiros/mail_txt.html', {'inscripcion': inscripcion})
             for to in (inscripcion.email, settings.EMAIL_ADMIN_RETIROS):
-                send_mail(u'Pre-Inscripción - Centro Sivananda /ref #%s' % inscripcion.id',
+                send_mail(u'Pre-Inscripción - Centro Sivananda /ref #%s' % inscripcion.id,
                           mail_txt, settings.EMAIL_ADMIN_RETIROS, [to])
             return redirect('retiros_gracias')
         else:

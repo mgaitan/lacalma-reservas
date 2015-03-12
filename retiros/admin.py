@@ -11,8 +11,9 @@ class RetiroAdmin(admin.ModelAdmin):
 
 
 class InscripcionAdmin(admin.ModelAdmin):
-    pass
-
+    list_display = ('__unicode__', 'retiro')
+    list_filter = ('retiro',)
+    search_fields = ('nombres', 'apellido' 'email')
 
 admin.site.register(Retiro, RetiroAdmin)
 admin.site.register(Inscripcion, InscripcionAdmin)
