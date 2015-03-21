@@ -4,13 +4,12 @@ from .models import Inscripcion
 
 
 class InscripcionForm(forms.ModelForm):
-    CHOICES = (('deposito', u'Realizaré un deposito o transferencia bancaria en las próximas 48hs'),
-               ('mercadopago', 'Abonaré con tarjeta de crédito (hasta 12 cuotas)'))
+    # CHOICES = (('mercadopago', 'Abonaré con tarjeta de crédito (hasta 12 cuotas)'),)
 
 
     acepto = forms.BooleanField(u'He leído y acepto las Normas de Funcionamiento')
 
-    forma_pago = forms.ChoiceField(widget=forms.RadioSelect, choices=CHOICES, initial='deposito')
+    forma_pago = forms.CharField(widget=forms.HiddenInput, initial='mercadopago')
     email_confirma = forms.EmailField(label='Confirme su email')
 
 

@@ -28,7 +28,7 @@
         {% csrf_token %}
         {{ form|crispy }}
 
-        <input id="btn-reserva-submit" type="submit"  class="btn btn-success" value="" /></p>
+        <input id="btn-reserva-submit" type="submit"  class="btn btn-success" value="Pagar con tarjeta de crédito via Mercadopago" /></p>
 
 
         </form>
@@ -47,17 +47,7 @@
         });
 
 
-        function update_submit() {
-            if ($('input[type=radio][name=forma_pago]:checked').val() == 'mercadopago') {
-                $('#btn-reserva-submit').val('Pagar inscripción via MercadoPago')
-            }else {
-                $('#btn-reserva-submit').val('Confirmar pre-reserva')
-            }
-        }
-        $('input[type=radio][name=forma_pago]').change(update_submit);
-        update_submit();
-
-        $('#id_forma_pago_2').parent().append(' (<a class="modalButton" data-title="Promociones vigentes con MercadoPago" href="https://www.mercadopago.com/mla/credit_card_promos.htm">ver promociones</a>)');
+        $('#div_id_acepto').after('<p>El costo total del evento es $ {{ retiro.precio }} por pago con tarjeta. (<a class="modalButton" data-title="Promociones vigentes con MercadoPago" href="https://www.mercadopago.com/mla/credit_card_promos.htm">ver promociones</a>)</p>');
 
         $('#id_acepto').parent().append(' las <a class="modalButton" data-title="Normas de Funcionamiento" href="{% url 'retiros_normas' %}">Normas de Funcionamiento</a>');
 
