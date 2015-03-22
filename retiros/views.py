@@ -21,8 +21,7 @@ def inscripcion(request, retiro_id):
 
     retiro = get_object_or_404(Retiro, id=retiro_id)
     data = request.POST if request.method == 'POST' else None
-    instance = Inscripcion.objects.first() if not data else None
-    form = InscripcionForm(data, instance=instance)
+    form = InscripcionForm(data)
     if form.is_valid():
         inscripcion = form.save(commit = False)
         inscripcion.retiro = retiro
@@ -118,7 +117,7 @@ def mp_notification(request):
 
 
                 mail_txt = render_to_string('retiros/mail_mp_txt.html', {'inscripcion': inscripcion})
-                for to in (inscripcion.email, settings.EMAIL_ADMIN_RETIROS, 'gracielamothe@gmail.com'):
+                for to in (inscripcion.email, settings.EMAIL_ADMIN_RETIROS):
 
                     send_mail(u'Inscripción Confirmada - Centro Sivananda /ref #%s' % inscripcion.id,
                       mail_txt, settings.EMAIL_ADMIN_RETIROS, [to])
