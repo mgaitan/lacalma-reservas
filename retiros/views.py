@@ -23,9 +23,8 @@ def inscripcion(request, retiro_id):
     data = request.POST if request.method == 'POST' else None
     form = InscripcionForm(data)
     if form.is_valid():
-        inscripcion = form.save(commit = False)
+        inscripcion = form.save(commit=False)
         inscripcion.retiro = retiro
-
         inscripcion.save()
 
         if inscripcion.forma_pago == 'deposito':
@@ -39,11 +38,12 @@ def inscripcion(request, retiro_id):
 
             inscripcion.mp_id = str(uuid.uuid1())
             site = Site.objects.get_current()
-
-
             mp = mercadopago.MP(settings.MP_SIVANANDA_CLIENT_ID, settings.MP_SIVANANDA_CLIENT_SECRET)
 
             title = "{} - Inscripcion".format(inscripcion.retiro)
+
+
+
             preference = {
                 "items": [
                     {
@@ -51,7 +51,7 @@ def inscripcion(request, retiro_id):
                         "title": title,
                         "quantity": 1,
                         "currency_id": "ARS",
-                        "unit_price": float(inscripcion.costo_total)
+                        "unit_price": float(0)
                     }
                 ],
                 "payer": {
@@ -65,6 +65,18 @@ def inscripcion(request, retiro_id):
                 "external_reference": inscripcion.mp_id,
                 "notification_url": site.domain + reverse('retiros_ipn'),
             }
+
+            if form.cleaned_data['codigo_descuento']:
+                import ipdb; ipdb.set_trace()
+                codigo = form.cleaned_data['codigo_descuento']
+                preference['items'].append(
+                    {
+                        "id": codigo.codigo,
+                        "title": str(codigo),
+                        "quantity": 1,
+                        "currency_id": "ARS",
+                        "unit_price": float(-codigo.calcular_descuento(retiro.precio))
+                    })
 
             preference = mp.create_preference(preference)
 

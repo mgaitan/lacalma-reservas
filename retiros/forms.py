@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from django import forms
 from .models import Inscripcion
+from descuentos.models import CodigoDeDescuento
 
 
 class InscripcionForm(forms.ModelForm):
@@ -11,6 +12,7 @@ class InscripcionForm(forms.ModelForm):
 
     forma_pago = forms.CharField(widget=forms.HiddenInput, initial='mercadopago')
     email_confirma = forms.EmailField(label='Confirme su email')
+    codigo_descuento = forms.CharField(label=u'¿Tiene un código de descuento?', required=False)
 
 
     class Meta:
@@ -19,7 +21,19 @@ class InscripcionForm(forms.ModelForm):
                   'ciudad', 'provincia', 'pais', 'telefono', 'email', 'email_confirma',
                   'estado_civil', 'enfermedades', 'medicamentos',
                   'contacto_emergencia', 'telefono_emergencia', 'practica_desde',
-                  'lugar_practica', 'medio_noticia', 'comentario', 'acepto', 'forma_pago']
+                  'lugar_practica', 'medio_noticia', 'comentario', 'acepto', 'codigo_descuento', 'forma_pago']
+
+
+    def clean_codigo_descuento(self):
+        data = self.cleaned_data.get('codigo_descuento', None)
+        import ipdb; ipdb.set_trace()
+        if data:
+            try:
+                codigo = CodigoDeDescuento.objects.get(codigo=data)
+                return codigo
+            except CodigoDeDescuento.DoesNotExist:
+                return None
+        return None
 
 
     def clean(self):

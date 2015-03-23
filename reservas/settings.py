@@ -40,6 +40,7 @@ INSTALLED_APPS = (
     'django.contrib.formtools',
     'crispy_forms',
     'reservas',
+    'descuentos',
     'encuesta',
     'retiros',
     'lacalma',
