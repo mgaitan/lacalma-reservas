@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import json
 import uuid
 
 from django.shortcuts import render, get_object_or_404, redirect
@@ -42,8 +41,6 @@ def inscripcion(request, retiro_id):
 
             title = "{} - Inscripcion".format(inscripcion.retiro)
 
-
-
             preference = {
                 "items": [
                     {
@@ -51,7 +48,7 @@ def inscripcion(request, retiro_id):
                         "title": title,
                         "quantity": 1,
                         "currency_id": "ARS",
-                        "unit_price": float(0)
+                        "unit_price": float(retiro.precio)
                     }
                 ],
                 "payer": {
@@ -68,14 +65,7 @@ def inscripcion(request, retiro_id):
 
             if form.cleaned_data['codigo_descuento']:
                 codigo = form.cleaned_data['codigo_descuento']
-                preference['items'].append(
-                    {
-                        "id": codigo.codigo,
-                        "title": str(codigo),
-                        "quantity": 1,
-                        "currency_id": "ARS",
-                        "unit_price": float(-codigo.calcular_descuento(retiro.precio))
-                    })
+                preference['items'][0]["unit_price"] = preference['items'][0]["unit_price"] - float(codigo.calcular_descuento(retiro.precio))
 
             preference = mp.create_preference(preference)
 
