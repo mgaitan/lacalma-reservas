@@ -67,7 +67,6 @@ def inscripcion(request, retiro_id):
             }
 
             if form.cleaned_data['codigo_descuento']:
-                import ipdb; ipdb.set_trace()
                 codigo = form.cleaned_data['codigo_descuento']
                 preference['items'].append(
                     {

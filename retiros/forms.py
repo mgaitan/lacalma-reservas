@@ -26,7 +26,6 @@ class InscripcionForm(forms.ModelForm):
 
     def clean_codigo_descuento(self):
         data = self.cleaned_data.get('codigo_descuento', None)
-        import ipdb; ipdb.set_trace()
         if data:
             try:
                 codigo = CodigoDeDescuento.objects.get(codigo=data)
