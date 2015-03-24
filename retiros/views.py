@@ -11,7 +11,7 @@ from django.core.urlresolvers import reverse
 from django.core.mail import send_mail
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.conf import settings
-
+from django.utils import timezone
 
 import mercadopago
 

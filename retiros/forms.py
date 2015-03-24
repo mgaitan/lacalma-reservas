@@ -37,6 +37,6 @@ class InscripcionForm(forms.ModelForm):
 
     def clean(self):
         cleaned_data = super(InscripcionForm, self).clean()
-        if cleaned_data['email'] != cleaned_data.get('email_confirma'):
+        if cleaned_data.get('email', None) != cleaned_data.get('email_confirma', None):
             self.add_error('email', 'Las direcciones no coinciden')
         return cleaned_data
