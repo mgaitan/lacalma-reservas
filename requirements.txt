@@ -1,7 +1,7 @@
-Django==1.7.1
+Django>=1.8
 django-crispy-forms==1.4.0
-django-model-utils==2.2
-ipdb==0.8
-ipython==2.3.1
+django-model-utils>=2.2
+ipdb
+ipython
 pytz==2014.10
-mercadopago==0.3.3
+mercadopago==0.3.3django_formtools==1.0
