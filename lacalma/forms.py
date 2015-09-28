@@ -7,6 +7,8 @@ from lacalma.models import Reserva, Departamento
 class ReservaAdminForm(forms.ModelForm):
     class Meta:
         model = Reserva
+        exclude = []
+
 
     def clean(self):
         cleaned_data = super(ReservaAdminForm, self).clean()
@@ -52,7 +54,7 @@ class ReservaForm1(forms.Form):
 
 
 class ReservaForm2(forms.ModelForm):
-    CHOICES = (('deposito', u'Realizaré una seña del 50% vía transferencia bancaria en las próximas 48hs'),
+    CHOICES = (('deposito', u'Realizaré una seña del 50% vía transferencia bancaria en las próximas horas'),
                ('mercadopago', 'Abonaré con tarjeta de crédito (hasta 12 cuotas)'))
     forma_pago = forms.ChoiceField(widget=forms.RadioSelect, choices=CHOICES, initial='deposito')
     email_confirma = forms.EmailField(label='Confirme su email')

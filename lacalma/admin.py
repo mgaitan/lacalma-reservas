@@ -5,7 +5,7 @@ from django.contrib.sites.models import Site
 from lacalma.forms import ReservaAdminForm
 from lacalma.models import Departamento, Reserva, ConceptoFacturable
 
-site = Site.objects.get_current()
+site = '' # Site.objects.get_current()
 
 
 class DepartamentoAdmin(admin.ModelAdmin):
@@ -19,9 +19,6 @@ class ReservaAdmin(admin.ModelAdmin):
 
     def num(self, obj):
         return '#' + str(obj.id)
-
-    num.short_description = 'Reserva'
-
 
     def depto(self, obj):
         return obj.departamento.nombre
@@ -44,7 +41,6 @@ class ReservaAdmin(admin.ModelAdmin):
     inlines = [
         FacturableInline,
     ]
-
 
     fieldsets = (
         ('Reserva', {

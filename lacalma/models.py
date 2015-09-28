@@ -19,9 +19,10 @@ def dias_en_rango(inicio, fin):
     return dias
 
 
-TEMPORADA_ALTA = dias_en_rango(date(2014, 12, 27), date(2015, 2, 11))
-TEMPORADA_MEDIA = dias_en_rango(date(2015, 2, 11), date(2015, 4, 6))  # hasta semana santa
-DESCUENTO_QUINCENA = 10     # porciento
+TEMPORADA_ALTA = dias_en_rango(date(2015, 12, 26), date(2016, 2, 14))
+TEMPORADA_MEDIA = dias_en_rango(date(2016, 2, 15), date(2016, 4, 4))  # hasta semana santa
+DESCUENTO_QUINCENA = None     # porciento
+DESCUENTO_PAGO_CONTADO = 5    # porciento
 DEPOSITO_REQUERIDO = 50
 
 
@@ -88,8 +89,8 @@ class Reserva(TimeStampedModel):
         return dias_en_rango(self.hasta, self.desde)
 
     def descuento(self):
-        if self.dias_total >= 15:
-            return DESCUENTO_QUINCENA, self.total_sin_descuento() * Decimal(str(DESCUENTO_QUINCENA / 100.0))
+        if DESCUENTO_PAGO_CONTADO and self.forma_pago == Reserva.METODO.deposito:
+            return DESCUENTO_PAGO_CONTADO, self.total_sin_descuento() * Decimal(str(DESCUENTO_PAGO_CONTADO / 100.0))
         else:
             return 0, 0
 
@@ -106,7 +107,7 @@ class Reserva(TimeStampedModel):
                     self.dias_alta * self.departamento.dia_alta,
                     self.dias_baja * self.departamento.dia_baja))
 
-    def calcular_costo(self, aplicar_descuento=False):
+    def calcular_costo(self):
         reserva = self.rango()
         self.dias_total = len(reserva)
         self.dias_media = len(set(reserva).intersection(TEMPORADA_MEDIA))
@@ -127,11 +128,11 @@ class Reserva(TimeStampedModel):
         # fecha vencimiento
         desde = datetime.combine(self.desde, time(14, 0, tzinfo=UTC))
         faltan = int((desde - timezone.now()).total_seconds() / 3600)
-        if faltan >= 240:
-            # mas de 10 dias?
-            self.fecha_vencimiento_reserva = timezone.now() + timedelta(hours=48)
+        if faltan >= 24*20:
+            # faltan mas de 20 dias?
+            self.fecha_vencimiento_reserva = timezone.now() + timedelta(hours=24)
         else:
-            self.fecha_vencimiento_reserva = desde - timedelta(hours=faltan*0.75)
+            self.fecha_vencimiento_reserva = desde - timedelta(hours=faltan*0.14)
 
     def save(self, *args, **kwargs):
         self.calcular_costo()

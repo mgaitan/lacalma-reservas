@@ -33,12 +33,11 @@ class Command(BaseCommand):
             send_mail('[La Calma] Reserva vencida ref #%s' % reserva.id, mail_txt,
                 'info@lacalma-lasgrutas.com.ar', ['info@lacalma-lasgrutas.com.ar'])
 
-
-
-        for inscripcion in Inscripcion.objects.filter(estado=Inscripcion.ESTADOS.pendiente,
-                                                       fecha_vencimiento_reserva__lt=AHORA):
-            inscripcion.estado = Reserva.ESTADOS.vencida
-            inscripcion.save(update_fields=['estado'])
-            mail_txt = render_to_string('retiros/mail_admin_vencio_txt.html', {'inscripcion': inscripcion})
-            send_mail('[Retiros] Pre-inscripcion vencida ref #%s' % inscripcion.id, mail_txt,
-                settings.EMAIL_ADMIN_RETIROS, [EMAIL_ADMIN_RETIROS])
+        # for inscripcion in Inscripcion.objects.filter(estado=Inscripcion.ESTADOS.pendiente,
+        #                                               fecha_vencimiento_reserva__lt=AHORA):
+        #    inscripcion.estado = Reserva.ESTADOS.vencida
+        #    inscripcion.save(update_fields=['estado'])
+        #    mail_txt = render_to_string('retiros/mail_admin_vencio_txt.html', {'inscripcion': inscripcion})
+        #    send_mail('[Retiros] Pre-inscripcion vencida ref #%s' % inscripcion.id, mail_txt,
+        #        settings.EMAIL_ADMIN_RETIROS, [EMAIL_ADMIN_RETIROS])
+        # """

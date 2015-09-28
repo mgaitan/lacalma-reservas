@@ -11,7 +11,7 @@ from django.template.loader import render_to_string
 from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
-from django.contrib.formtools.wizard.views import SessionWizardView
+from formtools.wizard.views import SessionWizardView
 from django.contrib.admin.views.decorators import staff_member_required
 
 import mercadopago
@@ -70,7 +70,7 @@ class ReservaWizard(SessionWizardView):
 
         site = Site.objects.get_current()
         self.request.session['reserva_reciente'] = reserva.id
-        if reserva.forma_pago == 'deposito':
+        if reserva.forma_pago == Reserva.METODO.deposito:
 
             mail_txt = render_to_string('mail_txt.html', {'reserva': reserva})
             mail_html = render_to_string('mail.html', {'reserva': reserva})
@@ -82,7 +82,7 @@ class ReservaWizard(SessionWizardView):
             msg.send()
             return redirect('gracias')
         else:
-
+            import ipdb; ipdb.set_trace()
             reserva.mp_id = str(uuid.uuid1())
 
 

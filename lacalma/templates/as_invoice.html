@@ -39,10 +39,10 @@
               <h4>Descripción</h4>
             </th>
             <th>
-              <h4>Cantidad</h4>
+              <h4>Dias</h4>
             </th>
             <th>
-              <h4>Precio unitario</h4>
+              <h4>Precio por día</h4>
             </th>
             <th>
               <h4>Subtotal</h4>
@@ -78,10 +78,8 @@
         {% endif %}
         {% if reserva.descuento.0 %}
           <tr>
-            <td>Descuento por reserva mayor a 15 días</td>
-            <td><div class="text-right">- {{ reserva.descuento.0 }} %</div></td>
-            <td><div class="text-right">$ {{ reserva.descuento.1 }}</div></td>
-            <td><div class="text-right">$ -{{ reserva.descuento.1 }}</div></td>
+            <td colspan="3"><p class="text-right" >Descuento por pago contado/transferencia: {{ reserva.descuento.0 }} % </p> </td>
+            <td><div class="text-right">- ${{ reserva.descuento.1|floatformat:2 }}</div></td>
           </tr>
         {% endif %}
         {% for facturable in  reserva.facturables.all %}
@@ -89,13 +87,13 @@
             <td> {{ facturable.concepto }} </td>
             <td><div class="text-right"></div></td>
             <td><div class="text-right"></div></td>
-            <td><div class="text-right">$ {{ facturable.monto }}</div></td>
+            <td><div class="text-right">$ {{ facturable.monto|floatformat:2 }}</div></td>
           </tr>
         {% endfor %}
 
         <tr>
             <td colspan="3"><p class="text-right" > <strong>Total: </strong></p></td>
-            <td><p class="text-right"><strong>$ {{ reserva.costo_total }}</strong></p></td>
+            <td><p class="text-right"><strong>$ {{ reserva.costo_total|floatformat:2 }}</strong></p></td>
           </tr>
 
   {% if reserva.id %}
@@ -103,17 +101,17 @@
     {% if reserva.estado == 'confirmada' %}
         <tr>
             <td colspan="3"><p class="text-right" > <br> <br><strong>Depósito de seña realizado </strong></p></td>
-            <td><p class="text-right"><br> <br><strong>$ {{ reserva.deposito_reserva }} </strong></p></td>
+            <td><p class="text-right"><br> <br><strong>$ {{ reserva.deposito_reserva|floatformat:2 }} </strong></p></td>
           </tr>
           <tr>
             <td colspan="3"><p class="text-right" > <br> <br><strong>Saldo a abonar </strong></p></td>
-            <td><p class="text-right"><br> <br><strong>$ {{ reserva.saldo }} </strong></p></td>
+            <td><p class="text-right"><br> <br><strong>$ {{ reserva.saldo|floatformat:2 }} </strong></p></td>
           </tr>
 
     {% elif reserva.estado == 'pendiente' %}
         <tr>
             <td colspan="3"><p class="text-right" > <br> <br><strong>Depósito de seña requerido ({{ reserva.deposito_requerido.0 }} %): </strong></p></td>
-            <td><p class="text-right"><br> <br><strong>$ {{ reserva.deposito_requerido.1 }} </strong></p></td>
+            <td><p class="text-right"><br> <br><strong>$ {{ reserva.deposito_requerido.1|floatformat:2 }} </strong></p></td>
           </tr>
 
 

@@ -7,4 +7,4 @@ class EncuestaForm(forms.ModelForm):
 
     class Meta:
         model = EncuestaSatisfaccion
-
+        exclude = []
