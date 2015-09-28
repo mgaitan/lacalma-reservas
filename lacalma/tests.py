@@ -16,7 +16,7 @@ def ReservaFactory(desde, hasta, depto=1):
 
 class TestCalcular(TestCase):
 
-    fixtures = ['deptos.json']
+    # fixtures = ['deptos.json']
 
     def test_1_dias_temporada_baja(self):
         reserva = ReservaFactory(desde=date(2014, 11, 20), hasta=date(2014, 11, 21))
