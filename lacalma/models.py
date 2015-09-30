@@ -10,6 +10,16 @@ import uuid
 from datetime import datetime, date, timedelta, time
 
 
+def aumento(alta_anterior, coef_aumento=1.35):
+    """
+    formula para calcular aumentos
+
+        baja es 35% menos que alta
+        media es 20% menos que alta
+    """
+    return [alta_anterior * coef_aumento * i for i in [.65, 0.8, 1]]
+
+
 def dias_en_rango(inicio, fin):
     if fin < inicio:
         fin, inicio = inicio, fin

@@ -28,7 +28,7 @@
     "nombre": "Departamento 1",
     "dia_alta": "1900",
     "dia_media": "1520",
-    "dia_baja": "1200",
+    "dia_baja": "1230",
     "capacidad": 5
   },
   "model": "lacalma.departamento",
@@ -39,7 +39,7 @@
     "nombre": "Departamento 4",
     "dia_alta": "1900",
     "dia_media": "1520",
-    "dia_baja": "1200",
+    "dia_baja": "1230",
     "capacidad": 5
   },
   "model": "lacalma.departamento",
