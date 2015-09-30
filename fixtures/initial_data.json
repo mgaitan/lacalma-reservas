@@ -26,9 +26,9 @@
 {
   "fields": {
     "nombre": "Departamento 1",
-    "dia_media": "1550",
-    "dia_alta": "1940",
-    "dia_baja": "1260",
+    "dia_alta": "1900",
+    "dia_media": "1520",
+    "dia_baja": "1200",
     "capacidad": 5
   },
   "model": "lacalma.departamento",
@@ -37,9 +37,9 @@
 {
   "fields": {
     "nombre": "Departamento 4",
-    "dia_media": "1550",
-    "dia_alta": "1940",
-    "dia_baja": "1260",
+    "dia_alta": "1900",
+    "dia_media": "1520",
+    "dia_baja": "1200",
     "capacidad": 5
   },
   "model": "lacalma.departamento",
@@ -48,9 +48,9 @@
 {
   "fields": {
     "nombre": "Departamento 2",
-    "dia_media": "1345",
-    "dia_alta": "1680",
-    "dia_baja": "1100",
+    "dia_alta": "1620",
+    "dia_media": "1300",
+    "dia_baja": "1050",
     "capacidad": 4
   },
   "model": "lacalma.departamento",
@@ -59,9 +59,9 @@
 {
   "fields": {
     "nombre": "Departamento 3",
-    "dia_media": "1345",
-    "dia_alta": "1680",
-    "dia_baja": "1100",
+    "dia_alta": "1620",
+    "dia_media": "1300",
+    "dia_baja": "1050",
     "capacidad": 4
   },
   "model": "lacalma.departamento",
