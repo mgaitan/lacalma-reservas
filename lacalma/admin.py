@@ -5,7 +5,7 @@ from django.contrib.sites.models import Site
 from lacalma.forms import ReservaAdminForm
 from lacalma.models import Departamento, Reserva, ConceptoFacturable
 
-site = '' # Site.objects.get_current()
+site = Site.objects.get_current()
 
 
 class DepartamentoAdmin(admin.ModelAdmin):
