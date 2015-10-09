@@ -82,7 +82,6 @@ class ReservaWizard(SessionWizardView):
             msg.send()
             return redirect('gracias')
         else:
-            import ipdb; ipdb.set_trace()
             reserva.mp_id = str(uuid.uuid1())
 
 

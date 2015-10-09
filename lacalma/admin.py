@@ -36,7 +36,8 @@ class ReservaAdmin(admin.ModelAdmin):
     list_display = ('num', 'depto', 'nombre_y_apellido', 'desde', 'hasta', 'estado', 'fecha_vencimiento_reserva', 'forma_pago', 'links')
     list_filter = ('departamento', 'estado', 'desde', 'hasta', 'fecha_vencimiento_reserva', 'forma_pago')
     search_fields = ('nombre_y_apellido', 'email')
-    readonly_fields = ('dias_alta', 'dias_baja', 'dias_media', 'dias_total', 'total_sin_descuento', 'costo_total')
+    readonly_fields = ('dias_alta', 'dias_baja', 'dias_media', 'dias_total', 'total_sin_descuento',
+                       'costo_total', 'mp_url', 'mp_pendiente', 'mp_id')
 
     inlines = [
         FacturableInline,
@@ -61,6 +62,10 @@ class ReservaAdmin(admin.ModelAdmin):
         ('Dias y costos (se calcula automáticamente)', {
             'fields': ('dias_alta', 'dias_baja', 'dias_media', 'dias_total', 'costo_total')
         }),
+        ('Para reservas via MercadoPago', {
+           'fields': ('mp_url', 'mp_id', 'mp_pendiente')
+        })
+
     )
 
     def save_related(self, request, form, formsets, change):

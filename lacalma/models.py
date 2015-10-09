@@ -87,7 +87,7 @@ class Reserva(TimeStampedModel):
     deposito_reserva = models.DecimalField(max_digits=7, decimal_places=2, default=0)
     mp_id = models.CharField(verbose_name=u'ID Transacción de Mercadopago', max_length=100, null=True, blank=True)
     mp_pendiente = models.BooleanField(default=False)
-    mp_url = models.CharField(max_length=255, default='')
+    mp_url = models.CharField(verbose_name='Dirección p/Pago', max_length=255, default='', help_text='Puede copiar esta dirección para enviar por email u otro medio')
     observaciones = models.TextField(help_text="Se mostraran en el presupuesto o remito", null=True, blank=True)
     uuid = models.CharField(max_length=8, null=True, editable=False)
     envio_encuesta = models.DateTimeField(null=True, blank=True)
