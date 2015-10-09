@@ -50,7 +50,7 @@ class ReservaAdmin(admin.ModelAdmin):
         self.message_user(request, "Se regeneró mercadopago para %i/%i reserva/s" % (queryset.count(), selected))
 
     def mp_button(self, obj):
-        return '<div class="object-tools"><a href="%s" class="historylink">Generar nueva url de mercadopago por el saldo actual</a></div><p class="help">La forma de pago debe ser MercadoPago (guarde primero)</p> ' % reverse('regenerar_mercadopago', args=[obj.id])
+        return '<div class="object-tools"><a href="%s" class="historylink">Generar nueva url por saldo actual</a></div><p class="help">Descarta la url actual. La forma de pago debe ser MercadoPago (guarde primero)</p> ' % reverse('regenerar_mercadopago', args=[obj.id])
 
     mp_button.short_description = 'Regenerar'
     mp_button.allow_tags = True
