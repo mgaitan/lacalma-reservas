@@ -8,3 +8,4 @@ ipython
 pytz==2014.10
 mercadopago==0.3.4
 raven==5.7.2
+django-nose==1.4.2
