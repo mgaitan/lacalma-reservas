@@ -29,8 +29,8 @@ def dias_en_rango(inicio, fin):
     return dias
 
 
-TEMPORADA_ALTA = dias_en_rango(date(2015, 12, 26), date(2016, 2, 14))
-TEMPORADA_MEDIA = dias_en_rango(date(2016, 2, 15), date(2016, 4, 4))  # hasta semana santa
+TEMPORADA_ALTA = dias_en_rango(date(2015, 12, 26), date(2016, 2, 15))
+TEMPORADA_MEDIA = dias_en_rango(date(2016, 2, 15), date(2016, 4, 5))  # hasta semana santa
 DESCUENTO_QUINCENA = None     # porciento
 DESCUENTO_PAGO_CONTADO = 5    # porciento
 DEPOSITO_REQUERIDO = 50
@@ -117,7 +117,7 @@ class Reserva(TimeStampedModel):
                     self.dias_alta * self.departamento.dia_alta,
                     self.dias_baja * self.departamento.dia_baja))
 
-    def calcular_costo(self):
+    def calcular_costo(self, descuento=True):
         reserva = self.rango()
         self.dias_total = len(reserva)
         self.dias_media = len(set(reserva).intersection(TEMPORADA_MEDIA))
@@ -125,8 +125,8 @@ class Reserva(TimeStampedModel):
         self.dias_baja = self.dias_total - self.dias_media - self.dias_alta
 
         self.costo_total = self.total_sin_descuento()
-
-        self.costo_total -= self.descuento()[1]
+        if descuento:
+            self.costo_total -= self.descuento()[1]
 
         for facturable in self.facturables.all():
             self.costo_total += facturable.monto

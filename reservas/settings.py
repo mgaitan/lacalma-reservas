@@ -45,6 +45,7 @@ INSTALLED_APPS = (
     'retiros',
     'lacalma',
     'raven.contrib.django.raven_compat',
+    'django_nose',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -102,6 +103,11 @@ MP_SANDBOX_MODE = True
 RAVEN_CONFIG = {
     'dsn': 'https://:8cf565593e7e42a38a3332b567601034@app.getsentry.com/34941',
 }
+
+TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
+NOSE_ARGS = ['-s', '--nologcapture', '--nocapture', '--with-id',
+             '--logging-clear-handlers']
+
 
 EMAIL_ADMIN_RETIROS = 'gaitan@gmail.com'
 
