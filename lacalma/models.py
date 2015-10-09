@@ -77,7 +77,8 @@ class Reserva(TimeStampedModel):
     estado = models.CharField(max_length=50, choices=ESTADOS, default=ESTADOS.pendiente)
     como_se_entero = models.CharField(verbose_name=u'¿Cómo conoció La Calma?', max_length=50, choices=ENTERO, null=True, blank=True)
     comentario = models.TextField(verbose_name=u'¿Algún comentario?', null=True, blank=True)
-    forma_pago = models.CharField(verbose_name='Forma de pago', max_length=50, choices=METODO, default=METODO.deposito)
+    forma_pago = models.CharField(verbose_name='Forma de pago', max_length=50, choices=METODO, default=METODO.deposito,
+        help_text='Cambiarlo puede modificar el saldo a pagar por aplicar o quitar descuentos')
 
     dias_total = models.IntegerField(default=0)
     dias_baja = models.IntegerField(default=0)
@@ -161,6 +162,11 @@ class Reserva(TimeStampedModel):
         if self.forma_pago != Reserva.METODO.mercadopago:
             return
 
+        if self.mp_id and self.mp_pendiente:
+            # TODO Log this.
+            mp.cancel_payment(self.mp_id)
+
+        # nuevo id
         self.mp_id = str(uuid.uuid1())
 
         mp = mercadopago.MP(settings.MP_CLIENT_ID, settings.MP_CLIENT_SECRET)
@@ -168,6 +174,8 @@ class Reserva(TimeStampedModel):
         title = "La Calma {}: {} al {} inclusive".format(self.departamento.nombre,
                                                          self.desde.strftime("%d/%m/%Y"),
                                                          (self.hasta - timedelta(days=1)).strftime("%d/%m/%Y"))
+        if self.deposito_reserva:
+            title += ' (saldo)'
         preference = mp.create_preference({
             "items": [
                 {
@@ -175,7 +183,7 @@ class Reserva(TimeStampedModel):
                     "title": title,
                     "quantity": 1,
                     "currency_id": "ARS",
-                    "unit_price": float(self.costo_total)
+                    "unit_price": float(self.saldo())
                 }
             ],
             "payer": {

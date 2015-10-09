@@ -5,6 +5,7 @@ from datetime import date, timedelta
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.conf import settings
 from django.contrib.sites.models import Site
+from django.contrib import messages
 from django.core.urlresolvers import reverse
 from django.core.mail import EmailMultiAlternatives, send_mail
 from django.template.loader import render_to_string
@@ -105,6 +106,14 @@ def gracias_mp(request):
 def presupuesto(request, id):
     reserva = get_object_or_404(Reserva, id=id)
     return render(request, 'presupuesto.html', {'reserva': reserva})
+
+
+@staff_member_required
+def regenerar_mercadopago(request, id):
+    reserva = get_object_or_404(Reserva, id=id)
+    reserva.generar_cupon_mercadopago()
+    messages.success(request, 'URL de pago actualizada')
+    return redirect(reverse('admin:lacalma_reserva_change', args=[id]))
 
 
 @csrf_exempt
