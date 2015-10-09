@@ -4,6 +4,7 @@ from django.core.urlresolvers import reverse
 from django.contrib.sites.models import Site
 from lacalma.forms import ReservaAdminForm
 from lacalma.models import Departamento, Reserva, ConceptoFacturable
+import mercadopago
 
 site = Site.objects.get_current()
 
@@ -13,8 +14,6 @@ class DepartamentoAdmin(admin.ModelAdmin):
 
 class FacturableInline(admin.TabularInline):
     model = ConceptoFacturable
-
-
 
 
 

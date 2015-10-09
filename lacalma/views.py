@@ -14,7 +14,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
 from formtools.wizard.views import SessionWizardView
 from django.contrib.admin.views.decorators import staff_member_required
-
+import mercadopago
 
 from lacalma.models import Reserva, Departamento
 from lacalma.forms import ReservaForm1, ReservaForm2
