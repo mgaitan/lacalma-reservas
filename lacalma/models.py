@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
+from django.conf import settings
+from django.core.urlresolvers import reverse
 from django.db import models
 from django.db.models import Q
+from django.contrib.sites.models import Site
 from model_utils import Choices
 from model_utils.models import TimeStampedModel
 from decimal import Decimal
@@ -8,7 +11,10 @@ from pytz import UTC
 from django.utils import timezone
 import uuid
 from datetime import datetime, date, timedelta, time
+import mercadopago
 
+
+site = Site.objects.get_current()
 
 def aumento(alta_anterior, coef_aumento=1.35):
     """
@@ -72,7 +78,6 @@ class Reserva(TimeStampedModel):
     como_se_entero = models.CharField(verbose_name=u'¿Cómo conoció La Calma?', max_length=50, choices=ENTERO, null=True, blank=True)
     comentario = models.TextField(verbose_name=u'¿Algún comentario?', null=True, blank=True)
     forma_pago = models.CharField(verbose_name='Forma de pago', max_length=50, choices=METODO, default=METODO.deposito)
-
 
     dias_total = models.IntegerField(default=0)
     dias_baja = models.IntegerField(default=0)
@@ -150,6 +155,47 @@ class Reserva(TimeStampedModel):
             self.uuid = str(uuid.uuid1()).split('-')[0]
         super(Reserva, self).save(*args, **kwargs)
 
+    def generar_cupon_mercadopago(self):
+        """configura la reserva para ser pagada via mercadopago"""
+
+        if self.forma_pago != Reserva.METODO.mercadopago:
+            return
+
+        self.mp_id = str(uuid.uuid1())
+
+        mp = mercadopago.MP(settings.MP_CLIENT_ID, settings.MP_CLIENT_SECRET)
+
+        title = "La Calma {}: {} al {} inclusive".format(self.departamento.nombre,
+                                                         self.desde.strftime("%d/%m/%Y"),
+                                                         (self.hasta - timedelta(days=1)).strftime("%d/%m/%Y"))
+        preference = mp.create_preference({
+            "items": [
+                {
+                    "id": str(self.id),
+                    "title": title,
+                    "quantity": 1,
+                    "currency_id": "ARS",
+                    "unit_price": float(self.costo_total)
+                }
+            ],
+            "payer": {
+                "name": self.nombre_y_apellido,
+                "email": self.email,
+            },
+            "back_urls": {
+                "success": site.domain + reverse('gracias_mp'),
+            },
+            "auto_return": "approved",
+            "external_reference": self.mp_id,
+            "notification_url": site.domain + reverse('ipn'),
+        })
+
+        if settings.MP_SANDBOX_MODE:
+            url = preference['response']['sandbox_init_point']
+        else:
+            url = preference['response']['init_point']
+        self.mp_url = url
+        self.save(update_fields=['mp_id', 'mp_url'])
 
     @classmethod
     def fecha_libre(cls, departamento, desde, hasta, exclude=None):

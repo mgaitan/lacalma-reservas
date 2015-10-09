@@ -14,7 +14,7 @@ from django.utils import timezone
 from formtools.wizard.views import SessionWizardView
 from django.contrib.admin.views.decorators import staff_member_required
 
-import mercadopago
+
 from lacalma.models import Reserva, Departamento
 from lacalma.forms import ReservaForm1, ReservaForm2
 
@@ -82,47 +82,8 @@ class ReservaWizard(SessionWizardView):
             msg.send()
             return redirect('gracias')
         else:
-            reserva.mp_id = str(uuid.uuid1())
-
-
-            mp = mercadopago.MP(settings.MP_CLIENT_ID, settings.MP_CLIENT_SECRET)
-
-            title = "La Calma {}: {} al {} inclusive".format(reserva.departamento.nombre,
-                                                             reserva.desde.strftime("%d/%m/%Y"),
-                                                             (reserva.hasta - timedelta(days=1)).strftime("%d/%m/%Y"))
-            preference = {
-                "items": [
-                    {
-                        "id": str(reserva.id),
-                        "title": title,
-                        "quantity": 1,
-                        "currency_id": "ARS",
-                        "unit_price": float(reserva.costo_total)
-                    }
-                ],
-                "payer": {
-                    "name": reserva.nombre_y_apellido,
-                    "email": reserva.email,
-                },
-                "back_urls": {
-                    "success": site.domain + reverse('gracias_mp'),
-                },
-                "auto_return": "approved",
-                "external_reference": reserva.mp_id,
-                "notification_url": site.domain + reverse('ipn'),
-            }
-
-            preference = mp.create_preference(preference)
-
-            send_mail('MP preference info', json.dumps(preference, indent=2), 'info@lacalma-lasgrutas.com.ar',
-                    ['gaitan@gmail.com'], fail_silently=False)
-            if settings.MP_SANDBOX_MODE:
-                url = preference['response']['sandbox_init_point']
-            else:
-                url = preference['response']['init_point']
-            reserva.mp_url = url
-            reserva.save(update_fields=['mp_id', 'mp_url'])
-            return redirect(url)
+            reserva.generar_cupon_mercadopago()
+            return redirect(reserva.mp_url)
 
 
 reserva_view = ReservaWizard.as_view([('fechas', ReservaForm1), ('datos', ReservaForm2)])
