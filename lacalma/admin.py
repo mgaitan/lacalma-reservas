@@ -6,8 +6,6 @@ from lacalma.forms import ReservaAdminForm
 from lacalma.models import Departamento, Reserva, ConceptoFacturable
 import mercadopago
 
-site = Site.objects.get_current()
-
 
 class DepartamentoAdmin(admin.ModelAdmin):
     pass
@@ -34,6 +32,7 @@ class ReservaAdmin(admin.ModelAdmin):
     saldo.short_description = 'Saldo a pagar'
 
     def links(self, obj):
+        site = Site.objects.get_current()
         return '<a href="http://%s%s" target="_blank">ver %s</a>' % (site.domain,
                                           reverse('presupuesto', args=(obj.id,)),
                                           'remito' if obj.estado == 'confirmada' else 'prespuesto')

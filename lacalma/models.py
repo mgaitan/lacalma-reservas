@@ -14,7 +14,6 @@ from datetime import datetime, date, timedelta, time
 import mercadopago
 
 
-site = Site.objects.get_current()
 
 def aumento(alta_anterior, coef_aumento=1.35):
     """
@@ -158,9 +157,9 @@ class Reserva(TimeStampedModel):
 
     def generar_cupon_mercadopago(self):
         """configura la reserva para ser pagada via mercadopago"""
-
         if self.forma_pago != Reserva.METODO.mercadopago:
             return
+        site = Site.objects.get_current()
 
         if self.mp_id and self.mp_pendiente:
             # TODO Log this.
