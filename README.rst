@@ -6,6 +6,6 @@ sistema de administracion para alquileres temporarios.
 
 
 .. image:: https://travis-ci.org/mgaitan/lacalma-reservas.png?branch=master
-    :target: https://travis-ci.org/mgaitan/waliki
+   :target: https://travis-ci.org/mgaitan/lacalma-reservas
 
 
