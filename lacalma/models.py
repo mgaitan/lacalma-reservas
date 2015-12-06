@@ -143,11 +143,11 @@ class Reserva(TimeStampedModel):
         # fecha vencimiento
         desde = datetime.combine(self.desde, time(14, 0, tzinfo=UTC))
         faltan = int((desde - timezone.now()).total_seconds() / 3600)
-        if faltan >= 24*20:
+        if faltan >= 24*10:
             # faltan mas de 20 dias?
             self.fecha_vencimiento_reserva = timezone.now() + timedelta(hours=24)
         else:
-            self.fecha_vencimiento_reserva = desde - timedelta(hours=faltan*0.14)
+            self.fecha_vencimiento_reserva = timezone.now() + timedelta(hours=24 - (240 - faltan)/24)
 
     def save(self, *args, **kwargs):
         self.calcular_costo()

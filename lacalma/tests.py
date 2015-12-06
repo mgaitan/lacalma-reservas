@@ -1,6 +1,8 @@
 import json
-from datetime import date, timedelta
+from datetime import date, timedelta, datetime
+import pytz
 from django.utils import timezone
+from freezegun import freeze_time
 from decimal import Decimal
 from django.test import TestCase
 from django.core.management import call_command
@@ -249,3 +251,26 @@ class TestDiasOcupadosEnFrontEnd(TestCase):
         response = self.client.get('/')
         fechas = json.loads(response.context['reservas_confirmadas'])["1"]
         self.assertEqual(fechas, [d.isoformat() for d in rango[:-1]])
+
+
+class TestCalcularVencimiento(TestCase):
+
+    fixtures = ['deptos.json']
+
+    def test_vencimiento_mas_de_10_dias(self):
+
+        reserva = ReservaFactory(desde=date(2015, 12, 1), hasta=date(2015, 12, 5))
+
+        with freeze_time("2015-11-20 12:00:00"):     # mas de 10 dias vence a las 24hs.
+            reserva.calcular_vencimiento()
+        self.assertEqual(reserva.fecha_vencimiento_reserva, datetime(2015,11,21,12,0,0,tzinfo=pytz.utc))
+
+
+    def test_vencimiento_menos_de_10_dias(self):
+
+        reserva = ReservaFactory(desde=date(2015, 12, 1), hasta=date(2015, 12, 5))
+
+        with freeze_time("2015-11-22 12:00:00"):     # menos de 10 dias vence
+            reserva.calcular_vencimiento()
+            self.assertTrue(timedelta(hours=24) > reserva.fecha_vencimiento_reserva - timezone.now() > timedelta(hours=23))
+
