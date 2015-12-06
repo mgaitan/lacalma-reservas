@@ -31,10 +31,10 @@ def update(branch='master'):
         run("git stash")
         run("git fetch && git reset --hard origin/%s" % branch)
         run("%s install -r requirements.txt" % env.pip)
-        run("%s manage.py syncdb" % env.python)
         run("%s manage.py makemigrations" % env.python)
         run("%s manage.py migrate" % env.python)
         run("echo 'yes' | %s manage.py collectstatic" % env.python)
+        run("git stash pop")
         restart()
 
 def django_manage(cmd):
