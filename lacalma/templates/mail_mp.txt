@@ -8,7 +8,7 @@ Si desea reintentar el pago con tarjeta ingrese a este link:
 
 Si en cambio desea confirmar su reserva vía transferencia bancaria, por favor proceda con los siguientes datos:
 
-    Depósito requerido: $ {{ reserva.deposito_requerido.1 }} ({{ reserva.deposito_requerido.0 }} %)
+    Depósito requerido: $ {{ reserva.deposito_requerido.1|floatformat:2 }} ({{ reserva.deposito_requerido.0 }} %)
     Caja de Ahorro en Pesos Nº 25403769081732
     Banco de la Nación Argentina
     Sucursal 2540

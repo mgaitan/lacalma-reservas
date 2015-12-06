@@ -7,8 +7,8 @@ Hemos recibido la confirmación de pago de su reserva con los siguientes detalle
     * Dias en temporada alta: {{ reserva.dias_alta }}
     * Dias en temporada media: {{ reserva.dias_media }}
     * Dias en temporada baja: {{ reserva.dias_baja }}{% if reserva.descuento.0 %}
-    * Descuento por pago contado/transferencia: $ {{ reserva.descuento.1 }} ({{ reserva.descuento.0 }} %){% endif %}
-    * Costo total: $ {{ reserva.costo_total }}
+    * Descuento por pago contado/transferencia: $ {{ reserva.descuento.1|floatformat:2  }} ({{ reserva.descuento.0 }} %){% endif %}
+    * Costo total: $ {{ reserva.costo_total|floatformat:2 }}
 
     * Comentario o consulta:
 

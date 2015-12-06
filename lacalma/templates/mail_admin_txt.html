@@ -14,10 +14,10 @@ Hay una nueva solicitud de reserva para  el {{ reserva.departamento }}:
     * Dias en temporada alta: {{ reserva.dias_alta }}
     * Dias en temporada media: {{ reserva.dias_media }}
     * Dias en temporada baja: {{ reserva.dias_baja }}{% if reserva.descuento.0 %}
-    * Descuento por pago contado/transferencia: $ {{ reserva.descuento.1 }} ({{ reserva.descuento.0 }} %){% endif %}
-    * Costo total: $ {{ reserva.costo_total }}
+    * Descuento por pago contado/transferencia: $ {{ reserva.descuento.1|floatformat:2 }} ({{ reserva.descuento.0 }} %){% endif %}
+    * Costo total: $ {{ reserva.costo_total|floatformat:2 }}
 
-    * Depósito de seña requerido: $ {{ reserva.deposito_requerido.1 }} ({{ reserva.deposito_requerido.0 }} %)
+    * Depósito de seña requerido: $ {{ reserva.deposito_requerido.1|floatformat:2 }} ({{ reserva.deposito_requerido.0 }} %)
 
     * Fecha de vencimiento de reserva pendiente: {{ reserva.fecha_vencimiento_reserva|date:"l j \d\e F \d\e Y" }}
 

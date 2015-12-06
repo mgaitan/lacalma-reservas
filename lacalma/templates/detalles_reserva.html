@@ -29,16 +29,16 @@
 
                 {% if reserva.descuento.0 %}
                     <dt>Descuento por pago contado/transferencia</dt>
-                    <dd>$ {{ reserva.descuento.1 }} ({{ reserva.descuento.0 }} %)</dd>
+                    <dd>$ {{ reserva.descuento.1|floatformat:2 }} ({{ reserva.descuento.0 }} %)</dd>
                 {% endif %}
 
                 <dt>Costo total</dt>
-                    <dd>$ {{ reserva.costo_total }}</dd>
+                    <dd>$ {{ reserva.costo_total|floatformat:2 }}</dd>
 
                 {% if reserva.estado == 'pendiente' %}
 
                 <dt>Depósito de seña requerido</dt>
-                    <dd>$ {{ reserva.deposito_requerido.1 }} ({{ reserva.deposito_requerido.0 }} %)</dd>
+                    <dd>$ {{ reserva.deposito_requerido.1|floatformat:2 }} ({{ reserva.deposito_requerido.0 }} %)</dd>
 
                 <dt>Fecha de vencimiento de la reserva pendiente</dt>
                     <dd>{{ reserva.fecha_vencimiento_reserva|date:"l j \d\e F \d\e Y - H:i \h\s" }}</dd>

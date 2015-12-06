@@ -267,7 +267,6 @@ class TestCalcularVencimiento(TestCase):
 
 
     def test_vencimiento_menos_de_10_dias(self):
-
         reserva = ReservaFactory(desde=date(2015, 12, 1), hasta=date(2015, 12, 5))
 
         with freeze_time("2015-11-22 12:00:00"):     # menos de 10 dias vence
