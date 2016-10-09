@@ -34,8 +34,8 @@ def dias_en_rango(inicio, fin):
     return dias
 
 
-TEMPORADA_ALTA = dias_en_rango(date(2015, 12, 26), date(2016, 2, 15))
-TEMPORADA_MEDIA = dias_en_rango(date(2016, 2, 15), date(2016, 4, 5))  # hasta semana santa
+TEMPORADA_ALTA = dias_en_rango(date(2016, 12, 26), date(2017, 2, 15))
+TEMPORADA_MEDIA = dias_en_rango(date(2017, 2, 15), date(2017, 4, 5))  # hasta semana santa
 DESCUENTO_QUINCENA = None     # porciento
 DESCUENTO_PAGO_CONTADO = None    # porciento
 DEPOSITO_REQUERIDO = 50
