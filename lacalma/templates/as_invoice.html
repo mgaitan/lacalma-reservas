@@ -68,6 +68,14 @@
             <td><div class="text-right">$ {{ reserva.detalle.media }}</div></td>
           </tr>
           {% endif %}
+          {% if reserva.dias_media_baja %}
+          <tr>
+            <td>Dias en temporada media-baja {{ reserva.departamento.nombre }}</td>
+            <td><div class="text-right">{{ reserva.dias_media_baja }}</div></td>
+            <td><div class="text-right">$ {{ reserva.departamento.dia_media_baja }}</div></td>
+            <td><div class="text-right">$ {{ reserva.detalle.media_baja }}</div></td>
+          </tr>
+          {% endif %}
           {% if reserva.dias_baja %}
           <tr>
             <td>Dias en temporada baja {{ reserva.departamento.nombre }}</td>

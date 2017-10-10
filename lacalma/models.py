@@ -34,11 +34,14 @@ def dias_en_rango(inicio, fin):
     return dias
 
 
-TEMPORADA_ALTA = dias_en_rango(date(2016, 12, 26), date(2017, 2, 13))
-TEMPORADA_MEDIA = dias_en_rango(date(2017, 2, 13), date(2017, 4, 2))  # hasta semana santa
+TEMPORADA_ALTA = dias_en_rango(date(2017, 12, 26), date(2018, 2, 15))
+TEMPORADA_MEDIA = dias_en_rango(date(2018, 2, 15), date(2018, 2, 26))  # hasta semana santa
+TEMPORADA_MEDIA_BAJA = dias_en_rango(date(2018, 2, 26), date(2018, 4, 4))  # hasta semana santa
+
 DESCUENTO_QUINCENA = None     # porciento
 DESCUENTO_PAGO_CONTADO = None    # porciento
 DEPOSITO_REQUERIDO = 50
+
 
 
 class Departamento(models.Model):
@@ -46,6 +49,7 @@ class Departamento(models.Model):
     capacidad = models.IntegerField()
     dia_alta = models.DecimalField(max_digits=7, decimal_places=2)
     dia_media = models.DecimalField(max_digits=7, decimal_places=2)
+    dia_media_baja = models.DecimalField(max_digits=7, decimal_places=2, default=0)
     dia_baja = models.DecimalField(max_digits=7, decimal_places=2)
 
     class Meta:
@@ -81,6 +85,7 @@ class Reserva(TimeStampedModel):
 
     dias_total = models.IntegerField(default=0)
     dias_baja = models.IntegerField(default=0)
+    dias_media_baja = models.IntegerField(default=0)
     dias_media = models.IntegerField(default=0)
     dias_alta = models.IntegerField(default=0)
 
@@ -115,19 +120,20 @@ class Reserva(TimeStampedModel):
     def detalle(self):
         return {'media': self.dias_media * self.departamento.dia_media,
                 'alta': self.dias_alta * self.departamento.dia_alta,
-                'baja': self.dias_baja * self.departamento.dia_baja}
+                'baja': self.dias_baja * self.departamento.dia_baja,
+                'media_baja': self.dias_media_baja * self.departamento.dia_media_baja
+                }
 
     def total_sin_descuento(self):
-        return sum((self.dias_media * self.departamento.dia_media,
-                    self.dias_alta * self.departamento.dia_alta,
-                    self.dias_baja * self.departamento.dia_baja))
+        return sum(self.detalle().values())
 
     def calcular_costo(self, descuento=True):
         reserva = self.rango()
         self.dias_total = len(reserva)
         self.dias_media = len(set(reserva).intersection(TEMPORADA_MEDIA))
+        self.dias_media_baja = len(set(reserva).intersection(TEMPORADA_MEDIA_BAJA))
         self.dias_alta = len(set(reserva).intersection(TEMPORADA_ALTA))
-        self.dias_baja = self.dias_total - self.dias_media - self.dias_alta
+        self.dias_baja = self.dias_total - self.dias_media - self.dias_media_baja - self.dias_alta
 
         self.costo_total = self.total_sin_descuento()
         if descuento:

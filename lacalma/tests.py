@@ -1,5 +1,5 @@
 import json
-from datetime import date, timedelta, datetime
+from datetime import date, timedelta, datetime, time, combine
 import pytz
 from django.utils import timezone
 from freezegun import freeze_time
@@ -28,12 +28,16 @@ class TestCalcular(TestCase):
     fixtures = ['deptos.json']
 
     def test_1_dias_temporada_baja(self):
-        reserva = ReservaFactory(desde=date(2015, 11, 20), hasta=date(2015, 11, 21))
+        desde = TEMPORADA_ALTA[0] - timedelta(days=2)
+        hasta = desde + timedelta(days=1)
+        reserva = ReservaFactory(desde=desde, hasta=hasta)
         reserva.calcular_costo(False)
         self.assertEqual(reserva.costo_total, Decimal(1230.00) )
 
     def test_2_dias_temporada_baja(self):
-        reserva = ReservaFactory(desde=date(2015, 11, 20), hasta=date(2015, 11, 22))
+        desde = TEMPORADA_ALTA[0] - timedelta(days=3)
+        hasta = desde + timedelta(days=2)
+        reserva = ReservaFactory(desde=desde, hasta=hasta)
         reserva.calcular_costo(False)
         self.assertEqual(reserva.costo_total, 2 * Decimal(1230.00))
 
@@ -259,11 +263,17 @@ class TestCalcularVencimiento(TestCase):
 
     def test_vencimiento_mas_de_10_dias(self):
 
-        reserva = ReservaFactory(desde=date(2015, 12, 1), hasta=date(2015, 12, 5))
+        desde = TEMPORADA_ALTA[0]   # 3 dias de baja
+        hasta = TEMPORADA_ALTA[0] + timedelta(days=4)   # 4 dias de alta
 
-        with freeze_time("2015-11-20 12:00:00"):     # mas de 10 dias vence a las 24hs.
+        reserva = ReservaFactory(desde=desde, hasta=hasta)
+        midnight = time(0, 0, tzinfo=pytz.utc)
+        reserva_datetime = combine(TEMPORADA_ALTA - timedelta(11), midnight)
+
+        with freeze_time(reserva_datetime):     # mas de 10 dias vence a las 24hs.
             reserva.calcular_vencimiento()
-        self.assertEqual(reserva.fecha_vencimiento_reserva, datetime(2015,11,21,12,0,0,tzinfo=pytz.utc))
+        self.assertEqual(reserva.fecha_vencimiento_reserva,
+                         reserva_datetime + timedelta(hours=24))
 
 
     def test_vencimiento_menos_de_10_dias(self):
