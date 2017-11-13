@@ -4,6 +4,7 @@ from django.core.urlresolvers import reverse
 from django.contrib.sites.models import Site
 from lacalma.forms import ReservaAdminForm
 from lacalma.models import Departamento, Reserva, ConceptoFacturable
+from djangoql.admin import DjangoQLSearchMixin
 import mercadopago
 
 
@@ -16,7 +17,7 @@ class FacturableInline(admin.TabularInline):
 
 
 
-class ReservaAdmin(admin.ModelAdmin):
+class ReservaAdmin(DjangoQLSearchMixin, admin.ModelAdmin):
 
     def num(self, obj):
         return '#' + str(obj.id)
@@ -59,7 +60,7 @@ class ReservaAdmin(admin.ModelAdmin):
     actions = ['regenerar_mercadopago']
 
 
-    list_display = ('num', 'depto', 'nombre_y_apellido', 'desde', 'hasta', 'estado', 'fecha_vencimiento_reserva', 'forma_pago', 'links')
+    list_display = ('num', 'depto', 'nombre_y_apellido', 'desde', 'hasta', 'estado', 'procedencia', 'email', 'fecha_vencimiento_reserva', 'forma_pago', 'links')
     list_filter = ('departamento', 'estado', 'desde', 'hasta', 'fecha_vencimiento_reserva', 'forma_pago')
     search_fields = ('nombre_y_apellido', 'email')
     readonly_fields = ('dias_alta', 'dias_baja', 'dias_media', 'dias_total', 'total_sin_descuento',

@@ -34,6 +34,8 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'djangoql',
+    'export_action',
     'formtools',
     'crispy_forms',
     'reservas',

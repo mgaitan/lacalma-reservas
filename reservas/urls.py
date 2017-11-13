@@ -16,5 +16,6 @@ urlpatterns = [
     url(r'^ipn$', mp_notification, name='ipn'),
     url(r'^encuesta/', include('encuesta.urls')),
     url(r'^retiros/', include('retiros.urls')),
+    url(r'^export_action/', include("export_action.urls", namespace="export_action")),
     url(r'^$', reserva_view)
 ]
