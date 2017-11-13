@@ -10,3 +10,5 @@ mercadopago==0.3.4
 raven==5.7.2
 django-nose==1.4.2
 freezegun==0.3.5
+djangoql==0.8.9
+django-export-action==0.1.1
