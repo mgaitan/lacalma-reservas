@@ -76,9 +76,13 @@ class ReservaWizard(SessionWizardView):
             mail_txt = render_to_string('mail_txt.html', {'reserva': reserva})
             mail_html = render_to_string('mail.html', {'reserva': reserva})
 
-            msg = EmailMultiAlternatives('Reserva %s - Las Grutas /ref. #%s' % (site.name, reserva.id),
-                                   mail_txt, 'info@lacalma-lasgrutas.com.ar', [reserva.email],
-                                   cc=['info@lacalma-lasgrutas.com.ar'])
+            msg = EmailMultiAlternatives(
+                'Reserva %s - Las Grutas /ref. #%s' % (site.name, reserva.id),
+                mail_txt,
+                'info@lacalma-lasgrutas.com.ar',
+                [reserva.email],
+                cc=['info@lacalma-lasgrutas.com.ar']
+            )
             msg.attach_alternative(mail_html, "text/html")
             msg.send()
             return redirect('gracias')
