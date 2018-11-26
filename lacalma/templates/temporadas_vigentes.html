@@ -22,15 +22,8 @@
                 <td>{{ temporada.nombre|title }}</td>
                 <td>Desde el {{ temporada.desde|date }} hasta {{ temporada.hasta|date }}</td>
               {% endifchanged %}
-              {% if temporada.is_1_4 %}
-                <td>$ {{temporada.precio }}</td>
-                <td></td>
-              {% endif %}
-              {% if temporada.is_2_3 %}
-                <td></td>
-                <td>$ {{temporada.precio }}</td>
-              {% endif %}
 
+                <td>$ {{temporada.precio }}</td>
               {% ifchanged temporada.desde temporada.hasta %}{% else %}</tr>{% endifchanged %}
             {% endfor %}
 
