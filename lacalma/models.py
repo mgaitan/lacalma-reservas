@@ -45,7 +45,7 @@ class Temporada(models.Model):
     nombre = models.CharField(max_length=50)
     desde = models.DateField()
     hasta = models.DateField()
-    precio = models.DecimalField(max_digits=8, decimal_places=2)
+    precio = models.DecimalField(max_digits=9, decimal_places=2)
     departamentos = models.ManyToManyField('Departamento', related_name='temporadas')
 
     def rango(self):
@@ -64,7 +64,7 @@ class Temporada(models.Model):
 class Departamento(models.Model):
     nombre = models.CharField(max_length=50, unique=True)
     capacidad = models.IntegerField()
-    precio_fuera_temporada = models.DecimalField(max_digits=7, decimal_places=2)
+    precio_fuera_temporada = models.DecimalField(max_digits=9, decimal_places=2)
 
     class Meta:
         ordering = ('nombre',)
@@ -98,12 +98,12 @@ class Reserva(TimeStampedModel):
         help_text='Cambiarlo puede modificar el saldo a pagar por aplicar o quitar descuentos')
 
     dias_total = models.IntegerField(default=0)
-    costo_total = models.DecimalField(max_digits=7, decimal_places=2, default=0)
+    costo_total = models.DecimalField(max_digits=9, decimal_places=2, default=0)
 
     fecha_vencimiento_reserva = models.DateTimeField(null=True, blank=True)
 
     fecha_deposito_reserva = models.DateTimeField(null=True, blank=True)
-    deposito_reserva = models.DecimalField(max_digits=7, decimal_places=2, default=0)
+    deposito_reserva = models.DecimalField(max_digits=9, decimal_places=2, default=0)
     mp_id = models.CharField(verbose_name=u'ID Transacción de Mercadopago', max_length=100, null=True, blank=True)
     mp_pendiente = models.BooleanField(default=False)
     mp_url = models.CharField(verbose_name='Dirección p/Pago', max_length=255, default='', help_text='Puede copiar esta dirección para enviar por email u otro medio')
@@ -249,4 +249,4 @@ class ConceptoFacturable(TimeStampedModel):
 
     reserva = models.ForeignKey(Reserva, related_name='facturables')
     concepto = models.CharField(max_length=200)
-    monto = models.DecimalField(max_digits=7, decimal_places=2, default=0)
+    monto = models.DecimalField(max_digits=9, decimal_places=2, default=0)
