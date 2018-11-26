@@ -10,6 +10,7 @@
             <tr>
                 <th>Temporada {% if desde != hasta %}{{desde}}-{{hasta}}{%else %}{{ desde}}
                 {% endif %}  </th>
+                <th></th>
                 <th>1 y 4</th>
                 <th>2 y 3</th>
             </tr>
@@ -18,6 +19,7 @@
 
               {% ifchanged temporada.desde temporada.hasta %}
                 <tr>
+                <td>{{ temporada.nombre|title }}</td>
                 <td>Desde el {{ temporada.desde|date }} hasta {{ temporada.hasta|date }}</td>
               {% endifchanged %}
               {% if temporada.is_1_4 %}

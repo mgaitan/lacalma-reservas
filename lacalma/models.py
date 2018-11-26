@@ -26,11 +26,12 @@ def aumento(alta_anterior, coef_aumento=1.35):
     return [alta_anterior * coef_aumento * i for i in [.65, 0.8, 1]]
 
 
-def dias_en_rango(inicio, fin):
+def dias_en_rango(inicio, fin, include_end=False):
     if fin < inicio:
         fin, inicio = inicio, fin
     dias = []
-    for i in range((fin - inicio).days):
+    extra = 1 if include_end else 0
+    for i in range((fin - inicio).days + extra):
         dias.append(inicio + timedelta(days=i))
     return dias
 
@@ -48,7 +49,7 @@ class Temporada(models.Model):
     departamentos = models.ManyToManyField('Departamento', related_name='temporadas')
 
     def rango(self):
-        return dias_en_rango(self.hasta, self.desde)
+        return dias_en_rango(self.hasta, self.desde, True)
 
     def is_1_4(self):
         return self.departamentos.filter(nombre__in=["Departamento 1", "Departamento 4"]).count() == 2
@@ -130,7 +131,9 @@ class Reserva(TimeStampedModel):
         reserva = self.rango()
         dias_en_temporada = 0
         for temporada in self.departamento.temporadas.filter(
-            Q(desde__range=(self.desde, self.hasta)) | Q(hasta__range=(self.desde, self.hasta))
+            Q(desde__range=(self.desde, self.hasta)) |
+            Q(hasta__range=(self.desde, self.hasta)) |
+            Q(desde__lte=self.desde, hasta__gte=self.hasta)
         ):
             dias = len(set(reserva).intersection(set(temporada.rango())))
             d[temporada.nombre] = (dias, temporada.precio, dias * temporada.precio)
