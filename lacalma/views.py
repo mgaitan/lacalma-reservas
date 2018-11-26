@@ -162,7 +162,7 @@ def temporadas_vigentes(requests):
     one_year = now + timedelta(days=365)
     temporadas = Temporada.objects.filter(
         Q(desde__range=(now, one_year)) | Q(hasta__range=(now, one_year))
-    ).order_by('desde')
+    ).order_by('desde', '-precio')
     desde = temporadas.first().desde.year
     hasta = temporadas.last().hasta.year
     return render(
