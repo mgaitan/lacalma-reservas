@@ -68,14 +68,15 @@ class ReservaForm2(forms.ModelForm):
           'comentario': forms.Textarea(attrs={'rows':3, 'cols':30}),
         }
 
-
     def __init__(self, *args, **kwargs):
         super(ReservaForm2, self).__init__(*args, **kwargs)
-        for field in ('nombre_y_apellido', 'email', 'telefono'):
+        for field in ('nombre_y_apellido', 'email', 'email_confirma', 'telefono'):
             self.fields[field].required = True
 
     def clean(self):
         cleaned_data = super(ReservaForm2, self).clean()
-        if cleaned_data['email'] != cleaned_data['email_confirma']:
+        email = cleaned_data.get('email')
+        email_confirma = cleaned_data.get('email_confirma')
+        if email and email_confirma and email != email_confirma:
             self.add_error('email', 'Las direcciones no coinciden')
         return cleaned_data
