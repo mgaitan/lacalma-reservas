@@ -8,7 +8,8 @@
         <table class="table">
 
             <tr>
-                <th>{{desde}}-{{hasta}}</th>
+                <th>Temporada {% if desde != hasta %}{{desde}}-{{hasta}}{%else %}{{ desde}}
+                {% endif %}  </th>
                 <th>1 y 4</th>
                 <th>2 y 3</th>
             </tr>
