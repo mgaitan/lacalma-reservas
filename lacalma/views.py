@@ -27,6 +27,12 @@ class ReservaWizard(SessionWizardView):
     def get_template_names(self):
         return 'step_%s.html' % self.steps.current
 
+    def get_form_initial(self, step):
+        if step == 'fechas':
+            codigo = self.request.GET.get('codigo')
+            return {'codigo_descuento': codigo}
+        return {}
+
     def get_context_data(self, form, **kwargs):
 
         context = super(ReservaWizard, self).get_context_data(form=form, **kwargs)
@@ -55,7 +61,7 @@ class ReservaWizard(SessionWizardView):
             reserva = Reserva(desde=fe.cleaned_data['desde'],
                               hasta=fe.cleaned_data['hasta'],
                               departamento=fe.cleaned_data['departamento'])
-            reserva.calcular_costo()
+            reserva.calcular_costo(decuento=fe.cleaned_data['codigo_descuento'])
             reserva.calcular_vencimiento()
             context['reserva'] = reserva
         return context

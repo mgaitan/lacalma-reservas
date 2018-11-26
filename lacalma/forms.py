@@ -2,13 +2,13 @@
 from datetime import datetime, timedelta
 from django import forms
 from lacalma.models import Reserva, Departamento
+from descuentos.models import CodigoDeDescuento
 
 
 class ReservaAdminForm(forms.ModelForm):
     class Meta:
         model = Reserva
         exclude = []
-
 
     def clean(self):
         cleaned_data = super(ReservaAdminForm, self).clean()
@@ -18,19 +18,33 @@ class ReservaAdminForm(forms.ModelForm):
         return cleaned_data
 
 
-
 class ReservaForm1(forms.Form):
     departamento = forms.ModelChoiceField(queryset=Departamento.objects.all(), empty_label=None)
     desde = forms.DateField(required=False, widget=forms.HiddenInput)
     hasta = forms.DateField(required=False, widget=forms.HiddenInput, )
     fechas = forms.CharField(label='¿Durante qué días quiere reservar?',
                 help_text='Seleccione hasta la última noche que duerme', required=False)
+    codigo_descuento = forms.CharField(label=u'¿Tiene un código de descuento?', required=False)
+
 
     def __init__(self, *args, **kwargs):
         super(ReservaForm1, self).__init__(*args, **kwargs)
         self.fields['departamento'].widget = forms.HiddenInput()
         self.fields['departamento'].initial = Departamento.objects.all()[0]
         self.fields['fechas'].widget = forms.HiddenInput()
+        # self.fields['codigo_descuento'].widget = forms.HiddenInput()
+
+
+    def clean_codigo_descuento(self):
+        data = self.cleaned_data.get('codigo_descuento', None)
+        if data:
+            try:
+                codigo = CodigoDeDescuento.objects.get(codigo=data)
+                return codigo
+            except CodigoDeDescuento.DoesNotExist:
+                return None
+        return None
+
 
     def clean(self):
         cleaned_data = super(ReservaForm1, self).clean()

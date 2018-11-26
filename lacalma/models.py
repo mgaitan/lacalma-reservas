@@ -110,6 +110,7 @@ class Reserva(TimeStampedModel):
     observaciones = models.TextField(help_text="Se mostraran en el presupuesto o remito", null=True, blank=True)
     uuid = models.CharField(max_length=8, null=True, editable=False)
     envio_encuesta = models.DateTimeField(null=True, blank=True)
+    descuentos = models.ManyToManyField('descuentos.CodigoDeDescuento')
 
     def __unicode__(self):
         return u'Reserva #%s' % self.id
@@ -152,6 +153,10 @@ class Reserva(TimeStampedModel):
         self.dias_total = len(reserva)
 
         self.costo_total = self.total_sin_descuento()
+
+        for d in self.descuentos.all():
+            self.costo_total -= d.calcular_descuento(self.costo_total)
+
         if descuento:
             self.costo_total -= self.descuento()[1]
 
