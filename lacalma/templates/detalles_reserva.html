@@ -17,16 +17,14 @@
                 <dt>Teléfono</dt>
                     <dd>{{ reserva.telefono }}</dd>
 
+        {% for temporada, item in self.detalle.items %}
 
-                <dt>Dias en temporada alta</dt>
-                    <dd>{{ reserva.dias_alta }}</dd>
-                <dt>Dias en temporada media</dt>
-                    <dd>{{ reserva.dias_media }}</dd>
-                <dt>Dias en temporada media-baja</dt>
-                    <dd>{{ reserva.dias_media_baja }}</dd>
-                <dt>Dias en temporada baja</dt>
-                    <dd>{{ reserva.dias_baja }}</dd>
+                <dt>{% if temporada|slice:":5" == "fuera" %}Dias fuera de temporada
+                    {% else %}Dias en {{ temporada|lower }}{% endif %} </dt>
 
+                <dd>{{ item.0 }}  (${{item.1}})</dd>
+
+        {% endfor %}
 
 
                 {% if reserva.descuento.0 %}

@@ -128,9 +128,12 @@ MP_CLIENT_SECRET = ''
 MP_SANDBOX_MODE = True
 
 
-RAVEN_CONFIG = {
-    'dsn': 'https://:8cf565593e7e42a38a3332b567601034@app.getsentry.com/34941',
-}
+DATE_FORMAT = 'd-M-Y'
+
+if not DEBUG:
+    RAVEN_CONFIG = {
+        'dsn': 'https://:8cf565593e7e42a38a3332b567601034@app.getsentry.com/34941',
+    }
 
 TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 NOSE_ARGS = ['-s', '--nologcapture', '--nocapture', '--with-id',

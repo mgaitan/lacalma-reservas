@@ -1,6 +1,9 @@
 from django.conf.urls import include, url
 from django.contrib import admin
-from lacalma.views import reserva_view, gracias, gracias_mp, presupuesto, mp_notification, regenerar_mercadopago
+from lacalma.views import (
+    reserva_view, gracias, gracias_mp, presupuesto, mp_notification, regenerar_mercadopago,
+    temporadas_vigentes
+)
 
 urlpatterns = [
     # Examples:
@@ -17,5 +20,6 @@ urlpatterns = [
     url(r'^encuesta/', include('encuesta.urls')),
     url(r'^retiros/', include('retiros.urls')),
     url(r'^export_action/', include("export_action.urls", namespace="export_action")),
+    url(r'^temporadas-vigentes/$', temporadas_vigentes, name='temporadas_vigentes'),
     url(r'^$', reserva_view)
 ]

@@ -3,7 +3,7 @@ from django.contrib import admin
 from django.core.urlresolvers import reverse
 from django.contrib.sites.models import Site
 from lacalma.forms import ReservaAdminForm
-from lacalma.models import Departamento, Reserva, ConceptoFacturable
+from lacalma.models import Departamento, Reserva, ConceptoFacturable, Temporada
 from djangoql.admin import DjangoQLSearchMixin
 import mercadopago
 
@@ -13,7 +13,6 @@ class DepartamentoAdmin(admin.ModelAdmin):
 
 class FacturableInline(admin.TabularInline):
     model = ConceptoFacturable
-
 
 
 
@@ -54,16 +53,14 @@ class ReservaAdmin(DjangoQLSearchMixin, admin.ModelAdmin):
     mp_button.short_description = 'Regenerar'
     mp_button.allow_tags = True
 
-
     regenerar_mercadopago.short_description = "Regenerar cupon de reservas mercadopago pendientes"
 
     actions = ['regenerar_mercadopago']
 
-
     list_display = ('num', 'depto', 'nombre_y_apellido', 'desde', 'hasta', 'estado', 'procedencia', 'email', 'fecha_vencimiento_reserva', 'forma_pago', 'links')
     list_filter = ('departamento', 'estado', 'desde', 'hasta', 'fecha_vencimiento_reserva', 'forma_pago')
     search_fields = ('nombre_y_apellido', 'email')
-    readonly_fields = ('dias_alta', 'dias_baja', 'dias_media', 'dias_total', 'total_sin_descuento',
+    readonly_fields = ('dias_total', 'total_sin_descuento',
                        'costo_total', 'mp_url', 'mp_pendiente', 'mp_id', 'saldo', 'mp_button')
 
     inlines = [
@@ -100,5 +97,13 @@ class ReservaAdmin(DjangoQLSearchMixin, admin.ModelAdmin):
         form.instance.save()
 
 
+class TemporadaAdmin(admin.ModelAdmin):
+    def deptos(self, obj):
+        return ' y '.join(d.nombre for d in obj.departamentos.all())
+
+    list_display = ('nombre', 'desde', 'hasta', 'deptos')
+
+
+admin.site.register(Temporada, TemporadaAdmin)
 admin.site.register(Departamento, DepartamentoAdmin)
 admin.site.register(Reserva, ReservaAdmin)

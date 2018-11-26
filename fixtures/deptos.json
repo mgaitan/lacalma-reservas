@@ -2,10 +2,7 @@
 {
   "fields": {
     "nombre": "Departamento 1",
-    "dia_alta": "2400",
-    "dia_media": "2040",
-    "dia_media_baja": "1800",
-    "dia_baja": "1450",
+    "precio_fuera_de_temporada": "2400",
     "capacidad": 5
   },
   "model": "lacalma.departamento",
@@ -14,10 +11,7 @@
 {
   "fields": {
     "nombre": "Departamento 4",
-    "dia_alta": "2400",
-    "dia_media": "2040",
-    "dia_media_baja": "1800",
-    "dia_baja": "1450",
+    "precio_fuera_de_temporada": "2400",
     "capacidad": 5
   },
   "model": "lacalma.departamento",
@@ -26,10 +20,7 @@
 {
   "fields": {
     "nombre": "Departamento 2",
-    "dia_alta": "2000",
-    "dia_media": "1700",
-    "dia_media_baja": "1500",
-    "dia_baja": "1200",
+    "precio_fuera_de_temporada": "2000",
     "capacidad": 4
   },
   "model": "lacalma.departamento",
@@ -38,10 +29,7 @@
 {
   "fields": {
     "nombre": "Departamento 3",
-    "dia_alta": "2000",
-    "dia_media": "1700",
-    "dia_media_baja": "1500",
-    "dia_baja": "1200",
+    "precio_fuera_de_temporada": "2000",
     "capacidad": 4
   },
   "model": "lacalma.departamento",

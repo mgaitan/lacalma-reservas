@@ -52,38 +52,19 @@
         <tbody>
 
 
-          {% if reserva.dias_alta %}
-          <tr>
-            <td>Dias en temporada alta {{ reserva.departamento.nombre }}</td>
-            <td><div class="text-right">{{ reserva.dias_alta }}</div></td>
-            <td><div class="text-right">$ {{ reserva.departamento.dia_alta }}</div></td>
-            <td><div class="text-right">$ {{ reserva.detalle.alta }}</div></td>
+      {% for temporada, item in reserva.detalle.items %}
+
+        <tr>
+            <td>{% if temporada|slice:":5" == "fuera" %}Dias fuera de temporada
+                    {% else %}Dias en {{ temporada|lower }}{% endif %}</td>
+            <td><div class="text-right">{{ item.0 }}</div></td>
+            <td><div class="text-right">$ {{ item.1 }}</div></td>
+            <td><div class="text-right">$ {{ item.2 }}</div></td>
           </tr>
-          {% endif %}
-          {% if reserva.dias_media %}
-          <tr>
-            <td>Dias en temporada media {{ reserva.departamento.nombre }}</td>
-            <td><div class="text-right">{{ reserva.dias_media }}</div></td>
-            <td><div class="text-right">$ {{ reserva.departamento.dia_media }}</div></td>
-            <td><div class="text-right">$ {{ reserva.detalle.media }}</div></td>
-          </tr>
-          {% endif %}
-          {% if reserva.dias_media_baja %}
-          <tr>
-            <td>Dias en temporada media-baja {{ reserva.departamento.nombre }}</td>
-            <td><div class="text-right">{{ reserva.dias_media_baja }}</div></td>
-            <td><div class="text-right">$ {{ reserva.departamento.dia_media_baja }}</div></td>
-            <td><div class="text-right">$ {{ reserva.detalle.media_baja }}</div></td>
-          </tr>
-          {% endif %}
-          {% if reserva.dias_baja %}
-          <tr>
-            <td>Dias en temporada baja {{ reserva.departamento.nombre }}</td>
-            <td><div class="text-right">{{ reserva.dias_baja }}</div></td>
-            <td><div class="text-right">$ {{ reserva.departamento.dia_baja }}</div></td>
-            <td><div class="text-right">$ {{ reserva.detalle.baja }}</div></td>
-          </tr>
-        {% endif %}
+
+        {% endfor %}
+
+
         {% if reserva.descuento.0 %}
           <tr>
             <td colspan="3"><p class="text-right" >Descuento por pago contado/transferencia: {{ reserva.descuento.0 }} % </p> </td>

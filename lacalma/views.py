@@ -11,15 +11,14 @@ from django.core.mail import EmailMultiAlternatives, send_mail
 from django.template.loader import render_to_string
 from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import render, redirect, get_object_or_404
-from django.utils import timezone
 from formtools.wizard.views import SessionWizardView
 from django.contrib.admin.views.decorators import staff_member_required
+from django.utils import timezone
+from django.db.models import Q
 import mercadopago
 
-from lacalma.models import Reserva, Departamento
+from lacalma.models import Reserva, Departamento, Temporada
 from lacalma.forms import ReservaForm1, ReservaForm2
-
-
 
 
 class ReservaWizard(SessionWizardView):
@@ -126,7 +125,6 @@ def mp_notification(request):
     if settings.MP_SANDBOX_MODE:
         mp.sandbox_mode(True)
 
-
     if request.GET.get('topic', '') == 'payment':
         site = Site.objects.get_current()
 
@@ -145,17 +143,32 @@ def mp_notification(request):
                 reserva.deposito_reserva = reserva.costo_total
                 reserva.save()
 
-
-
                 mail_txt = render_to_string('mail_mp_txt.html', {'reserva': reserva})
                 mail_html = render_to_string('mail_mp.html', {'reserva': reserva})
 
-                msg = EmailMultiAlternatives(u'Confirmación de Reserva %s - Las Grutas /ref. #%s' % (site.name, reserva.id),
-                                       mail_txt, 'info@lacalma-lasgrutas.com.ar', [reserva.email],
-                                       cc=['info@lacalma-lasgrutas.com.ar'])
+                msg = EmailMultiAlternatives(
+                    u'Confirmación de Reserva %s - Las Grutas /ref. #%s' % (site.name, reserva.id),
+                    mail_txt, 'info@lacalma-lasgrutas.com.ar', [reserva.email],
+                    cc=['info@lacalma-lasgrutas.com.ar'])
                 msg.attach_alternative(mail_html, "text/html")
                 msg.send()
 
             return HttpResponse('ok')
     return HttpResponseBadRequest('bad boy')
 
+
+def temporadas_vigentes(requests):
+    now = timezone.now()
+    one_year = now + timedelta(days=365)
+    temporadas = Temporada.objects.filter(
+        Q(desde__range=(now, one_year)) | Q(hasta__range=(now, one_year))
+    ).order_by('desde')
+    desde = temporadas.first().desde.year
+    hasta = temporadas.last().hasta.year
+    return render(
+        requests, 'temporadas_vigentes.html', {
+            'temporadas': temporadas,
+            'desde': desde,
+            'hasta': hasta
+        }
+    )

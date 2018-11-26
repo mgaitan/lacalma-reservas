@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+    {% block body %}
+
+    <div class="row">
+        <div class="col-md-6 col-md-offset-3">
+
+        <table class="table">
+
+            <tr>
+                <th>{{desde}}-{{hasta}}</th>
+                <th>1 y 4</th>
+                <th>2 y 3</th>
+            </tr>
+
+            {% for temporada in temporadas %}
+
+              {% ifchanged temporada.desde temporada.hasta %}
+                <tr>
+                <td>Desde el {{ temporada.desde|date }} hasta {{ temporada.hasta|date }}</td>
+              {% endifchanged %}
+              {% if temporada.is_1_4 %}
+                <td>$ {{temporada.precio }}</td>
+                <td></td>
+              {% endif %}
+              {% if temporada.is_2_3 %}
+                <td></td>
+                <td>$ {{temporada.precio }}</td>
+              {% endif %}
+
+              {% ifchanged temporada.desde temporada.hasta %}{% else %}</tr>{% endifchanged %}
+            {% endfor %}
+
+        </table>
+
+
+        </div>
+    </div>
+
+    {% endblock body %}

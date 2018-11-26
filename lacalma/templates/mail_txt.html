@@ -5,9 +5,8 @@ Hemos recibido su solicitud de reserva con los siguientes detalles:
     * Departamento: {{ reserva.departamento }}
     * Fecha de llegada: {{ reserva.desde|date:"l j \d\e F \d\e Y" }} (desde las 14hs)
     * Fecha de salida: {{ reserva.hasta|date:"l j \d\e F \d\e Y" }} (hasta las 10hs)
-    * Dias en temporada alta: {{ reserva.dias_alta }}
-    * Dias en temporada media: {{ reserva.dias_media }}
-    * Dias en temporada baja: {{ reserva.dias_baja }}{% if reserva.descuento.0 %}
+{% for temporada, item in self.detalle.items %}
+    * Dias en {{temporada.nombre}}: ${{item.2}} ({{ item.0 }} dias){% endfor %}{%if reserva.descuento %}
     * Descuento por pago contado/transferencia $ {{ reserva.descuento.1|floatformat:2 }} ({{ reserva.descuento.0 }} %){% endif %}
     * Costo total: $ {{ reserva.costo_total|floatformat:2 }}
 

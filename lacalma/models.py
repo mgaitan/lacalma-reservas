@@ -4,13 +4,14 @@ from django.core.urlresolvers import reverse
 from django.db import models
 from django.db.models import Q
 from django.contrib.sites.models import Site
+from collections import OrderedDict
 from model_utils import Choices
 from model_utils.models import TimeStampedModel
 from decimal import Decimal
 from pytz import UTC
 from django.utils import timezone
 import uuid
-from datetime import datetime, date, timedelta, time
+from datetime import datetime, timedelta, time
 import mercadopago
 
 
@@ -34,23 +35,35 @@ def dias_en_rango(inicio, fin):
     return dias
 
 
-TEMPORADA_ALTA = dias_en_rango(date(2017, 12, 26), date(2018, 2, 15))
-TEMPORADA_MEDIA = dias_en_rango(date(2018, 2, 15), date(2018, 2, 26))  # hasta semana santa
-TEMPORADA_MEDIA_BAJA = dias_en_rango(date(2018, 2, 26), date(2018, 4, 4))  # hasta semana santa
-
 DESCUENTO_QUINCENA = None     # porciento
 DESCUENTO_PAGO_CONTADO = None    # porciento
 DEPOSITO_REQUERIDO = 50
 
 
+class Temporada(models.Model):
+    nombre = models.CharField(max_length=50)
+    desde = models.DateField()
+    hasta = models.DateField()
+    precio = models.DecimalField(max_digits=8, decimal_places=2)
+    departamentos = models.ManyToManyField('Departamento', related_name='temporadas')
+
+    def rango(self):
+        return dias_en_rango(self.hasta, self.desde)
+
+    def is_1_4(self):
+        return self.departamentos.filter(nombre__in=["Departamento 1", "Departamento 4"]).count() == 2
+
+    def is_2_3(self):
+        return self.departamentos.filter(nombre__in=["Departamento 3", "Departamento 2"]).count() == 2
+
+    def __str__(self):
+        return "Desde %s hasta %s " % (self.desde, self.hasta)
+
 
 class Departamento(models.Model):
     nombre = models.CharField(max_length=50, unique=True)
     capacidad = models.IntegerField()
-    dia_alta = models.DecimalField(max_digits=7, decimal_places=2)
-    dia_media = models.DecimalField(max_digits=7, decimal_places=2)
-    dia_media_baja = models.DecimalField(max_digits=7, decimal_places=2, default=0)
-    dia_baja = models.DecimalField(max_digits=7, decimal_places=2)
+    precio_fuera_temporada = models.DecimalField(max_digits=7, decimal_places=2)
 
     class Meta:
         ordering = ('nombre',)
@@ -84,11 +97,6 @@ class Reserva(TimeStampedModel):
         help_text='Cambiarlo puede modificar el saldo a pagar por aplicar o quitar descuentos')
 
     dias_total = models.IntegerField(default=0)
-    dias_baja = models.IntegerField(default=0)
-    dias_media_baja = models.IntegerField(default=0)
-    dias_media = models.IntegerField(default=0)
-    dias_alta = models.IntegerField(default=0)
-
     costo_total = models.DecimalField(max_digits=7, decimal_places=2, default=0)
 
     fecha_vencimiento_reserva = models.DateTimeField(null=True, blank=True)
@@ -118,22 +126,27 @@ class Reserva(TimeStampedModel):
         return DEPOSITO_REQUERIDO, self.total_sin_descuento() * Decimal(str(DEPOSITO_REQUERIDO / 100.0))
 
     def detalle(self):
-        return {'media': self.dias_media * self.departamento.dia_media,
-                'alta': self.dias_alta * self.departamento.dia_alta,
-                'baja': self.dias_baja * self.departamento.dia_baja,
-                'media_baja': self.dias_media_baja * self.departamento.dia_media_baja
-                }
+        d = OrderedDict()
+        reserva = self.rango()
+        dias_en_temporada = 0
+        for temporada in self.departamento.temporadas.filter(
+            Q(desde__range=(self.desde, self.hasta)) | Q(hasta__range=(self.desde, self.hasta))
+        ):
+            dias = len(set(reserva).intersection(set(temporada.rango())))
+            d[temporada.nombre] = (dias, temporada.precio, dias * temporada.precio)
+            dias_en_temporada += dias
+
+        fuera_de_temporada = len(reserva) - dias_en_temporada
+        if fuera_de_temporada:
+            d['fuera de temporada'] = fuera_de_temporada, self.departamento.precio_fuera_temporada, fuera_de_temporada * self.departamento.precio_fuera_temporada
+        return d
 
     def total_sin_descuento(self):
-        return sum(self.detalle().values())
+        return sum(i[2] for i in self.detalle().values())
 
     def calcular_costo(self, descuento=True):
         reserva = self.rango()
         self.dias_total = len(reserva)
-        self.dias_media = len(set(reserva).intersection(TEMPORADA_MEDIA))
-        self.dias_media_baja = len(set(reserva).intersection(TEMPORADA_MEDIA_BAJA))
-        self.dias_alta = len(set(reserva).intersection(TEMPORADA_ALTA))
-        self.dias_baja = self.dias_total - self.dias_media - self.dias_media_baja - self.dias_alta
 
         self.costo_total = self.total_sin_descuento()
         if descuento:
@@ -166,6 +179,7 @@ class Reserva(TimeStampedModel):
         if self.forma_pago != Reserva.METODO.mercadopago:
             return
         site = Site.objects.get_current()
+        mp = mercadopago.MP(settings.MP_CLIENT_ID, settings.MP_CLIENT_SECRET)
 
         if self.mp_id and self.mp_pendiente:
             # TODO Log this.
@@ -173,8 +187,6 @@ class Reserva(TimeStampedModel):
 
         # nuevo id
         self.mp_id = str(uuid.uuid1())
-
-        mp = mercadopago.MP(settings.MP_CLIENT_ID, settings.MP_CLIENT_SECRET)
 
         title = "La Calma {}: {} al {} inclusive".format(self.departamento.nombre,
                                                          self.desde.strftime("%d/%m/%Y"),
@@ -212,12 +224,17 @@ class Reserva(TimeStampedModel):
 
     @classmethod
     def fecha_libre(cls, departamento, desde, hasta, exclude=None):
-        qs = Reserva.objects.filter(departamento=departamento).\
-                           exclude(estado=Reserva.ESTADOS.vencida).\
-                           exclude(estado=Reserva.ESTADOS.cancelada).filter(
-                                  Q(desde__range=(desde, hasta - timedelta(days=1))) |
-                                  Q(hasta__range=(desde + timedelta(days=1), hasta)) |
-                                  Q(desde__lte=desde,hasta__gte=hasta))
+        qs = Reserva.objects.filter(
+            departamento=departamento
+        ).exclude(
+            estado=Reserva.ESTADOS.vencida
+        ).exclude(
+            estado=Reserva.ESTADOS.cancelada
+        ).filter(
+            Q(desde__range=(desde, hasta - timedelta(days=1))) |
+            Q(hasta__range=(desde + timedelta(days=1), hasta)) |
+            Q(desde__lte=desde, hasta__gte=hasta)
+        )
         if exclude:
             qs = qs.exclude(id=exclude.id)
 
