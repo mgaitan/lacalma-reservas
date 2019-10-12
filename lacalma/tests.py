@@ -1,12 +1,12 @@
 import json
-from datetime import date, timedelta, datetime, time, combine
+from datetime import date, timedelta, datetime, time
 import pytz
 from django.utils import timezone
 from freezegun import freeze_time
 from decimal import Decimal
 from django.test import TestCase
 from django.core.management import call_command
-from lacalma.models import Reserva, Departamento, TEMPORADA_ALTA, TEMPORADA_MEDIA, ConceptoFacturable
+from lacalma.models import Reserva, Departamento, ConceptoFacturable, dias_en_rango
 from lacalma.forms import ReservaForm1, ReservaForm2
 
 
@@ -15,13 +15,11 @@ def ReservaFactory(desde, hasta, depto=1):
     return Reserva(departamento=departamento, desde=desde, hasta=hasta,
                    nombre_y_apellido='tin', telefono='33', email='gaitan@gmail.com')
 
-"""
 TEMPORADA_ALTA = dias_en_rango(date(2015, 12, 26), date(2016, 2, 14))
 TEMPORADA_MEDIA = dias_en_rango(date(2016, 2, 15), date(2016, 4, 4))  # hasta semana santa
 DESCUENTO_QUINCENA = None     # porciento
 DESCUENTO_PAGO_CONTADO = 5    # porciento
 DEPOSITO_REQUERIDO = 50
-"""
 
 class TestCalcular(TestCase):
 
@@ -268,7 +266,7 @@ class TestCalcularVencimiento(TestCase):
 
         reserva = ReservaFactory(desde=desde, hasta=hasta)
         midnight = time(0, 0, tzinfo=pytz.utc)
-        reserva_datetime = combine(TEMPORADA_ALTA - timedelta(11), midnight)
+        reserva_datetime = datetime.combine(TEMPORADA_ALTA - timedelta(11), midnight)
 
         with freeze_time(reserva_datetime):     # mas de 10 dias vence a las 24hs.
             reserva.calcular_vencimiento()
