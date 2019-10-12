@@ -3,7 +3,7 @@ from django.contrib import admin
 from django.core.urlresolvers import reverse
 from django.contrib.sites.models import Site
 from lacalma.forms import ReservaAdminForm
-from lacalma.models import Departamento, Reserva, ConceptoFacturable, Temporada
+from lacalma.models import Departamento, Reserva, ConceptoFacturable, Temporada, Dolar
 from djangoql.admin import DjangoQLSearchMixin
 import mercadopago
 
@@ -111,3 +111,4 @@ class TemporadaAdmin(admin.ModelAdmin):
 admin.site.register(Temporada, TemporadaAdmin)
 admin.site.register(Departamento, DepartamentoAdmin)
 admin.site.register(Reserva, ReservaAdmin)
+admin.site.register(Dolar)
