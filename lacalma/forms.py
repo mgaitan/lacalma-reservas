@@ -54,7 +54,7 @@ class ReservaForm1(forms.Form):
 
 
 class ReservaForm2(forms.ModelForm):
-    CHOICES = (('deposito', u'Realizaré una seña del 50% vía transferencia bancaria en las próximas horas'),
+    CHOICES = (('deposito', u'Realizaré el pago vía transferencia bancaria en las próximas horas'),
                ('mercadopago', 'Abonaré con tarjeta de crédito (hasta 12 cuotas)'))
     forma_pago = forms.ChoiceField(widget=forms.RadioSelect, choices=CHOICES, initial='deposito')
     email_confirma = forms.EmailField(label='Confirme su email')

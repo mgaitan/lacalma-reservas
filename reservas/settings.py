@@ -142,6 +142,9 @@ NOSE_ARGS = ['-s', '--nologcapture', '--nocapture', '--with-id',
 
 EMAIL_ADMIN_RETIROS = 'gaitan@gmail.com'
 
+# conseguir en https://estadisticasbcra.com/api/registracion
+BCRA_TOKEN = "lala"
+
 try:
     from .local_settings import *
 except:
