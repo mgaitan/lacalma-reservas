@@ -5,10 +5,14 @@ import pytz
 from django.utils import timezone
 from freezegun import freeze_time
 from decimal import Decimal
+import responses
 from django.test import TestCase
 from django.core.management import call_command
-from lacalma.models import Reserva, Departamento, ConceptoFacturable, dias_en_rango, Temporada
+from django.utils.dateparse import parse_date
+from lacalma.models import Reserva, Departamento, ConceptoFacturable, dias_en_rango, Temporada, Dolar
 from lacalma.forms import ReservaForm1, ReservaForm2
+
+from django.test.utils import captured_stdout
 
 
 def ReservaFactory(desde, hasta, depto=1):
@@ -47,9 +51,6 @@ class BaseTestCase(TestCase):
 
 
 class TestCalcular(BaseTestCase):
-
-
-
     def test_1_dias_dentro_temporada(self):
         desde = TEMPORADA_ALTA[0]
         hasta = desde + timedelta(days=1)
@@ -71,10 +72,9 @@ class TestCalcular(BaseTestCase):
         reserva.calcular_costo(False)
         assert reserva.costo_total == 3 * Decimal(100) + 4 * Decimal(80)
         detalle = reserva.detalle()
-        assert detalle.keys() == ['alta', 'media']
-        assert detalle['alta'] == (3, Decimal('100.00'), Decimal('300.00'))
-        assert detalle['media'] == (4, Decimal('80.00'), Decimal('320.00'))
-        
+        assert detalle.keys() == ["alta", "media"]
+        assert detalle["alta"] == (3, Decimal("100.00"), Decimal("300.00"))
+        assert detalle["media"] == (4, Decimal("80.00"), Decimal("320.00"))
 
 
 class TestValidar(BaseTestCase):
@@ -203,9 +203,7 @@ class TestLimpiar(BaseTestCase):
         self.assertTrue(mail.body.startswith("Estimado/a"))
 
 
-
 class TestFacturables(BaseTestCase):
-
     @unittest.skip("Descuento desactivado")
     def test_descuento_pago_contado(self):
         PRECIO_DIA = self.alta.precio
@@ -255,8 +253,6 @@ class TestDiasOcupadosEnFrontEnd(TestCase):
 
 
 class TestCalcularVencimiento(BaseTestCase):
-
-
     def test_vencimiento_mas_de_10_dias(self):
         desde = TEMPORADA_ALTA[0]
         hasta = TEMPORADA_ALTA[0] + timedelta(days=4)  # 4 dias de alta
@@ -268,3 +264,61 @@ class TestCalcularVencimiento(BaseTestCase):
         with freeze_time(reserva_datetime):  # mas de 10 dias vence a las 24hs.
             reserva.calcular_vencimiento()
         self.assertEqual(reserva.fecha_vencimiento_reserva, reserva_datetime + timedelta(hours=24))
+
+
+class TestCambioPrecio(BaseTestCase):
+    def setUp(self):
+        super(TestCambioPrecio, self).setUp()
+
+    def test_vigente(self):
+        Dolar.objects.create(fecha=parse_date("2019-10-03"), precio="60.23")
+        Dolar.objects.create(fecha=parse_date("2019-10-11"), precio="60.31")
+        assert Dolar.vigente() == Decimal("60.31")
+
+    @responses.activate
+    def test_primer_precio(self):
+        responses.add(
+            responses.GET,
+            "https://api.estadisticasbcra.com/usd_of_minorista",
+            json=[{u"d": u"2019-10-10", u"v": 60.10}, {u"d": u"2019-10-11", u"v": 60.31}],
+            status=200,
+        )
+        call_command("actualizar_precios")
+        dolar = Dolar.objects.get()
+        assert dolar.precio == Decimal("60.31")
+        assert dolar.fecha == date(2019, 10, 11)
+
+    @responses.activate
+    def test_precio_sin_variacion(self):
+        Dolar.objects.create(fecha=parse_date("2019-10-11"), precio=61)
+        responses.add(
+            responses.GET,
+            "https://api.estadisticasbcra.com/usd_of_minorista",
+            json=[{u"d": u"2019-10-10", u"v": 60}, {u"d": u"2019-10-11", u"v": 61}],
+            status=200,
+        )
+        with captured_stdout() as stdout:
+            call_command("actualizar_precios")
+        assert stdout.getvalue() == "la variacion no supera 0.05\n"
+
+    @responses.activate
+    def test_precio_supera(self):
+        original = self.alta.precio
+        Dolar.objects.create(fecha=parse_date("2019-10-10"), precio=60)
+        responses.add(
+            responses.GET,
+            "https://api.estadisticasbcra.com/usd_of_minorista",
+            json=[{u"d": u"2019-10-10", u"v": 60}, {u"d": u"2019-10-11", u"v": 66}],
+            status=200,
+        )
+        with captured_stdout() as stdout:
+            call_command("actualizar_precios")
+        assert Dolar.vigente() == Decimal("66")
+        self.alta.refresh_from_db()
+        from django.core.mail import outbox
+
+        assert self.alta.precio == original * Decimal("1.1")
+        assert len(outbox) == 1
+        assert outbox[0].subject == "[La Calma] Cambio de precios"
+        assert outbox[0].body.startswith("Los precios cambiaron un 10.0%\n\n")
+        assert outbox[0].to == ['info@lacalma-lasgrutas.com.ar']

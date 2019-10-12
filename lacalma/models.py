@@ -41,12 +41,24 @@ DESCUENTO_PAGO_CONTADO = None    # porciento
 DEPOSITO_REQUERIDO = 50
 
 
+class Dolar(models.Model):
+    fecha = models.DateField()
+    precio = models.DecimalField(max_digits=9, decimal_places=2)
+
+    @classmethod
+    def vigente(cls):
+        first = cls.objects.order_by('-fecha').first()
+        if first:
+            return first.precio
+    
+
 class Temporada(models.Model):
     nombre = models.CharField(max_length=50)
     desde = models.DateField()
     hasta = models.DateField()
     precio = models.DecimalField(max_digits=9, decimal_places=2)
     departamentos = models.ManyToManyField('Departamento', related_name='temporadas')
+
 
     def rango(self):
         return dias_en_rango(self.hasta, self.desde, True)
