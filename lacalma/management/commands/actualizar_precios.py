@@ -38,7 +38,7 @@ class Command(BaseCommand):
                 Dolar.objects.create(fecha=parse_date(fecha), precio=precio_actual)
 
                 texto = []
-                for t in Temporada.objects.all():
+                for t in Temporada.objects.filter(hasta__gte=AHORA):
                     t.precio = redondeo(t.precio * (1 + porcentaje_dif))
                     t.save(update_fields=["precio"])
                     texto.append(
@@ -48,7 +48,7 @@ class Command(BaseCommand):
                 # la diferencia de precio es grande
                 send_mail(
                     "[La Calma] Cambio de precios",
-                    "Los precios cambiaron un {:.2f}%\n\n{}".format(porcentaje_dif * 100, "\n".join(texto)),
+                    u"El dólar cambió un {:.2f}%\n\n{}".format(porcentaje_dif * 100, "\n".join(texto)),
                     "info@lacalma-lasgrutas.com.ar",
                     ["info@lacalma-lasgrutas.com.ar"],
                 )
