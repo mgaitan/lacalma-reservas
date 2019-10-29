@@ -319,7 +319,7 @@ class TestCambioPrecio(BaseTestCase):
         self.alta.refresh_from_db()
         from django.core.mail import outbox
 
-        assert self.alta.precio == Decimal("105.00")
+        assert self.alta.precio == Decimal("110.00")
         assert len(outbox) == 1
         assert outbox[0].subject == "[La Calma] Cambio de precios"
         assert outbox[0].body.startswith(u"El dólar cambió un 5.67%\n\n")

@@ -14,7 +14,7 @@ LIMITE = 0.05     # variacion del
 HEADERS = {"Authorization": "BEARER {}".format(settings.BCRA_TOKEN)}
 
 
-def redondeo(x, base=5):
+def redondeo(x, base=10):
     """
     redondea al entero fijo más próximo multiplo de base
     """ 
