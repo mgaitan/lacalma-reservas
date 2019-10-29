@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
+from decimal import Decimal
 from django.core.management.base import BaseCommand  # CommandError
 from django.utils import timezone
 from django.conf import settings
-from datetime import timedelta
 import requests
 from lacalma.models import Temporada, Dolar
 from django.core.mail import send_mail
@@ -12,6 +12,13 @@ from django.utils.dateparse import parse_date
 AHORA = timezone.now()
 LIMITE = 0.05  # variacion del
 HEADERS = {"Authorization": "BEARER {}".format(settings.BCRA_TOKEN)}
+
+
+def redondeo(x, base=5):
+    """
+    redondea al entero fijo más próximo multiplo de base
+    """ 
+    return int(base * round(float(x)/base))
 
 
 class Command(BaseCommand):
@@ -26,13 +33,13 @@ class Command(BaseCommand):
             Dolar.objects.create(fecha=parse_date(fecha), precio=precio_actual)
             print("Se obtuvo primer precio de referencia {}".format(precio_actual))
         else:
-            porcentaje_dif = (precio_actual - precio_vigente) / precio_vigente
+            porcentaje_dif = (Decimal(precio_actual) - precio_vigente) / precio_vigente
             if abs(porcentaje_dif) > LIMITE:
                 Dolar.objects.create(fecha=parse_date(fecha), precio=precio_actual)
 
                 texto = []
                 for t in Temporada.objects.all():
-                    t.precio = t.precio * (1 + porcentaje_dif)
+                    t.precio = redondeo(t.precio * (1 + porcentaje_dif))
                     t.save(update_fields=["precio"])
                     texto.append(
                         "- Temporada {} - Depto {}: ${}".format(t.nombre, "1 o 4" if t.is_1_4 else "2 o 3", t.precio)
@@ -41,7 +48,7 @@ class Command(BaseCommand):
                 # la diferencia de precio es grande
                 send_mail(
                     "[La Calma] Cambio de precios",
-                    "Los precios cambiaron un {}%\n\n{}".format(porcentaje_dif * 100, "\n".join(texto)),
+                    "Los precios cambiaron un {:.2f}%\n\n{}".format(porcentaje_dif * 100, "\n".join(texto)),
                     "info@lacalma-lasgrutas.com.ar",
                     ["info@lacalma-lasgrutas.com.ar"],
                 )

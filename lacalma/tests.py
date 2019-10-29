@@ -308,17 +308,18 @@ class TestCambioPrecio(BaseTestCase):
         responses.add(
             responses.GET,
             "https://api.estadisticasbcra.com/usd_of_minorista",
-            json=[{u"d": u"2019-10-10", u"v": 60}, {u"d": u"2019-10-11", u"v": 66}],
+            json=[{u"d": u"2019-10-10", u"v": 60}, {u"d": u"2019-10-11", u"v": 63.4}],
             status=200,
         )
         with captured_stdout() as stdout:
             call_command("actualizar_precios")
-        assert Dolar.vigente() == Decimal("66")
+
+        assert Dolar.vigente() == Decimal("63.4")
         self.alta.refresh_from_db()
         from django.core.mail import outbox
 
-        assert self.alta.precio == original * Decimal("1.1")
+        assert self.alta.precio == Decimal("105.00")
         assert len(outbox) == 1
         assert outbox[0].subject == "[La Calma] Cambio de precios"
-        assert outbox[0].body.startswith("Los precios cambiaron un 10.0%\n\n")
+        assert outbox[0].body.startswith("Los precios cambiaron un 5.67%\n\n")
         assert outbox[0].to == ['info@lacalma-lasgrutas.com.ar']
