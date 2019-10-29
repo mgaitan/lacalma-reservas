@@ -304,7 +304,6 @@ class TestCambioPrecio(BaseTestCase):
 
     @responses.activate
     def test_precio_supera(self):
-        original = self.alta.precio
         Dolar.objects.create(fecha=parse_date("2019-10-10"), precio=60)
         responses.add(
             responses.GET,
@@ -312,7 +311,7 @@ class TestCambioPrecio(BaseTestCase):
             json=[{u"d": u"2019-10-10", u"v": 60}, {u"d": u"2019-10-11", u"v": 63.4}],
             status=200,
         )
-        with captured_stdout() as stdout:
+        with captured_stdout():
             call_command("actualizar_precios")
 
         assert Dolar.vigente() == Decimal("63.4")
