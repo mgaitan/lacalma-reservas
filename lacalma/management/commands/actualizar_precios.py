@@ -10,7 +10,7 @@ from django.utils.dateparse import parse_date
 
 
 AHORA = timezone.now()
-LIMITE = 0.05  # variacion del
+LIMITE = 0.05     # variacion del
 HEADERS = {"Authorization": "BEARER {}".format(settings.BCRA_TOKEN)}
 
 
@@ -24,6 +24,14 @@ def redondeo(x, base=5):
 class Command(BaseCommand):
     help = """Actualiza precios de temporada si el dolar salta un porcentaje"""
 
+    
+    def add_arguments(self, parser):
+        parser.add_argument(
+            '--force',
+            action='store_true',
+            help='Actualizar al dolar de hoy',
+        )
+
     def handle(self, *args, **options):
         precio_vigente = Dolar.vigente()
         response = requests.get("https://api.estadisticasbcra.com/usd_of_minorista", headers=HEADERS)
@@ -34,7 +42,7 @@ class Command(BaseCommand):
             print("Se obtuvo primer precio de referencia {}".format(precio_actual))
         else:
             porcentaje_dif = (Decimal(precio_actual) - precio_vigente) / precio_vigente
-            if abs(porcentaje_dif) > LIMITE:
+            if options['force'] or abs(porcentaje_dif) > LIMITE:
                 Dolar.objects.create(fecha=parse_date(fecha), precio=precio_actual)
 
                 texto = []
