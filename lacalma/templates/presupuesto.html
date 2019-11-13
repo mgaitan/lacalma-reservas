@@ -49,22 +49,7 @@
     {% include "as_invoice.html" with ignorar_detalles=True %}
 
 
-    {% if reserva.saldo > 0 %}
-
-    <p>Los datos de la cuenta bancaria para realizar el depósito {% if reserva.estado == 'confirmada' %}por el saldo{% else %}de seña{% endif %} son los siguientes:</p>
-
-    <div class="col-md-3" style="width: 40%">
-        <table class="table table-condensed table-bordered table-striped">
-            <tbody>
-            <tr><td> CBU <strong>1500688400068861769250</strong></td></tr>
-            <tr><td> Banco HSBC Argentina - Sucursal 2540</td></tr>
-            <tr><td> Titular: <strong>Graciela Lamothe Coulomme</strong> </td></tr>
-            <tr><td> CUIT 27-10659924-1</td></tr>
-            </tbody>
-        </table>
-    </div>
-
-     <p>Por favor, envíe el comprobante a nuestro correo electrónico</p>
+     <p>Por favor, envíe el comprobante de depósito correspondiente a nuestro correo electrónico info@lacalma-lasgrutas.com.ar</p>
 
     {% endif %}
 
