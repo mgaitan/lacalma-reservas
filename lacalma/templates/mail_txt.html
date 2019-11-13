@@ -1,7 +1,6 @@
 
 Hemos recibido su solicitud de reserva con los siguientes detalles:
 
-
     * Departamento: {{ reserva.departamento }}
     * Fecha de llegada: {{ reserva.desde|date:"l j \d\e F \d\e Y" }} (desde las 14hs)
     * Fecha de salida: {{ reserva.hasta|date:"l j \d\e F \d\e Y" }} (hasta las 10hs)
@@ -9,8 +8,6 @@ Hemos recibido su solicitud de reserva con los siguientes detalles:
     * Dias en {{temporada.nombre}}: ${{item.2}} ({{ item.0 }} dias){% endfor %}{%if reserva.descuento %}
     * Descuento por pago contado/transferencia $ {{ reserva.descuento.1|floatformat:2 }} ({{ reserva.descuento.0 }} %){% endif %}
     * Costo total: $ {{ reserva.costo_total|floatformat:2 }}
-
-    * Depósito de seña requerido: $ {{ reserva.deposito_requerido.1|floatformat:2 }} ({{ reserva.deposito_requerido.0 }} %)
 
    * Fecha de vencimiento de la reserva pendiente:
 

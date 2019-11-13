@@ -98,13 +98,14 @@
           </tr>
 
     {% elif reserva.estado == 'pendiente' %}
+      {% comment %}
+        
         <tr>
             <td colspan="3"><p class="text-right" > <br> <br><strong>Depósito de seña requerido ({{ reserva.deposito_requerido.0 }} %): </strong></p></td>
             <td><p class="text-right"><br> <br><strong>$ {{ reserva.deposito_requerido.1|floatformat:2 }} </strong></p></td>
           </tr>
-
-
-
+        {% endcomment %}
+      
     {% endif %}
 
 
