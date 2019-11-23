@@ -141,6 +141,7 @@ class Reserva(TimeStampedModel):
     def detalle(self):
         d = OrderedDict()
         reserva = self.rango()
+        
         dias_en_temporada = 0
         for temporada in self.departamento.temporadas.filter(
             Q(desde__range=(self.desde, self.hasta)) |
@@ -148,8 +149,9 @@ class Reserva(TimeStampedModel):
             Q(desde__lte=self.desde, hasta__gte=self.hasta)
         ):
             dias = len(set(reserva).intersection(set(temporada.rango())))
-            d[temporada.nombre] = (dias, temporada.precio, dias * temporada.precio)
-            dias_en_temporada += dias
+            if dias:
+                d[temporada.nombre] = (dias, temporada.precio, dias * temporada.precio)
+                dias_en_temporada += dias
 
         fuera_de_temporada = len(reserva) - dias_en_temporada
         if fuera_de_temporada:
@@ -159,7 +161,7 @@ class Reserva(TimeStampedModel):
     def total_sin_descuento(self):
         return sum(i[2] for i in self.detalle().values())
 
-    def calcular_costo(self, descuento=True):
+    def calcular_costo(self, descuento=False):
         reserva = self.rango()
         self.dias_total = len(reserva)
 
