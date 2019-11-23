@@ -1,4 +1,5 @@
 from fabric.api import env, run, cd
+from fabric.operations import local, get
 
 def common():
     env.host_string = 'nqnwebs.com'
@@ -32,7 +33,6 @@ def update(branch='master'):
         run("git fetch && git reset --hard origin/%s" % branch)
         run("%s install -r requirements.txt" % env.pip)
         run("%s manage.py migrate" % env.python)
-        run("%s manage.py loaddata fixtures/deptos.json" % env.python)
         run("echo 'yes' | %s manage.py collectstatic" % env.python)
         # run("git stash pop")
         restart()
@@ -40,3 +40,10 @@ def update(branch='master'):
 def django_manage(cmd):
     with cd(env.app):
         run("%s manage.py %s" % (env.python, cmd))
+
+def sync_db():
+    local('cp db.sqlite3 db.sqlite3.bak'.format(file))
+    with cd(env.app):
+        run("%s manage.py dumpdata auth lacalma descuentos > backup.json" % (env.python,))
+        get('backup.json', '.')
+    local('python manage.py loaddata backup.json')       
