@@ -34,6 +34,7 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_extensions',
     'djangoql',
     'export_action',
     'formtools',
